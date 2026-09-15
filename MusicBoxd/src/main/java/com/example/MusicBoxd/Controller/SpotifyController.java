@@ -1,4 +1,4 @@
-package com.example.MusicBoxd.controller;
+package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.api.spotify.SpotifyCurrentlyPlayingResponse;
 import com.example.MusicBoxd.api.spotify.SpotifyRecentlyPlayedResponse;
