@@ -134,7 +134,13 @@
                 </p>
 
                 <a
-                        th:href="@{/album/{id}(id=${album.collectionId})}"
+                        th:href="@{/album/save(
+            collectionId=${album.collectionId},
+            artistName=${album.artistName},
+            albumName=${album.collectionName},
+            artworkUrl=${album.artworkUrl600},
+            releaseDate=${album.releaseDate}
+        )}"
                 >
                     View Album
                     <span>→</span>
