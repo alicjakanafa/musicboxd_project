@@ -1,0 +1,70 @@
+package com.example.MusicBoxd.api.itunes;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.ArrayList;
+
+@Service
+public class ItunesService {
+
+    private final RestTemplate restTemplate;
+
+    public ItunesService() {
+        this.restTemplate = new RestTemplate();
+
+        for (var converter : restTemplate.getMessageConverters()) {
+
+            if (converter instanceof JacksonJsonHttpMessageConverter jsonConverter) {
+
+                var mediaTypes =
+                        new ArrayList<>(jsonConverter.getSupportedMediaTypes());
+
+                mediaTypes.add(MediaType.valueOf("text/javascript"));
+
+                jsonConverter.setSupportedMediaTypes(mediaTypes);
+            }
+        }
+    }
+
+    public ItunesAlbumResponse searchAlbums(String searchTerm) {
+
+        String url = UriComponentsBuilder
+                .fromUriString("https://itunes.apple.com/search")
+                .queryParam("term", searchTerm)
+                .queryParam("media", "music")
+                .queryParam("entity", "album")
+                .queryParam("limit", 20)
+                .build()
+                .toUriString();
+
+        return restTemplate.getForObject(
+                url,
+                ItunesAlbumResponse.class
+        );
+    }
+
+    public ItunesTrackResponse searchTracks(String searchTerm) {
+
+        String url = UriComponentsBuilder
+                .fromUriString("https://itunes.apple.com/search")
+                .queryParam("term", searchTerm)
+                .queryParam("media", "music")
+                .queryParam("entity", "song")
+                .queryParam("limit", 20)
+                .build()
+                .toUriString();
+
+        return restTemplate.getForObject(
+                url,
+                ItunesTrackResponse.class
+        );
+    }
+}
+
+
+
+
