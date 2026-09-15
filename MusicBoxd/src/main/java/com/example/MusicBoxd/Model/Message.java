@@ -1,114 +1,66 @@
 package com.example.MusicBoxd.Model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "messages")
+@Table(name = "MESSAGES")
+@Getter @Setter @NoArgsConstructor
 public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "sender_id")
     private Long senderId;
 
+    @Column(name = "receiver_id")
     private Long receiverId;
 
-    @Column(columnDefinition = "TEXT")
     private String content;
 
     private boolean read;
 
+    @Column(name = "song_title")
     private String songTitle;
 
+    @Column(name = "song_artist")
     private String songArtist;
 
+    @Column(name = "song_image_url")
     private String songImageUrl;
 
+    @Column(name = "song_preview_url")
     private String songPreviewUrl;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Message() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(Long senderId) {
+    public Message(
+            Long senderId,
+            Long receiverId,
+            String content,
+            String songTitle,
+            String songArtist,
+            String songImageUrl,
+            String songPreviewUrl
+    ) {
         this.senderId = senderId;
-    }
-
-    public Long getReceiverId() {
-        return receiverId;
-    }
-
-    public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
         this.content = content;
-    }
-
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
-    }
-
-    public String getSongTitle() {
-        return songTitle;
-    }
-
-    public void setSongTitle(String songTitle) {
+        this.read = false;
         this.songTitle = songTitle;
-    }
-
-    public String getSongArtist() {
-        return songArtist;
-    }
-
-    public void setSongArtist(String songArtist) {
         this.songArtist = songArtist;
-    }
-
-    public String getSongImageUrl() {
-        return songImageUrl;
-    }
-
-    public void setSongImageUrl(String songImageUrl) {
         this.songImageUrl = songImageUrl;
-    }
-
-    public String getSongPreviewUrl() {
-        return songPreviewUrl;
-    }
-
-    public void setSongPreviewUrl(String songPreviewUrl) {
         this.songPreviewUrl = songPreviewUrl;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
 
 
