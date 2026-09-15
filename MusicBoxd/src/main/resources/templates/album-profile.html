@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title th:text="${album.title}">
+    Album
+  </title>
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/album-profile.css}"
+  >
+
+</head>
+
+
+<body>
+
+<div class="album-page">
+
+  <!-- Album information -->
+
+  <section class="album-header">
+
+    <div class="album-art">
+
+      <!-- Album artwork -->
+
+      <img
+              th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
+              th:src="${album.artworkUrl}"
+              th:alt="${album.title}"
+      >
+
+      <!-- Fallback if there is no artwork -->
+
+      <div
+              class="album-art-placeholder"
+              th:if="${album.artworkUrl == null or album.artworkUrl.isEmpty()}"
+      >
+        No artwork
+      </div>
+
+    </div>
+
+
+    <div class="album-information">
+
+      <p>ALBUM</p>
+
+      <h1 th:text="${album.title}">
+        Album Name
+      </h1>
+
+      <h2 th:if="${artist != null}">
+
+        <a
+                th:href="@{/artists/{id}(id=${artist.id})}"
+                th:text="${artist.name}"
+        >
+          Artist Name
+        </a>
+
+      </h2>
+
+      <p
+              th:if="${album.releaseYear != null}"
+              th:text="${album.releaseYear}"
+      >
+        2026
+      </p>
+
+      <a
+              th:href="@{/reviews/new(albumId=${album.id})}"
+              class="review-button"
+      >
+        Review this album
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- Track list -->
+
+  <section class="songs">
+
+    <h2>Songs</h2>
+
+    <div
+            class="song"
+            th:each="song : ${songs}"
+    >
+
+      <div class="track-number">
+
+                <span
+                        th:text="${song.trackNumber}"
+                >
+                    1
+                </span>
+
+      </div>
+
+
+      <div class="song-information">
+
+        <h3
+                th:text="${song.title}"
+        >
+          Song Title
+        </h3>
+
+      </div>
+
+
+      <!-- iTunes preview -->
+
+      <div
+              class="song-preview"
+              th:if="${song.songUrl != null}"
+      >
+
+        <audio controls>
+
+          <source
+                  th:src="${song.songUrl}"
+                  type="audio/mpeg"
+          >
+
+        </audio>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+</body>
+
+</html>
