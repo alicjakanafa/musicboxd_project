@@ -1,12 +1,23 @@
 TRUNCATE TABLE
+    public.artist_tags,
+    public.list_tags,
+    public.album_tags,
+    public.song_tags,
+    public.list_items,
+    public.want_to_listen,
+    public.messages,
+    public.friends,
+    public.likes,
+    public.notifications,
     public.comments,
     public.reviews,
+    public.lists,
     public.songs,
     public.albums,
     public.tags,
     public.artists,
     public.users
-RESTART IDENTITY;
+RESTART IDENTITY CASCADE;
 
 INSERT INTO public.users (id, google_user_id, username, email, bio, profile_picture_url) VALUES
  (1, 'test-google-001', 'vinylfan', 'vinylfan@example.com', 'Always looking for my next favourite album.', NULL),
@@ -21,7 +32,6 @@ INSERT INTO public.artists (id, name) VALUES
 (3, 'Ella Blue'),
 (4, 'Neon Harbour');
 
--- Standalone tags: the supplied schema has no tag association table.
 INSERT INTO public.tags (id, name) VALUES
 (1, 'Rock'), (2, 'Indie'), (3, 'Jazz'),
 (4, 'Electronic'), (5, 'Soul'), (6, 'Pop');
@@ -74,6 +84,90 @@ INSERT INTO public.comments (id, user_id, review_id, content, created_at) VALUES
   (9, 1, 8, 'Ella Blue deserves more attention.', CURRENT_TIMESTAMP - INTERVAL '2 days'),
   (10, 2, 9, 'This would be brilliant live.', CURRENT_TIMESTAMP - INTERVAL '1 day');
 
+INSERT INTO public.likes (id, user_id, review_id, comment_id, created_at) VALUES
+  (1, 2, 1, NULL, CURRENT_TIMESTAMP - INTERVAL '9 days'),
+  (2, 3, 1, NULL, CURRENT_TIMESTAMP - INTERVAL '9 days'),
+  (3, 1, 2, NULL, CURRENT_TIMESTAMP - INTERVAL '8 days'),
+  (4, 4, 3, NULL, CURRENT_TIMESTAMP - INTERVAL '7 days'),
+  (5, 2, NULL, 1, CURRENT_TIMESTAMP - INTERVAL '8 days'),
+  (6, 5, NULL, 3, CURRENT_TIMESTAMP - INTERVAL '7 days'),
+  (7, 1, 6, NULL, CURRENT_TIMESTAMP - INTERVAL '4 days'),
+  (8, 3, NULL, 7, CURRENT_TIMESTAMP - INTERVAL '3 days');
+
+INSERT INTO public.friends (id, requester_id, receiver_id, status, created_at) VALUES
+  (1, 1, 2, 'accepted', CURRENT_TIMESTAMP - INTERVAL '30 days'),
+  (2, 1, 3, 'accepted', CURRENT_TIMESTAMP - INTERVAL '25 days'),
+  (3, 2, 4, 'pending', CURRENT_TIMESTAMP - INTERVAL '5 days'),
+  (4, 5, 3, 'pending', CURRENT_TIMESTAMP - INTERVAL '2 days'),
+  (5, 4, 1, 'accepted', CURRENT_TIMESTAMP - INTERVAL '15 days');
+
+INSERT INTO public.notifications (id, user_id, actor_id, related_id, type, notification_text, is_read, created_at) VALUES
+  (1, 1, 2, 1, 'comment', 'indiekid commented on your review', FALSE, CURRENT_TIMESTAMP - INTERVAL '9 days'),
+  (2, 1, 4, 2, 'comment', 'beatseeker commented on your review', TRUE, CURRENT_TIMESTAMP - INTERVAL '8 days'),
+  (3, 2, 1, 3, 'comment', 'vinylfan commented on your review', FALSE, CURRENT_TIMESTAMP - INTERVAL '8 days'),
+  (4, 3, 2, 4, 'comment', 'indiekid commented on your review', FALSE, CURRENT_TIMESTAMP - INTERVAL '7 days'),
+  (5, 1, 2, 1, 'like', 'indiekid liked your review', TRUE, CURRENT_TIMESTAMP - INTERVAL '9 days'),
+  (6, 1, 3, 1, 'like', 'jazzhands liked your review', FALSE, CURRENT_TIMESTAMP - INTERVAL '9 days'),
+  (7, 3, 5, 4, 'friend_request', 'newlistener sent you a friend request', FALSE, CURRENT_TIMESTAMP - INTERVAL '2 days');
+
+INSERT INTO public.messages (id, sender_id, receiver_id, content, read, song_title, song_artist, song_image_url, song_preview_url, created_at) VALUES
+  (1, 1, 2, 'Have you heard the new album from Paper Satellites?', TRUE, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP - INTERVAL '6 days'),
+  (2, 2, 1, 'Not yet, adding it to my list now!', FALSE, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP - INTERVAL '6 days'),
+  (3, 3, 4, 'Check out this track', FALSE, 'Neon Tide', 'Neon Harbour', NULL, NULL, CURRENT_TIMESTAMP - INTERVAL '4 days'),
+  (4, 4, 3, 'Nice, I love the production on this one.', TRUE, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP - INTERVAL '4 days'),
+  (5, 5, 1, 'Any album recommendations for a newcomer?', FALSE, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP - INTERVAL '1 day');
+
+INSERT INTO public.lists (id, user_id, title, description, created_at) VALUES
+  (1, 1, 'Late Night Listening', 'Albums for winding down at night', CURRENT_TIMESTAMP - INTERVAL '20 days'),
+  (2, 2, 'Indie Favourites', 'My go-to indie tracks', CURRENT_TIMESTAMP - INTERVAL '18 days'),
+  (3, 3, 'Sunday Chill', NULL, CURRENT_TIMESTAMP - INTERVAL '12 days'),
+  (4, 4, 'Workout Beats', 'High energy electronic tracks', CURRENT_TIMESTAMP - INTERVAL '10 days');
+
+INSERT INTO public.list_items (id, list_id, album_id, song_id, position, created_at) VALUES
+  (1, 1, 1, NULL, 1, CURRENT_TIMESTAMP - INTERVAL '20 days'),
+  (2, 1, NULL, 8, 2, CURRENT_TIMESTAMP - INTERVAL '19 days'),
+  (3, 1, NULL, 9, 3, CURRENT_TIMESTAMP - INTERVAL '19 days'),
+  (4, 2, 2, NULL, 1, CURRENT_TIMESTAMP - INTERVAL '18 days'),
+  (5, 2, NULL, 6, 2, CURRENT_TIMESTAMP - INTERVAL '17 days'),
+  (6, 3, 3, NULL, 1, CURRENT_TIMESTAMP - INTERVAL '12 days'),
+  (7, 4, 4, NULL, 1, CURRENT_TIMESTAMP - INTERVAL '10 days'),
+  (8, 4, NULL, 11, 2, CURRENT_TIMESTAMP - INTERVAL '9 days');
+
+INSERT INTO public.want_to_listen (id, user_id, song_id, album_id, created_at) VALUES
+  (1, 1, NULL, 2, CURRENT_TIMESTAMP - INTERVAL '14 days'),
+  (2, 2, NULL, 3, CURRENT_TIMESTAMP - INTERVAL '13 days'),
+  (3, 3, 12, NULL, CURRENT_TIMESTAMP - INTERVAL '11 days'),
+  (4, 4, NULL, 5, CURRENT_TIMESTAMP - INTERVAL '5 days'),
+  (5, 5, 1, NULL, CURRENT_TIMESTAMP - INTERVAL '3 days'),
+  (6, 1, NULL, 4, CURRENT_TIMESTAMP - INTERVAL '2 days');
+
+-- Link tables have composite primary keys (no surrogate id / sequence to reset).
+INSERT INTO public.artist_tags (artist_id, tag_id) VALUES
+  (1, 1), (1, 2),
+  (2, 2),
+  (3, 3), (3, 5),
+  (4, 4);
+
+INSERT INTO public.album_tags (album_id, tag_id) VALUES
+  (1, 1), (1, 2),
+  (2, 2),
+  (3, 3), (3, 5),
+  (4, 4),
+  (5, 1);
+
+INSERT INTO public.song_tags (song_id, tag_id) VALUES
+  (1, 1),
+  (4, 2),
+  (7, 3),
+  (10, 4),
+  (13, 1);
+
+INSERT INTO public.list_tags (list_id, tag_id) VALUES
+  (1, 1), (1, 2),
+  (2, 2),
+  (3, 3),
+  (4, 4);
+
 SELECT setval('public.users_id_seq', (SELECT MAX(id) FROM public.users), true);
 SELECT setval('public.artists_id_seq', (SELECT MAX(id) FROM public.artists), true);
 SELECT setval('public.tags_id_seq', (SELECT MAX(id) FROM public.tags), true);
@@ -81,3 +175,10 @@ SELECT setval('public.albums_id_seq', (SELECT MAX(id) FROM public.albums), true)
 SELECT setval('public.songs_id_seq', (SELECT MAX(id) FROM public.songs), true);
 SELECT setval('public.reviews_id_seq', (SELECT MAX(id) FROM public.reviews), true);
 SELECT setval('public.comments_id_seq', (SELECT MAX(id) FROM public.comments), true);
+SELECT setval('public.likes_id_seq', (SELECT MAX(id) FROM public.likes), true);
+SELECT setval('public.friends_id_seq', (SELECT MAX(id) FROM public.friends), true);
+SELECT setval('public.notifications_id_seq', (SELECT MAX(id) FROM public.notifications), true);
+SELECT setval('public.messages_id_seq', (SELECT MAX(id) FROM public.messages), true);
+SELECT setval('public.lists_id_seq', (SELECT MAX(id) FROM public.lists), true);
+SELECT setval('public.list_items_id_seq', (SELECT MAX(id) FROM public.list_items), true);
+SELECT setval('public.want_to_listen_id_seq', (SELECT MAX(id) FROM public.want_to_listen), true);
