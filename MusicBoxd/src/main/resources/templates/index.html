@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MusicBoxd</title>
+    <!-- Font for Musicboxd title -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="dashboard">
+
+    <section class="daily-catchup">
+        <h2>Hey Y/N, here's your daily catch up</h2>
+
+        <div class="catchup-list">
+            <!-- These are fake inserts for updates, but you can make them dynamic I reckon with a Thymeleaf template eventually!! -->
+            <div class="catchup-item">Someone added an album to a list</div>
+            <div class="catchup-item">New release from Phoebe Bridgers</div>
+            <div class="catchup-item">Your review received a like</div>
+            <div class="catchup-item"></div>
+            <div class="catchup-item"></div>
+        </div>
+    </section>
+
+
+    <section class="charts">
+
+        <section class="top-40">
+            <h2>UK iTunes Top 40</h2>
+
+            <div class="top-40-content">
+                <!-- API/chart content will go here -->
+            </div>
+        </section>
+
+        <div class="discovery-row">
+
+            <div class="album-of-the-day">
+                <h2>Suggested Album of the Day</h2>
+                <!-- API for a random album will go here -->
+            </div>
+
+            <div class="media-player">
+                <!-- Media player HTML / JS API stuff goes here -->
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <aside class="right-column">
+
+        <section class="friends">
+            <h2>Friends Activity</h2>
+            <!-- Eventually friend updates will go in here, and make sure you put it inside the div underneath :) -->
+            <div class="friends-content">
+            </div>
+        </section>
+
+        <section class="listening-stats">
+            <!-- These were generated with CSS, but if Last.FM has a listening statistics tool for API you can put it here -->
+            <div class="stat-bar stat-bar-1"></div>
+            <div class="stat-bar stat-bar-2"></div>
+            <div class="stat-bar stat-bar-3"></div>
+            <div class="stat-bar stat-bar-4"></div>
+        </section>
+
+    </aside>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
