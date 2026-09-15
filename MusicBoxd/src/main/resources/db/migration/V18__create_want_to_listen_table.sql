@@ -1,7 +1,7 @@
-CREATE TABLE lists(
+CREATE TABLE want_to_listen(
     id SERIAL PRIMARY KEY,
     user_id BIGINT,
-    title VARCHAR(50),
-    description TEXT,
+    song_id BIGINT,
+    album_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
