@@ -1,0 +1,21 @@
+<!-- templates/fragments/navbar.html -->
+
+<header class="site-header" th:fragment="navbar">
+
+    <nav class="nav-left">
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/reviews}">Reviews</a>
+        <a th:href="@{/lists}">Lists</a>
+    </nav>
+
+    <a class="brand" th:href="@{/}">
+        <span class="brand-name">MUSICBOXD</span>
+        <span class="brand-tagline">it’s letterboxd, but music</span>
+    </a>
+
+    <nav class="nav-right">
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/register}">Register</a>
+    </nav>
+
+</header>

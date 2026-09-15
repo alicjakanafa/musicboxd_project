@@ -1,0 +1,40 @@
+.site-footer {
+    margin-top: 40px;
+    padding: 30px;
+
+    background: var(--primary-left);
+    color: var(--text);
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-logo {
+    font-family: "Audiowide", sans-serif;
+    font-size: 1.2rem;
+}
+
+.footer-tagline {
+    font-size: 0.85rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-links a {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.footer-copy {
+    justify-self: end;
+    margin: 0;
+}
