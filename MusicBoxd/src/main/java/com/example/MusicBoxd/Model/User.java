@@ -1,4 +1,4 @@
-package com.example.MusicBoxd.Model;
+package com.example.MusicBoxd.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
