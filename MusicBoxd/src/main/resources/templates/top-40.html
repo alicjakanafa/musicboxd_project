@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
 
   <meta charset="UTF-8">
 
@@ -11,174 +13,181 @@
 
   <title>MusicBoxd - Top 40</title>
 
-  <style>
+  <link rel="stylesheet"
+        th:href="@{/css/top40.css}">
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #141414;
-      color: white;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 40px 0;
-    }
-
-    h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      color: #aaaaaa;
-      margin-bottom: 40px;
-    }
-
-    .artist-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .artist-card {
-      display: flex;
-      align-items: center;
-      background-color: #1f1f1f;
-      border-radius: 10px;
-      padding: 15px 20px;
-      transition: transform 0.2s;
-    }
-
-    .artist-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .rank {
-      width: 50px;
-      font-size: 24px;
-      font-weight: bold;
-      color: #888888;
-    }
-
-    .artist-image {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-right: 20px;
-    }
-
-    .artist-info {
-      flex: 1;
-    }
-
-    .artist-name {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .artist-stats {
-      color: #aaaaaa;
-      font-size: 14px;
-    }
-
-    .artist-link {
-      color: #1db954;
-      text-decoration: none;
-      margin-left: 20px;
-    }
-
-    .artist-link:hover {
-      text-decoration: underline;
-    }
-
-  </style>
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="page">
 
-  <h1>Last.fm Top 40</h1>
 
-  <p class="subtitle">
-    The world's most listened-to artists right now
-  </p>
+  <header class="top-header">
 
-  <div class="artist-list">
+    <div class="brand">
+      <span class="brand-name">MusicBoxd</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-page">Charts</span>
+    </div>
 
-    <div
-            class="artist-card"
-            th:each="artist, stat : ${artists}"
-    >
+    <div class="live-indicator">
+      <span class="live-dot"></span>
+      LIVE CHART
+    </div>
 
-      <div class="rank"
-           th:text="${stat.count}">
-        1
+  </header>
+
+
+  <main class="container">
+
+    <section class="hero">
+
+      <div class="hero-label">
+        LAST.FM GLOBAL CHART
       </div>
 
-      <img
-              class="artist-image"
-              th:src="${artist.image != null
-                        and !artist.image.isEmpty()
-                        ? artist.image.get(artist.image.size() - 1).text
-                        : ''}"
-              th:alt="${artist.name}"
+      <h1>
+        Top <span>40</span>
+      </h1>
+
+      <p>
+        The artists the world is listening to right now.
+      </p>
+
+    </section>
+
+
+    <section class="chart-header">
+
+      <div>
+        <h2>Trending Artists</h2>
+
+        <p>
+          Ranked by listeners worldwide
+        </p>
+      </div>
+
+      <div class="chart-source">
+        Powered by <strong>Last.fm</strong>
+      </div>
+
+    </section>
+
+
+    <div class="artist-list">
+
+      <div
+              class="artist-card"
+              th:each="artist, stat : ${artists}"
+              th:classappend="${stat.count <= 3} ? 'top-three' : ''"
       >
 
-      <div class="artist-info">
-
         <div
-                class="artist-name"
-                th:text="${artist.name}"
+                class="rank"
+                th:text="${stat.count}"
         >
-          Artist Name
+          1
         </div>
 
-        <div class="artist-stats">
+
+
+        <div class="artist-image-wrapper">
+
+          <img
+                  class="artist-image"
+                  th:if="${artist.image != null and !artist.image.isEmpty()}"
+                  th:src="${artist.image.get(artist.image.size() - 2).text}"
+                  th:alt="${artist.name}"
+                  onerror="this.style.display='none'"
+          >
+
+        </div>
+
+
+
+
+        <div class="artist-info">
+
+          <h3
+                  class="artist-name"
+                  th:text="${artist.name}"
+          >
+            Artist Name
+          </h3>
+
+          <div class="artist-stats">
 
                     <span
-                            th:text="${artist.playcount}"
+                            th:text="${#numbers.formatInteger(artist.listeners, 3, 'COMMA')}"
                     >
                         0
                     </span>
 
-          plays
+            listeners
 
-          &nbsp; • &nbsp;
+            <span class="stat-divider">•</span>
 
-          <span
-                  th:text="${artist.listeners}"
-          >
+            <span
+                    th:text="${#numbers.formatInteger(artist.playcount, 3, 'COMMA')}"
+            >
                         0
                     </span>
 
-          listeners
+            plays
+
+          </div>
 
         </div>
 
-      </div>
 
-      <a
-              class="artist-link"
-              th:href="${artist.url}"
-              target="_blank"
-      >
-        Last.fm →
-      </a>
+        <a
+                class="artist-link"
+                th:href="${artist.url}"
+                target="_blank"
+                rel="noopener noreferrer"
+        >
+          <span>Last.fm</span>
+          <span class="arrow">↗</span>
+        </a>
+
+      </div>
 
     </div>
 
-  </div>
+
+    <div
+            class="empty-state"
+            th:if="${artists == null or artists.isEmpty()}"
+    >
+
+      <div class="empty-icon">
+        ♪
+      </div>
+
+      <h2>No artists found</h2>
+
+      <p>
+        The Last.fm chart is currently unavailable.
+      </p>
+
+    </div>
+
+  </main>
+
+
+  <footer>
+
+    <p>
+      MusicBoxd · Global Top 40
+    </p>
+
+  </footer>
+
 
 </div>
 
 </body>
 
 </html>
-
