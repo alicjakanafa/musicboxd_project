@@ -1,139 +1,183 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Search Albums - MusicBoxd</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 40px;
-        }
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-        .container {
-            max-width: 1100px;
-            margin: auto;
-        }
+    <title>MusicBoxd - Search Albums</title>
 
-        h1 {
-            text-align: center;
-        }
+    <link rel="stylesheet"
+          th:href="@{/css/search.css}">
 
-        .search-form {
-            display: flex;
-            gap: 10px;
-            margin: 30px auto;
-            max-width: 700px;
-        }
-
-        .search-form input {
-            flex: 1;
-            padding: 12px;
-            font-size: 16px;
-        }
-
-        .search-form button {
-            padding: 12px 25px;
-            cursor: pointer;
-        }
-
-        .results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
-        .album-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .album-card img {
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .album-card h2 {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
-        .album-card p {
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .album-card a {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 15px;
-            background: #222;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="page">
 
-    <h1>Search Albums</h1>
+    <header class="top-header">
 
-    <form action="/search" method="get" class="search-form">
+        <div class="brand">
 
-        <input
-                type="text"
-                name="query"
-                th:value="${query}"
-                placeholder="Search for an album or artist..."
-                required
-        >
+            <span class="brand-name">
+                MusicBoxd
+            </span>
 
-        <button type="submit">
-            Search
-        </button>
+            <span class="brand-divider">
+                /
+            </span>
 
-    </form>
-
-    <div class="results">
-
-        <div
-                class="album-card"
-                th:each="album : ${albums}"
-        >
-
-            <img
-                    th:if="${album.artworkUrl100 != null}"
-                    th:src="${album.artworkUrl100}"
-                    th:alt="${album.collectionName}"
-            >
-
-            <h2 th:text="${album.collectionName}">
-                Album Name
-            </h2>
-
-            <p th:text="${album.artistName}">
-                Artist Name
-            </p>
-
-            <a
-                    th:href="@{/album/{id}(id=${album.collectionId})}"
-            >
-                View Album
-            </a>
+            <span class="brand-page">
+                Search
+            </span>
 
         </div>
 
-    </div>
+        <div class="page-label">
+            ALBUMS
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="hero">
+
+            <div class="hero-label">
+                MUSICBOXD SEARCH
+            </div>
+
+            <h1>
+                Find <span>Albums</span>
+            </h1>
+
+            <p>
+                Search for albums and discover what you want to listen to and review.
+            </p>
+
+        </section>
+
+
+        <form
+                action="/search"
+                method="get"
+                class="search-form"
+        >
+
+            <input
+                    type="text"
+                    name="query"
+                    th:value="${query}"
+                    placeholder="Search for an album or artist..."
+                    required
+            >
+
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
+
+
+        <section
+                class="results-header"
+                th:if="${albums != null and !albums.isEmpty()}"
+        >
+
+            <div>
+
+                <h2>
+                    Search Results
+                </h2>
+
+                <p>
+                    Albums matching your search
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <div
+                class="results"
+                th:if="${albums != null and !albums.isEmpty()}"
+        >
+
+            <div
+                    class="album-card"
+                    th:each="album : ${albums}"
+            >
+
+                <img
+                        th:if="${album.artworkUrl100 != null}"
+                        th:src="${album.artworkUrl100}"
+                        th:alt="${album.collectionName}"
+                >
+
+                <h2
+                        th:text="${album.collectionName}"
+                >
+                    Album Name
+                </h2>
+
+                <p
+                        th:text="${album.artistName}"
+                >
+                    Artist Name
+                </p>
+
+                <a
+                        th:href="@{/album/{id}(id=${album.collectionId})}"
+                >
+                    View Album
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div
+                class="empty-state"
+                th:if="${albums != null and albums.isEmpty()}"
+        >
+
+            <div class="empty-icon">
+                ♪
+            </div>
+
+            <h2>
+                No albums found
+            </h2>
+
+            <p>
+                Try searching for a different artist or album.
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            MusicBoxd · Album Search
+        </p>
+
+    </footer>
 
 </div>
 
 </body>
+
 </html>
+

@@ -1,147 +1,205 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Song Search - MusicBoxd</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 40px;
-        }
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-        h1 {
-            text-align: center;
-        }
+    <title>MusicBoxd - Search Songs</title>
 
-        .search-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    <link rel="stylesheet"
+          th:href="@{/css/search.css}">
 
-        .search-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .search-form input {
-            flex: 1;
-            padding: 12px;
-            font-size: 16px;
-        }
-
-        .search-form button {
-            padding: 12px 20px;
-            cursor: pointer;
-        }
-
-        .results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .track-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .track-card img {
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .track-card h2 {
-            margin-bottom: 5px;
-        }
-
-        .track-card p {
-            margin-top: 5px;
-            color: #666;
-        }
-
-        audio {
-            width: 100%;
-            margin-top: 15px;
-        }
-    </style>
 </head>
 
 <body>
 
-<div class="search-container">
+<div class="page">
 
-    <h1>Search Songs</h1>
+    <header class="top-header">
 
-    <form
-            action="/search/tracks"
-            method="get"
-            class="search-form"
-    >
-        <input
-                type="text"
-                name="query"
-                th:value="${query}"
-                placeholder="Search for a song or artist..."
-                required
+        <div class="brand">
+
+            <span class="brand-name">
+                MusicBoxd
+            </span>
+
+            <span class="brand-divider">
+                /
+            </span>
+
+            <span class="brand-page">
+                Search
+            </span>
+
+        </div>
+
+        <div class="page-label">
+            SONGS
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="hero">
+
+            <div class="hero-label">
+                MUSICBOXD SEARCH
+            </div>
+
+            <h1>
+                Find <span>Songs</span>
+            </h1>
+
+            <p>
+                Search for songs and listen to available previews.
+            </p>
+
+        </section>
+
+
+        <form
+                action="/search/tracks"
+                method="get"
+                class="search-form"
         >
 
-        <button type="submit">
-            Search
-        </button>
-    </form>
+            <input
+                    type="text"
+                    name="query"
+                    th:value="${query}"
+                    placeholder="Search for a song or artist..."
+                    required
+            >
 
-    <div class="results">
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
+
+
+        <section
+                class="results-header"
+                th:if="${tracks != null and !tracks.isEmpty()}"
+        >
+
+            <div>
+
+                <h2>
+                    Search Results
+                </h2>
+
+                <p>
+                    Songs matching your search
+                </p>
+
+            </div>
+
+        </section>
+
 
         <div
-                class="track-card"
-                th:each="track : ${tracks}"
+                class="results"
+                th:if="${tracks != null and !tracks.isEmpty()}"
         >
 
-            <img
-                    th:if="${track.artworkUrl100 != null}"
-                    th:src="${track.artworkUrl100}"
-                    th:alt="${track.trackName}"
+            <div
+                    class="track-card"
+                    th:each="track : ${tracks}"
             >
 
-            <h2 th:text="${track.trackName}">
-                Song Title
+                <img
+                        th:if="${track.artworkUrl100 != null}"
+                        th:src="${track.artworkUrl100}"
+                        th:alt="${track.trackName}"
+                >
+
+                <h2
+                        th:text="${track.trackName}"
+                >
+                    Song Title
+                </h2>
+
+                <p
+                        th:text="${track.artistName}"
+                >
+                    Artist Name
+                </p>
+
+                <p
+                        th:text="${track.collectionName}"
+                >
+                    Album Name
+                </p>
+
+
+                <audio
+                        th:if="${track.previewUrl != null}"
+                        controls
+                >
+
+                    <source
+                            th:src="${track.previewUrl}"
+                            type="audio/mpeg"
+                    >
+
+                    Your browser does not support audio playback.
+
+                </audio>
+
+
+                <p
+                        class="no-preview"
+                        th:if="${track.previewUrl == null}"
+                >
+                    No preview available.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+                class="empty-state"
+                th:if="${tracks != null and tracks.isEmpty()}"
+        >
+
+            <div class="empty-icon">
+                ♪
+            </div>
+
+            <h2>
+                No songs found
             </h2>
 
-            <p th:text="${track.artistName}">
-                Artist Name
-            </p>
-
-            <p th:text="${track.collectionName}">
-                Album Name
-            </p>
-
-            <audio
-                    th:if="${track.previewUrl != null}"
-                    controls
-            >
-                <source
-                        th:src="${track.previewUrl}"
-                        type="audio/mpeg"
-                >
-            </audio>
-
-            <p th:if="${track.previewUrl == null}">
-                No preview available.
+            <p>
+                Try searching for a different artist or song.
             </p>
 
         </div>
 
-    </div>
+    </main>
+
+
+    <footer>
+
+        <p>
+            MusicBoxd · Song Search
+        </p>
+
+    </footer>
 
 </div>
 
 </body>
 
 </html>
+
