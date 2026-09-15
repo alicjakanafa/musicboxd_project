@@ -1,63 +1,42 @@
 package com.example.MusicBoxd.Model;
 
 import jakarta.persistence.*;
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "friends")
+@Table(name = "FRIENDS")
+@Getter @Setter @NoArgsConstructor
 public class Friend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "requester_id")
     private Long requesterId;
 
+    @Column(name = "receiver_id")
     private Long receiverId;
 
     private String status;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Friend() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getRequesterId() {
-        return requesterId;
-    }
-
-    public void setRequesterId(Long requesterId) {
+    public Friend(
+            Long requesterId,
+            Long receiverId,
+            String status
+    ) {
         this.requesterId = requesterId;
-    }
-
-    public Long getReceiverId() {
-        return receiverId;
-    }
-
-    public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
 
 

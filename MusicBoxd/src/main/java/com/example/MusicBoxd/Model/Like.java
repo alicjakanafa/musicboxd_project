@@ -1,62 +1,43 @@
 package com.example.MusicBoxd.Model;
 
 import jakarta.persistence.*;
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "LIKES")
+@Getter @Setter @NoArgsConstructor
 public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "review_id")
     private Long reviewId;
 
+    @Column(name = "comment_id")
     private Long commentId;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Like() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
+    public Like(
+            Long userId,
+            Long reviewId,
+            Long commentId
+    ) {
         this.userId = userId;
-    }
-
-    public Long getReviewId() {
-        return reviewId;
-    }
-
-    public void setReviewId(Long reviewId) {
         this.reviewId = reviewId;
-    }
-
-    public Long getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(Long commentId) {
         this.commentId = commentId;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
 
