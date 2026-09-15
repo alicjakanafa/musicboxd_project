@@ -1,5 +1,3 @@
-TRUNCATE TABLE IF EXISTS songs;
-
 CREATE TABLE songs (
     id bigserial PRIMARY KEY,
     external_id VARCHAR(255),
@@ -8,5 +6,5 @@ CREATE TABLE songs (
     track_number INT,
     song_url TEXT,
     song_image_url TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

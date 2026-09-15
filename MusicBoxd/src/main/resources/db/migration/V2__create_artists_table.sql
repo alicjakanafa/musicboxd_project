@@ -1,6 +1,4 @@
-TRUNCATE TABLE IF EXISTS artists;
-
 CREATE TABLE artists (
    id bigserial PRIMARY KEY,
-   name VARCHAR(255);
+   name VARCHAR(255)
 );
