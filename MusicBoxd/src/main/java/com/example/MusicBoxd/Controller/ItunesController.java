@@ -1,20 +1,40 @@
 package com.example.MusicBoxd.Controller;
 
+import com.example.MusicBoxd.Model.Album;
+import com.example.MusicBoxd.Model.Artist;
+import com.example.MusicBoxd.Model.Song;
+import com.example.MusicBoxd.Repository.AlbumRepository;
+import com.example.MusicBoxd.Repository.ArtistRepository;
+import com.example.MusicBoxd.Repository.SongRepository;
 import com.example.MusicBoxd.api.itunes.ItunesAlbumResponse;
 import com.example.MusicBoxd.api.itunes.ItunesService;
+import com.example.MusicBoxd.api.itunes.ItunesTrack;
 import com.example.MusicBoxd.api.itunes.ItunesTrackResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 @Controller
 public class ItunesController {
 
     private final ItunesService itunesService;
+    private final ArtistRepository artistRepository;
+    private final AlbumRepository albumRepository;
+    private final SongRepository songRepository;
 
-    public ItunesController(ItunesService itunesService) {
+    public ItunesController(
+            ItunesService itunesService,
+            ArtistRepository artistRepository,
+            AlbumRepository albumRepository,
+            SongRepository songRepository
+    ) {
         this.itunesService = itunesService;
+        this.artistRepository = artistRepository;
+        this.albumRepository = albumRepository;
+        this.songRepository = songRepository;
     }
 
     @GetMapping("/search")
@@ -59,5 +79,112 @@ public class ItunesController {
         );
 
         return "track-search";
+    }
+
+    @GetMapping("/album/save")
+    public String saveAlbum(
+            @RequestParam Long collectionId,
+            @RequestParam String artistName,
+            @RequestParam String albumName,
+            @RequestParam String artworkUrl,
+            @RequestParam String releaseDate
+    ) {
+
+        // Find or create artist
+        Optional<Artist> existingArtist =
+                artistRepository.findByNameIgnoreCase(artistName);
+
+        Artist artist;
+
+        if (existingArtist.isPresent()) {
+            artist = existingArtist.get();
+        } else {
+            artist = new Artist(artistName);
+            artist = artistRepository.save(artist);
+        }
+
+        // Find or create album
+        Optional<Album> existingAlbum =
+                albumRepository.findByExternalId(
+                        collectionId.toString()
+                );
+
+        Album album;
+
+        if (existingAlbum.isPresent()) {
+
+            album = existingAlbum.get();
+
+            // Update artwork if we have a valid artwork URL
+            if (artworkUrl != null && !artworkUrl.isBlank()) {
+                album.setArtworkUrl(artworkUrl);
+                albumRepository.save(album);
+            }
+
+        } else {
+
+            Short releaseYear = null;
+
+            if (releaseDate != null && releaseDate.length() >= 4) {
+                try {
+                    releaseYear = Short.valueOf(
+                            releaseDate.substring(0, 4)
+                    );
+                } catch (NumberFormatException ignored) {
+                }
+            }
+
+            album = new Album(
+                    collectionId.toString(),
+                    artist.getId(),
+                    albumName,
+                    releaseYear,
+                    artworkUrl
+            );
+
+            album = albumRepository.save(album);
+        }
+
+        // Get songs from iTunes
+        ItunesTrackResponse trackResponse =
+                itunesService.getAlbumTracks(collectionId);
+
+        // Save songs
+        if (trackResponse != null &&
+                trackResponse.getResults() != null) {
+
+            for (ItunesTrack track : trackResponse.getResults()) {
+
+                // Only save actual songs
+                if (track.getTrackId() == null) {
+                    continue;
+                }
+
+                // Don't save the same song twice
+                boolean songExists =
+                        songRepository
+                                .findByExternalId(
+                                        track.getTrackId().toString()
+                                )
+                                .isPresent();
+
+                if (songExists) {
+                    continue;
+                }
+
+                Song song = new Song(
+                        track.getTrackId().toString(),
+                        album.getId(),
+                        track.getTrackName(),
+                        track.getTrackNumber(),
+                        track.getPreviewUrl(),
+                        track.getArtworkUrl100()
+                );
+
+                songRepository.save(song);
+            }
+        }
+
+        return "redirect:/albums/" + album.getId();
     }
 }

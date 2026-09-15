@@ -85,7 +85,6 @@ public class SpotifyController {
     @GetMapping("/spotify/callback")
     public String spotifyCallback(
             String code,
-            Model model,
             HttpSession session
     ) {
 
@@ -109,12 +108,6 @@ public class SpotifyController {
                 "redirect_uri",
                 redirectUri
         );
-
-
-        /*
-         * Spotify requires the client ID and secret
-         * to be sent using Basic Authentication.
-         */
 
         String credentials =
                 clientId + ":" + clientSecret;
@@ -156,43 +149,25 @@ public class SpotifyController {
                 tokenResponse.getBody();
 
         if (token == null) {
-
             throw new IllegalStateException(
                     "Spotify did not return a token"
             );
         }
-
-
-        /*
-         * Store the access token in the user's session.
-         */
 
         session.setAttribute(
                 "spotifyAccessToken",
                 token.getAccessToken()
         );
 
-
-        /*
-         * Load Spotify information for the homepage.
-         */
-
-        getSpotifyData(
-                token.getAccessToken(),
-                model
-        );
-
-        return "index";
+        return "redirect:/";
     }
-
-
     /*
      * ---------------------------------------------------------
      * GET SPOTIFY DATA
      * ---------------------------------------------------------
      */
 
-    private void getSpotifyData(
+    public void getSpotifyData(
             String accessToken,
             Model model
     ) {

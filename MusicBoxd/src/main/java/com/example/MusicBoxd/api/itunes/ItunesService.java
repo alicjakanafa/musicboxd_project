@@ -63,6 +63,63 @@ public class ItunesService {
                 ItunesTrackResponse.class
         );
     }
+    public ItunesAlbum getRandomAlbum() {
+
+        String[] searchTerms = {
+                "pop",
+                "rock",
+                "indie",
+                "alternative",
+                "jazz",
+                "hip hop",
+                "electronic",
+                "country",
+                "r&b"
+        };
+
+        int randomIndex =
+                (int) (Math.random() * searchTerms.length);
+
+        String randomSearchTerm =
+                searchTerms[randomIndex];
+
+        String url = UriComponentsBuilder
+                .fromUriString("https://itunes.apple.com/search")
+                .queryParam("term", randomSearchTerm)
+                .queryParam("media", "music")
+                .queryParam("entity", "album")
+                .queryParam("limit", 50)
+                .build()
+                .toUriString();
+
+        ItunesAlbumResponse response =
+                restTemplate.getForObject(
+                        url,
+                        ItunesAlbumResponse.class
+                );
+
+        var albums = response.getResults();
+
+        int randomAlbumIndex =
+                (int) (Math.random() * albums.size());
+
+        return albums.get(randomAlbumIndex);
+    }
+
+    public ItunesTrackResponse getAlbumTracks(Long collectionId) {
+
+        String url = UriComponentsBuilder
+                .fromUriString("https://itunes.apple.com/lookup")
+                .queryParam("id", collectionId)
+                .queryParam("entity", "song")
+                .build()
+                .toUriString();
+
+        return restTemplate.getForObject(
+                url,
+                ItunesTrackResponse.class
+        );
+    }
 }
 
 
