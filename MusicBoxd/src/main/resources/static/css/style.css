@@ -1,0 +1,163 @@
+:root {
+    --background: #000;
+    --primary-left: #89D957;
+    --primary-right: #C9E265;
+    --primary: #C9E265;
+    --surface: #d9d9d9;
+    --text: #000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    font-family: "DM Sans", sans-serif;
+}
+
+.dashboard {
+    padding: 35px 30px;
+
+    display: grid;
+    grid-template-columns:
+        minmax(400px, 1.2fr)
+        minmax(400px, 1fr)
+        minmax(200px, 0.5fr);
+
+    gap: 40px;
+    align-items: start;
+}
+
+.top-40 {
+    background: var(--surface);
+    border-radius: 35px;
+    padding: 24px;
+
+    min-height: 315px;
+}
+
+.top-40 h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.top-40-content {
+    background: var(--primary);
+    border-radius: 30px;
+
+    min-height: 210px;
+    margin-top: 15px;
+}
+
+.friends {
+    background: var(--primary);
+    border-radius: 35px;
+    padding: 22px;
+
+    min-height: 325px;
+}
+
+.friends h2 {
+    color: #000;
+    margin-top: 0;
+    text-align: center;
+}
+
+.friends-content {
+    background: var(--surface);
+    border-radius: 35px;
+
+    min-height: 280px;
+}
+
+.daily-catchup {
+    background: var(--surface);
+    border-radius: 35px;
+    padding: 24px 32px;
+
+    min-height: 650px;
+}
+
+.daily-catchup h2 {
+    margin-top: 0;
+}
+
+.catchup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+
+    margin-top: 28px;
+}
+
+.catchup-item {
+    min-height: 85px;
+
+    background: var(--primary);
+    border-radius: 40px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 24px;
+}
+
+.album-of-the-day,
+.media-player {
+    background: #C9E265;
+    border-radius: 30px;
+    min-height: 200px;
+    padding: 20px;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+}
+
+.listening-stats {
+    min-height: 260px;
+
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 12px;
+}
+
+.stat-bar {
+    width: 55px;
+
+    background: #00c779;
+    border-radius: 8px 8px 0 0;
+}
+
+.stat-bar-1 {
+    height: 250px;
+}
+
+.stat-bar-2 {
+    height: 190px;
+}
+
+.stat-bar-3 {
+    height: 140px;
+}
+
+.stat-bar-4 {
+    height: 95px;
+}
+
+.charts {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.discovery-row {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 25px;
+}
