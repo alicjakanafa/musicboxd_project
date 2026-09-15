@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### API keys ###
+lastfm.api.key="REDACTED_LASTFM_KEY"
+spotify.client.id=REDACTED_SPOTIFY_CLIENT_ID
+spotify.client.secret=REDACTED_SPOTIFY_SECRET
