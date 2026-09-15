@@ -1,0 +1,56 @@
+.site-header {
+    min-height: 145px;
+    padding: 20px 30px;
+
+    background: linear-gradient(
+        to right,
+        var(--primary-left),
+        var(--primary-right)
+    );
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+}
+
+.brand {
+    align-self: center;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: center;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.brand-name {
+    font-family: "Audiowide", sans-serif;
+    font-size: 40px;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.brand-tagline {
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.nav-left {
+    justify-self: start;
+}
+
+.nav-right {
+    justify-self: end;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    gap: 20px;
+}
+
+.site-header nav a {
+    color: var(--text);
+    text-decoration: none;
+}
