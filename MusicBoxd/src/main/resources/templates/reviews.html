@@ -18,6 +18,18 @@
         Album Title
     </h1>
 
+    <!-- Artist -->
+    <p th:if="${artist != null}">
+
+        <a
+                th:href="@{/artists/{id}(id=${artist.id})}"
+                th:text="${artist.name}"
+        >
+            Artist Name
+        </a>
+
+    </p>
+
     <p th:text="${album.releaseYear}">
         Release Year
     </p>
@@ -45,12 +57,29 @@
             name="rating"
             required
     >
-        <option value="">Choose a rating</option>
-        <option value="1">1 / 5</option>
-        <option value="2">2 / 5</option>
-        <option value="3">3 / 5</option>
-        <option value="4">4 / 5</option>
-        <option value="5">5 / 5</option>
+        <option value="">
+            Choose a rating
+        </option>
+
+        <option value="1">
+            1 / 5
+        </option>
+
+        <option value="2">
+            2 / 5
+        </option>
+
+        <option value="3">
+            3 / 5
+        </option>
+
+        <option value="4">
+            4 / 5
+        </option>
+
+        <option value="5">
+            5 / 5
+        </option>
     </select>
 
 
@@ -73,4 +102,5 @@
 </form>
 
 </body>
+
 </html>

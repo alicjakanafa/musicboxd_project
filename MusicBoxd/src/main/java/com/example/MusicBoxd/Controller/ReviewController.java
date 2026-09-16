@@ -1,10 +1,11 @@
 package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Album;
+import com.example.MusicBoxd.Model.Artist;
 import com.example.MusicBoxd.Model.Review;
 import com.example.MusicBoxd.Repository.AlbumRepository;
+import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
-//import com.example.MusicBoxd.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,14 +26,18 @@ public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    //*@Autowired
-    //*private UserRepository userRepository;
-
     @Autowired
     private AlbumRepository albumRepository;
 
+    @Autowired
+    private ArtistRepository artistRepository;
+
+
     @GetMapping("/users/{userId}/reviews")
-    public String getUserReviews(@PathVariable Long userId, Model model) {
+    public String getUserReviews(
+            @PathVariable Long userId,
+            Model model
+    ) {
 
         List<Review> reviews =
                 reviewRepository.findByUserId(userId);
@@ -59,39 +64,65 @@ public class ReviewController {
         return "profile-page";
     }
 
-    @GetMapping("/reviews/{id}")
-    public String reviewAlbum(@PathVariable Long id, Model model) {
 
-        Album album = albumRepository.findById(id)
+    @GetMapping("/reviews/{id}")
+    public String reviewAlbum(
+            @PathVariable Long id,
+            Model model
+    ) {
+
+        Album album = albumRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("album not found")
                 );
 
+        // Add album to the page
         model.addAttribute("album", album);
+
+
+        // Find the artist connected to this album
+        if (album.getArtistId() != null) {
+
+            Artist artist = artistRepository
+                    .findById(album.getArtistId())
+                    .orElse(null);
+
+            model.addAttribute("artist", artist);
+        }
+
 
         return "reviews";
     }
 
 
-
     @PostMapping("/reviews/{id}")
-    public String saveReview(@PathVariable Long id, @RequestParam BigDecimal rating, @RequestParam String content) {
+    public String saveReview(
+            @PathVariable Long id,
+            @RequestParam BigDecimal rating,
+            @RequestParam String content
+    ) {
 
+        // Check that the album exists
         albumRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("album not found")
                 );
 
+
         Review review = new Review();
 
-        //Currently uses just user1 at the moment cause we dont have auth setup
+        // Currently using user 1 because authentication
+        // has not been set up yet
         review.setUserId(1L);
 
-        //Saves the review data
+        // Connect the review to the album
         review.setAlbumId(id);
+
         review.setRating(rating);
         review.setContent(content);
         review.setCreatedAt(LocalDateTime.now());
+
         reviewRepository.save(review);
 
         return "redirect:/users/1/reviews";
