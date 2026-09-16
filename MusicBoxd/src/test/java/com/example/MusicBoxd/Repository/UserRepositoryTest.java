@@ -43,7 +43,7 @@ class UserRepositoryTest {
 
         assertThat(found).isPresent();
         User result = found.get();
-        assertThat(result.getGoogleUserId()).isEqualTo("google-456");
+        assertThat(result.getOktaUserId()).isEqualTo("google-456");
         assertThat(result.getUsername()).isEqualTo("listener2");
         assertThat(result.getEmail()).isEqualTo("listener2@example.com");
         assertThat(result.getBio()).isEqualTo("another bio");
@@ -59,7 +59,7 @@ class UserRepositoryTest {
 
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getUsername()).isEqualTo("minimal-user");
-        assertThat(saved.getGoogleUserId()).isNull();
+        assertThat(saved.getOktaUserId()).isNull();
         assertThat(saved.getEmail()).isNull();
         assertThat(saved.getBio()).isNull();
         assertThat(saved.getProfilePictureUrl()).isNull();

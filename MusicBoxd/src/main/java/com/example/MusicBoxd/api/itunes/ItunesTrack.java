@@ -1,5 +1,9 @@
 package com.example.MusicBoxd.api.itunes;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class ItunesTrack {
 
     private Long trackId;
@@ -11,75 +15,11 @@ public class ItunesTrack {
     private Integer trackNumber;
     private Long trackTimeMillis;
 
-    public Long getTrackId() {
-        return trackId;
-    }
-
-    public void setTrackId(Long trackId) {
-        this.trackId = trackId;
-    }
-
-    public String getTrackName() {
-        return trackName;
-    }
-
-    public void setTrackName(String trackName) {
-        this.trackName = trackName;
-    }
-
-    public String getArtistName() {
-        return artistName;
-    }
-
-    public void setArtistName(String artistName) {
-        this.artistName = artistName;
-    }
-
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
-    }
-
-    public String getArtworkUrl100() {
-        return artworkUrl100;
-    }
-
-    public void setArtworkUrl100(String artworkUrl100) {
-        this.artworkUrl100 = artworkUrl100;
-    }
-
     public String getHighResolutionArtworkUrl() {
         if (artworkUrl100 == null) {
             return null;
         }
 
         return artworkUrl100.replace("100x100bb", "600x600bb");
-    }
-
-    public String getPreviewUrl() {
-        return previewUrl;
-    }
-
-    public void setPreviewUrl(String previewUrl) {
-        this.previewUrl = previewUrl;
-    }
-
-    public Integer getTrackNumber() {
-        return trackNumber;
-    }
-
-    public void setTrackNumber(Integer trackNumber) {
-        this.trackNumber = trackNumber;
-    }
-
-    public Long getTrackTimeMillis() {
-        return trackTimeMillis;
-    }
-
-    public void setTrackTimeMillis(Long trackTimeMillis) {
-        this.trackTimeMillis = trackTimeMillis;
     }
 }
