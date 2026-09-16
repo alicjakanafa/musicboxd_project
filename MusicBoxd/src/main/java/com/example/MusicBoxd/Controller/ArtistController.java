@@ -3,7 +3,6 @@ package com.example.MusicBoxd.Controller;
 import com.example.MusicBoxd.Model.Artist;
 import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.api.lastfm.LastFmArtistResponse;
-import com.example.MusicBoxd.api.lastfm.LastFmImage;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
 import com.example.MusicBoxd.api.lastfm.LastFmTopAlbum;
 import com.example.MusicBoxd.api.lastfm.LastFmTopAlbumsResponse;
@@ -12,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,5 +98,28 @@ public class ArtistController {
 
         return "artist-profile";
     }
-}
 
+
+    /*
+     * Find an artist by their name and
+     * send them to their MusicBoxd profile.
+     *
+     * Used by the Top 40 page.
+     */
+    @GetMapping("/from-name")
+    public String showArtistByName(
+            @RequestParam String name
+    ) {
+
+        Artist artist =
+                artistRepository
+                        .findByNameIgnoreCase(name)
+                        .orElseGet(() ->
+                                artistRepository.save(
+                                        new Artist(name)
+                                )
+                        );
+
+        return "redirect:/artists/" + artist.getId();
+    }
+}

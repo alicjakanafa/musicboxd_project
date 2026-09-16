@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
 
     <meta charset="UTF-8">
 
@@ -13,10 +14,10 @@
         Artist - MusicBoxd
     </title>
 
-    <link
-            rel="stylesheet"
-            th:href="@{/css/artist-profile.css}"
-    >
+    <link rel="stylesheet" th:href="@{/css/artist-profile.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
 
 </head>
 
@@ -25,10 +26,11 @@
 <div class="artist-page">
 
 
-    <!-- =========================
-         ARTIST HEADER
-         ========================= -->
+    <!-- Shared MusicBoxd navbar -->
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
 
+
+    <!-- Artist information -->
     <header class="artist-header">
 
         <div class="artist-information">
@@ -46,12 +48,9 @@
                     th:if="${artistInfo != null}"
             >
 
-                <span
-                        th:text="${artistInfo.listeners}"
-                >
-                    0
-                </span>
-
+            <span th:text="${artistInfo.listeners}">
+                0
+            </span>
 
             </p>
 
@@ -59,10 +58,6 @@
 
     </header>
 
-
-    <!-- =========================
-         ALBUMS
-         ========================= -->
 
     <main>
 
@@ -77,31 +72,22 @@
                 <span
                         th:text="${#lists.size(albums)} + ' albums'"
                 >
-                    0 albums
-                </span>
+                0 albums
+            </span>
 
             </div>
 
 
             <div class="album-grid">
 
-                <!--
-                    Each album comes from Last.fm.
-
-                    Clicking an album sends its artist name
-                    and album name to our controller.
-                -->
-
                 <a
                         class="album-card"
                         th:each="album : ${albums}"
                         th:href="@{/album/from-artist(
-                            artistName=${artist.name},
-                            albumName=${album.name}
-                        )}"
+                        artistName=${artist.name},
+                        albumName=${album.name}
+                    )}"
                 >
-
-                    <!-- Album artwork -->
 
                     <div class="album-art">
 
@@ -121,16 +107,11 @@
                     </div>
 
 
-                    <!-- Album information -->
-
                     <div class="album-information">
 
-                        <h3
-                                th:text="${album.name}"
-                        >
+                        <h3 th:text="${album.name}">
                             Album Name
                         </h3>
-
 
                     </div>
 
@@ -138,10 +119,6 @@
 
             </div>
 
-
-            <!-- =========================
-                 NO ALBUMS
-                 ========================= -->
 
             <div
                     class="empty-message"
@@ -157,6 +134,11 @@
         </section>
 
     </main>
+
+
+    <!-- Shared MusicBoxd footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 
 </div>
 

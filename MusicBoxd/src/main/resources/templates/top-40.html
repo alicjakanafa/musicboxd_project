@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
 
   <meta charset="UTF-8">
 
@@ -13,9 +10,9 @@
 
   <title>MusicBoxd - Top 40</title>
 
-  <link rel="stylesheet"
-        th:href="@{/css/top40.css}">
-
+  <link rel="stylesheet" th:href="@{/css/top40.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
 
 </head>
 
@@ -23,21 +20,8 @@
 
 <div class="page">
 
-
-  <header class="top-header">
-
-    <div class="brand">
-      <span class="brand-name">MusicBoxd</span>
-      <span class="brand-divider">/</span>
-      <span class="brand-page">Charts</span>
-    </div>
-
-    <div class="live-indicator">
-      <span class="live-dot"></span>
-      LIVE CHART
-    </div>
-
-  </header>
+  <!-- Shared MusicBoxd navbar -->
+  <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 
   <main class="container">
@@ -62,11 +46,15 @@
     <section class="chart-header">
 
       <div>
-        <h2>Trending Artists</h2>
+
+        <h2>
+          Trending Artists
+        </h2>
 
         <p>
           Ranked by listeners worldwide
         </p>
+
       </div>
 
       <div class="chart-source">
@@ -92,7 +80,6 @@
         </div>
 
 
-
         <div class="artist-image-wrapper">
 
           <img
@@ -106,34 +93,40 @@
         </div>
 
 
-
-
         <div class="artist-info">
 
-          <h3
-                  class="artist-name"
-                  th:text="${artist.name}"
-          >
-            Artist Name
+          <!-- MusicBoxd artist profile -->
+          <h3 class="artist-name">
+
+            <a
+                    th:href="@{/artists/from-name(name=${artist.name})}"
+                    th:text="${artist.name}"
+            >
+              Artist Name
+            </a>
+
           </h3>
+
 
           <div class="artist-stats">
 
-                    <span
-                            th:text="${#numbers.formatInteger(artist.listeners, 3, 'COMMA')}"
-                    >
-                        0
-                    </span>
+                        <span
+                                th:text="${#numbers.formatInteger(artist.listeners, 3, 'COMMA')}"
+                        >
+                            0
+                        </span>
 
             listeners
 
-            <span class="stat-divider">•</span>
+            <span class="stat-divider">
+                            •
+                        </span>
 
             <span
                     th:text="${#numbers.formatInteger(artist.playcount, 3, 'COMMA')}"
             >
-                        0
-                    </span>
+                            0
+                        </span>
 
             plays
 
@@ -142,14 +135,22 @@
         </div>
 
 
+        <!-- Last.fm profile -->
         <a
                 class="artist-link"
                 th:href="${artist.url}"
                 target="_blank"
                 rel="noopener noreferrer"
         >
-          <span>Last.fm</span>
-          <span class="arrow">↗</span>
+
+                    <span>
+                        Last.fm
+                    </span>
+
+          <span class="arrow">
+                        ↗
+                    </span>
+
         </a>
 
       </div>
@@ -166,7 +167,9 @@
         ♪
       </div>
 
-      <h2>No artists found</h2>
+      <h2>
+        No artists found
+      </h2>
 
       <p>
         The Last.fm chart is currently unavailable.
@@ -177,14 +180,8 @@
   </main>
 
 
-  <footer>
-
-    <p>
-      MusicBoxd · Global Top 40
-    </p>
-
-  </footer>
-
+  <!-- Shared MusicBoxd footer -->
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </div>
 

@@ -40,7 +40,7 @@ public class HomeController {
                 "topArtists",
                 response.getArtists()
                         .getArtist()
-                        .subList(0, 5)
+                        .subList(0, 10)
         );
 
         // Suggested Album of the Day
