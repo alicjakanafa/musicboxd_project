@@ -51,6 +51,14 @@ public class ItunesTrack {
         this.artworkUrl100 = artworkUrl100;
     }
 
+    public String getHighResolutionArtworkUrl() {
+        if (artworkUrl100 == null) {
+            return null;
+        }
+
+        return artworkUrl100.replace("100x100bb", "600x600bb");
+    }
+
     public String getPreviewUrl() {
         return previewUrl;
     }

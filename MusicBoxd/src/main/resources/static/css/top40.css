@@ -312,6 +312,15 @@ ARTIST CARD
 
 }
 
+.artist-name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.artist-name a:hover {
+    text-decoration: underline;
+}
+
 /* =========================================
 TOP THREE
 ========================================= */
