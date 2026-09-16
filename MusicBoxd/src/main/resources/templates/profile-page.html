@@ -15,12 +15,23 @@
 
 <body>
 
+<h2 th:text="${user.username}">Username</h2>
+
+<img
+        alt="Profile Picture"
+        width="100" height="100"
+        class="profile-picture" />
+<p>
+  Member since:
+  <span th:text="${#temporals.format(user.createdAt, 'dd MMMM yyyy')}">
+
+    </span>
+</p>
+
 <h1>My Reviews</h1>
 
-<div th:if="${reviews.isEmpty()}">
-
+<div th:if="${reviews == null or reviews.isEmpty()}">
   <p>You haven't written any reviews yet.</p>
-
 </div>
 
 <div th:each="review : ${reviews}"
@@ -66,8 +77,11 @@
     </p>
 
 
-    <p th:if="${review.createdAt != null}" th:text="${review.createdAt}">
-      Review date
+    <p th:if="${review.createdAt != null}">
+      Review date:
+      <span th:text="${#temporals.format(review.createdAt, 'dd MMMM yyyy')}">
+
+    </span>
     </p>
 
   </div>
