@@ -9,7 +9,9 @@ import lombok.Setter;
 @Data
 @Entity
 @Table(name = "ARTISTS")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class Artist {
 
     @Id
@@ -21,5 +23,4 @@ public class Artist {
     public Artist(String name) {
         this.name = name;
     }
-
 }

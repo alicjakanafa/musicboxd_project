@@ -11,8 +11,10 @@
 
     <title>MusicBoxd - Search Albums</title>
 
-    <link rel="stylesheet"
-          th:href="@{/css/search.css}">
+    <link
+            rel="stylesheet"
+            th:href="@{/css/search.css}"
+    >
 
 </head>
 
@@ -115,11 +117,16 @@
                     th:each="album : ${albums}"
             >
 
+                <!-- Album artwork -->
+
                 <img
-                        th:if="${album.artworkUrl100 != null}"
-                        th:src="${album.artworkUrl100}"
+                        th:if="${album.artworkUrl100 != null and !album.artworkUrl100.isEmpty()}"
+                        th:src="${album.highResolutionArtworkUrl}"
                         th:alt="${album.collectionName}"
                 >
+
+
+                <!-- Album title -->
 
                 <h2
                         th:text="${album.collectionName}"
@@ -127,20 +134,26 @@
                     Album Name
                 </h2>
 
+
+                <!-- Artist -->
+
                 <p
                         th:text="${album.artistName}"
                 >
                     Artist Name
                 </p>
 
+
+                <!-- Album profile -->
+
                 <a
                         th:href="@{/album/save(
-            collectionId=${album.collectionId},
-            artistName=${album.artistName},
-            albumName=${album.collectionName},
-            artworkUrl=${album.artworkUrl600},
-            releaseDate=${album.releaseDate}
-        )}"
+                            collectionId=${album.collectionId},
+                            artistName=${album.artistName},
+                            albumName=${album.collectionName},
+                            artworkUrl=${album.highResolutionArtworkUrl},
+                            releaseDate=${album.releaseDate}
+                        )}"
                 >
                     View Album
                     <span>→</span>
@@ -186,4 +199,3 @@
 </body>
 
 </html>
-
