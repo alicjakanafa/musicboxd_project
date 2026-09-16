@@ -18,8 +18,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "google_user_id")
-    private String googleUserId;
+    @Column(name = "okta_user_id")
+    private String oktaUserId;
 
     private String username;
 
@@ -34,13 +34,13 @@ public class User {
     private LocalDateTime createdAt;
 
     public User(
-            String googleUserId,
+            String oktaUserId,
             String username,
             String email,
             String bio,
             String profilePictureUrl
     ) {
-        this.googleUserId = googleUserId;
+        this.oktaUserId = oktaUserId;
         this.username = username;
         this.email = email;
         this.bio = bio;

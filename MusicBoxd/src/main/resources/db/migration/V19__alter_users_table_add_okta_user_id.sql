@@ -1,0 +1,1 @@
+ALTER TABLE users RENAME COLUMN google_user_id TO okta_user_id;
