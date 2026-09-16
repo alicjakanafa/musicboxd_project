@@ -3,33 +3,160 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta charset="UTF-8">
-    <title th:text="${artist.name}">Artist</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${artist.name} + ' - MusicBoxd'">
+        Artist - MusicBoxd
+    </title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/artist-profile.css}"
+    >
+
 </head>
 
 <body>
 
-<h1 th:text="${artist.name}">
-    Artist Name
-</h1>
+<div class="artist-page">
 
-<h2>Albums</h2>
 
-<div th:each="album : ${albums}">
+    <!-- =========================
+         ARTIST HEADER
+         ========================= -->
 
-    <h3 th:text="${album.title}">
-        Album
-    </h3>
+    <header class="artist-header">
 
-</div>
+        <div class="artist-information">
 
-<h2>Songs</h2>
+            <p class="artist-label">
+                ARTIST
+            </p>
 
-<div th:each="song : ${songs}">
+            <h1 th:text="${artist.name}">
+                Artist Name
+            </h1>
 
-    <p th:text="${song.title}">
-        Song
-    </p>
+            <p
+                    class="artist-listeners"
+                    th:if="${artistInfo != null}"
+            >
+
+                <span
+                        th:text="${artistInfo.listeners}"
+                >
+                    0
+                </span>
+
+
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         ALBUMS
+         ========================= -->
+
+    <main>
+
+        <section class="albums-section">
+
+            <div class="section-header">
+
+                <h2>
+                    Albums
+                </h2>
+
+                <span
+                        th:text="${#lists.size(albums)} + ' albums'"
+                >
+                    0 albums
+                </span>
+
+            </div>
+
+
+            <div class="album-grid">
+
+                <!--
+                    Each album comes from Last.fm.
+
+                    Clicking an album sends its artist name
+                    and album name to our controller.
+                -->
+
+                <a
+                        class="album-card"
+                        th:each="album : ${albums}"
+                        th:href="@{/album/from-artist(
+                            artistName=${artist.name},
+                            albumName=${album.name}
+                        )}"
+                >
+
+                    <!-- Album artwork -->
+
+                    <div class="album-art">
+
+                        <img
+                                th:if="${album.image != null and !album.image.isEmpty()}"
+                                th:src="${album.image.get(album.image.size() - 1).text}"
+                                th:alt="${album.name}"
+                        >
+
+                        <div
+                                class="album-art-placeholder"
+                                th:if="${album.image == null or album.image.isEmpty()}"
+                        >
+                            No artwork
+                        </div>
+
+                    </div>
+
+
+                    <!-- Album information -->
+
+                    <div class="album-information">
+
+                        <h3
+                                th:text="${album.name}"
+                        >
+                            Album Name
+                        </h3>
+
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- =========================
+                 NO ALBUMS
+                 ========================= -->
+
+            <div
+                    class="empty-message"
+                    th:if="${#lists.isEmpty(albums)}"
+            >
+
+                <p>
+                    No albums found for this artist.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 

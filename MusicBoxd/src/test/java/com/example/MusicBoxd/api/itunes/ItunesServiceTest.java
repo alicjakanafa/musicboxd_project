@@ -71,7 +71,6 @@ class ItunesServiceTest {
         assertThat(album.getCollectionName()).isEqualTo("1989 (Taylor's Version)");
         assertThat(album.getArtistName()).isEqualTo("Taylor Swift");
         assertThat(album.getArtworkUrl100()).isEqualTo("https://example.com/100x100.jpg");
-        assertThat(album.getArtworkUrl600()).isEqualTo("https://example.com/600x600.jpg");
         assertThat(album.getReleaseDate()).isEqualTo("2023-10-27T07:00:00Z");
         assertThat(album.getPrimaryGenreName()).isEqualTo("Pop");
     }

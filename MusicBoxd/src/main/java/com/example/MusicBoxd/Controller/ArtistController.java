@@ -1,11 +1,12 @@
 package com.example.MusicBoxd.Controller;
 
-import com.example.MusicBoxd.Model.Album;
 import com.example.MusicBoxd.Model.Artist;
-import com.example.MusicBoxd.Model.Song;
-import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
-import com.example.MusicBoxd.Repository.SongRepository;
+import com.example.MusicBoxd.api.lastfm.LastFmArtistResponse;
+import com.example.MusicBoxd.api.lastfm.LastFmImage;
+import com.example.MusicBoxd.api.lastfm.LastFmService;
+import com.example.MusicBoxd.api.lastfm.LastFmTopAlbum;
+import com.example.MusicBoxd.api.lastfm.LastFmTopAlbumsResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,17 +22,14 @@ import java.util.Optional;
 public class ArtistController {
 
     private final ArtistRepository artistRepository;
-    private final AlbumRepository albumRepository;
-    private final SongRepository songRepository;
+    private final LastFmService lastFmService;
 
     public ArtistController(
             ArtistRepository artistRepository,
-            AlbumRepository albumRepository,
-            SongRepository songRepository
+            LastFmService lastFmService
     ) {
         this.artistRepository = artistRepository;
-        this.albumRepository = albumRepository;
-        this.songRepository = songRepository;
+        this.lastFmService = lastFmService;
     }
 
     @GetMapping("/{id}")
@@ -47,21 +45,50 @@ public class ArtistController {
             return "redirect:/";
         }
 
-        List<Album> albums =
-                albumRepository.findByArtistId(id);
+        Artist currentArtist = artist.get();
 
-        List<Song> songs = new ArrayList<>();
+        String artistName =
+                currentArtist.getName();
 
-        for (Album album : albums) {
+        /*
+         * Get artist information from Last.fm
+         */
+        LastFmArtistResponse artistResponse =
+                lastFmService.getArtistInfo(
+                        artistName
+                );
 
-            songs.addAll(
-                    songRepository.findByAlbumId(album.getId())
-            );
+        /*
+         * Get all of the artist's albums from Last.fm
+         */
+        LastFmTopAlbumsResponse albumResponse =
+                lastFmService.getArtistAlbums(
+                        artistName
+                );
+
+        List<LastFmTopAlbum> albums =
+                new ArrayList<>();
+
+        if (albumResponse != null &&
+                albumResponse.getTopalbums() != null &&
+                albumResponse.getTopalbums().getAlbum() != null) {
+
+            albums =
+                    albumResponse
+                            .getTopalbums()
+                            .getAlbum();
         }
 
         model.addAttribute(
                 "artist",
-                artist.get()
+                currentArtist
+        );
+
+        model.addAttribute(
+                "artistInfo",
+                artistResponse != null
+                        ? artistResponse.getArtist()
+                        : null
         );
 
         model.addAttribute(
@@ -69,11 +96,7 @@ public class ArtistController {
                 albums
         );
 
-        model.addAttribute(
-                "songs",
-                songs
-        );
-
         return "artist-profile";
     }
 }
+
