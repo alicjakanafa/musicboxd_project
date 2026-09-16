@@ -1,0 +1,220 @@
+.register-page {
+    min-height: calc(100vh - 145px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 60px 30px;
+
+    background: var(--background);
+}
+
+.register-card {
+    width: min(100%, 980px);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 45px;
+
+    padding: 42px;
+
+    background: var(--surface);
+    border-radius: 35px;
+}
+
+.register-form-section h1 {
+    margin: 0;
+
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.register-intro {
+    margin: 12px 0 30px;
+
+    font-size: 1.05rem;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
+    width: 100%;
+
+    padding: 18px 24px;
+
+    border: none;
+    border-radius: 40px;
+
+    background: var(--primary);
+
+    color: var(--text);
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 1rem;
+
+    outline: none;
+}
+
+.register-form input[type="text"]:focus,
+.register-form input[type="email"]:focus,
+.register-form input[type="password"]:focus {
+    outline: 3px solid black;
+    outline-offset: 2px;
+}
+
+.terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 8px 4px 12px;
+}
+
+.terms input {
+    width: 20px;
+    height: 20px;
+
+    flex-shrink: 0;
+}
+
+.terms a {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.register-button {
+    width: 100%;
+
+    padding: 18px;
+
+    border: none;
+    border-radius: 40px;
+
+    background: var(--primary);
+
+    color: var(--text);
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: transform 0.15s ease;
+}
+
+.register-button:hover {
+    transform: translateY(-2px);
+}
+
+.register-button:active {
+    transform: translateY(0);
+}
+
+.register-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin: 28px 0 20px;
+
+    color: #777;
+}
+
+.register-divider::before,
+.register-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #aaa;
+}
+
+.login-prompt {
+    text-align: center;
+}
+
+.login-prompt a {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.register-art {
+    position: relative;
+
+    min-height: 520px;
+
+    overflow: hidden;
+
+    padding: 30px;
+
+    background: var(--primary);
+
+    border-radius: 28px;
+}
+
+.art-message {
+    position: relative;
+    z-index: 2;
+
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 0.95;
+}
+
+.signup-waveform {
+    position: absolute;
+
+    width: 120%;
+    max-width: none;
+
+    left: 50%;
+    bottom: 28px;
+
+    transform: translateX(-42%);
+}
+
+/* This section is for screen readers */
+
+.sr-only {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+
+    border: 0;
+}
+
+/* Screen reader section ends */
+
+/* Responsive breakpoint for multiple layouts */
+
+@media (max-width: 800px) {
+
+    .register-card {
+        grid-template-columns: 1fr;
+    }
+
+    .register-art {
+        min-height: 300px;
+    }
+
+}
