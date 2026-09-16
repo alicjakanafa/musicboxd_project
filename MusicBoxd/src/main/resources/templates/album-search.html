@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
 
     <meta charset="UTF-8">
 
@@ -11,10 +12,10 @@
 
     <title>MusicBoxd - Search Albums</title>
 
-    <link
-            rel="stylesheet"
-            th:href="@{/css/search.css}"
-    >
+    <link rel="stylesheet" th:href="@{/css/search.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
 
 </head>
 
@@ -22,29 +23,8 @@
 
 <div class="page">
 
-    <header class="top-header">
 
-        <div class="brand">
-
-            <span class="brand-name">
-                MusicBoxd
-            </span>
-
-            <span class="brand-divider">
-                /
-            </span>
-
-            <span class="brand-page">
-                Search
-            </span>
-
-        </div>
-
-        <div class="page-label">
-            ALBUMS
-        </div>
-
-    </header>
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 
     <main class="container">
@@ -117,8 +97,6 @@
                     th:each="album : ${albums}"
             >
 
-                <!-- Album artwork -->
-
                 <img
                         th:if="${album.artworkUrl100 != null and !album.artworkUrl100.isEmpty()}"
                         th:src="${album.highResolutionArtworkUrl}"
@@ -126,34 +104,24 @@
                 >
 
 
-                <!-- Album title -->
-
-                <h2
-                        th:text="${album.collectionName}"
-                >
+                <h2 th:text="${album.collectionName}">
                     Album Name
                 </h2>
 
 
-                <!-- Artist -->
-
-                <p
-                        th:text="${album.artistName}"
-                >
+                <p th:text="${album.artistName}">
                     Artist Name
                 </p>
 
 
-                <!-- Album profile -->
-
                 <a
                         th:href="@{/album/save(
-                            collectionId=${album.collectionId},
-                            artistName=${album.artistName},
-                            albumName=${album.collectionName},
-                            artworkUrl=${album.highResolutionArtworkUrl},
-                            releaseDate=${album.releaseDate}
-                        )}"
+                        collectionId=${album.collectionId},
+                        artistName=${album.artistName},
+                        albumName=${album.collectionName},
+                        artworkUrl=${album.highResolutionArtworkUrl},
+                        releaseDate=${album.releaseDate}
+                    )}"
                 >
                     View Album
                     <span>→</span>
@@ -186,13 +154,8 @@
     </main>
 
 
-    <footer>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-        <p>
-            MusicBoxd · Album Search
-        </p>
-
-    </footer>
 
 </div>
 

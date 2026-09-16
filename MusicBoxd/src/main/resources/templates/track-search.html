@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -11,8 +10,9 @@
 
     <title>MusicBoxd - Search Songs</title>
 
-    <link rel="stylesheet"
-          th:href="@{/css/search.css}">
+    <link rel="stylesheet" th:href="@{/css/search.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
 
 </head>
 
@@ -20,29 +20,8 @@
 
 <div class="page">
 
-    <header class="top-header">
-
-        <div class="brand">
-
-            <span class="brand-name">
-                MusicBoxd
-            </span>
-
-            <span class="brand-divider">
-                /
-            </span>
-
-            <span class="brand-page">
-                Search
-            </span>
-
-        </div>
-
-        <div class="page-label">
-            SONGS
-        </div>
-
-    </header>
+    <!-- Shared MusicBoxd navbar -->
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 
     <main class="container">
@@ -58,7 +37,7 @@
             </h1>
 
             <p>
-                Search for songs and listen to available previews.
+                Search for songs and discover music to listen to and review.
             </p>
 
         </section>
@@ -111,56 +90,53 @@
         >
 
             <div
-                    class="track-card"
+                    class="album-card"
                     th:each="track : ${tracks}"
             >
 
+                <!-- HD artwork -->
                 <img
-                        th:if="${track.artworkUrl100 != null}"
-                        th:src="${track.artworkUrl100}"
+                        th:if="${track.highResolutionArtworkUrl != null}"
+                        th:src="${track.highResolutionArtworkUrl}"
                         th:alt="${track.trackName}"
                 >
 
-                <h2
-                        th:text="${track.trackName}"
-                >
-                    Song Title
+
+                <h2 th:text="${track.trackName}">
+                    Song Name
                 </h2>
 
-                <p
-                        th:text="${track.artistName}"
-                >
+
+                <p th:text="${track.artistName}">
                     Artist Name
                 </p>
 
+
                 <p
+                        th:if="${track.collectionName != null}"
                         th:text="${track.collectionName}"
                 >
                     Album Name
                 </p>
 
 
-                <audio
+                <div
                         th:if="${track.previewUrl != null}"
-                        controls
+                        class="song-preview"
                 >
 
-                    <source
-                            th:src="${track.previewUrl}"
-                            type="audio/mpeg"
-                    >
+                    <audio controls>
 
-                    Your browser does not support audio playback.
+                        <source
+                                th:src="${track.previewUrl}"
+                                type="audio/mpeg"
+                        >
 
-                </audio>
+                        Your browser does not support the audio element.
 
+                    </audio>
 
-                <p
-                        class="no-preview"
-                        th:if="${track.previewUrl == null}"
-                >
-                    No preview available.
-                </p>
+                </div>
 
             </div>
 
@@ -181,7 +157,7 @@
             </h2>
 
             <p>
-                Try searching for a different artist or song.
+                Try searching for a different song or artist.
             </p>
 
         </div>
@@ -189,17 +165,11 @@
     </main>
 
 
-    <footer>
-
-        <p>
-            MusicBoxd · Song Search
-        </p>
-
-    </footer>
+    <!-- Shared MusicBoxd footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </div>
 
 </body>
 
 </html>
-

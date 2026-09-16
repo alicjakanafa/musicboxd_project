@@ -199,55 +199,125 @@ body > main {
 
 .album-of-the-day {
     grid-area: album;
-
     width: 100%;
-    padding: 30px;
+    padding: 28px;
     background: var(--primary-right);
-    border-radius: 35px;
+    border-radius: 28px;
+    box-sizing: border-box;
 }
 
 .album-of-the-day h2 {
-    margin: 0;
+    margin: 0 0 20px 0;
+    font-size: 22px;
 }
+
+/* Album card */
 
 .suggested-album {
     display: flex;
     align-items: center;
-    gap: 25px;
-    margin-top: 25px;
+    gap: 24px;
+
+    padding: 18px;
+
+    text-decoration: none;
+    color: inherit;
+
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+
+    transition:
+            transform 0.2s ease,
+            background 0.2s ease;
 }
 
-.suggested-album-cover {
-    width: 180px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 20px;
-    flex-shrink: 0;
+.suggested-album:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.09);
 }
+
+/* Album artwork */
+
+.suggested-album-cover {
+    width: 150px;
+    height: 150px;
+
+    object-fit: cover;
+    border-radius: 16px;
+
+    flex-shrink: 0;
+
+    display: block;
+}
+
+/* Album information */
 
 .suggested-album-info {
     min-width: 0;
+
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+
+    gap: 7px;
 }
 
 .suggested-album-info h3 {
     margin: 0;
-    font-size: 25px;
+
+    font-size: 24px;
+    line-height: 1.2;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .suggested-album-artist {
     margin: 0;
-    font-size: 18px;
-    font-weight: bold;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    opacity: 0.9;
 }
 
 .suggested-album-genre {
-    margin: 0;
-    opacity: 0.7;
+    margin: 2px 0 0 0;
+
+    font-size: 14px;
+
+    opacity: 0.6;
 }
 
+/* View album text */
+
+.suggested-album-link {
+    display: inline-flex;
+    align-items: center;
+
+    width: fit-content;
+
+    margin-top: 8px;
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    background: rgba(255, 255, 255, 0.08);
+    opacity: 0.7;
+
+    transition:
+            background 0.2s ease,
+            opacity 0.2s ease;
+}
+
+.suggested-album:hover .suggested-album-link {
+    background: rgba(255, 255, 255, 0.14);
+    opacity: 1;
+}
 /* ==================== SEARCH CARDS ==================== */
 
 .feature-card-row {
