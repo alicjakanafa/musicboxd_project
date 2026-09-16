@@ -6,7 +6,6 @@ public class ItunesAlbum {
     private String collectionName;
     private String artistName;
     private String artworkUrl100;
-    private String artworkUrl600;
     private String releaseDate;
     private String primaryGenreName;
 
@@ -42,12 +41,16 @@ public class ItunesAlbum {
         this.artworkUrl100 = artworkUrl100;
     }
 
-    public String getArtworkUrl600() {
-        return artworkUrl600;
-    }
+    public String getHighResolutionArtworkUrl() {
 
-    public void setArtworkUrl600(String artworkUrl600) {
-        this.artworkUrl600 = artworkUrl600;
+        if (artworkUrl100 == null) {
+            return null;
+        }
+
+        return artworkUrl100.replace(
+                "100x100bb",
+                "600x600bb"
+        );
     }
 
     public String getReleaseDate() {

@@ -90,20 +90,55 @@ public class ItunesController {
             @RequestParam String releaseDate
     ) {
 
-        // Find or create artist
+        // =========================
+        // FIND OR CREATE ARTIST
+        // =========================
+
         Optional<Artist> existingArtist =
-                artistRepository.findByNameIgnoreCase(artistName);
+                artistRepository.findByNameIgnoreCase(
+                        artistName
+                );
 
         Artist artist;
 
         if (existingArtist.isPresent()) {
+
             artist = existingArtist.get();
+
         } else {
+
             artist = new Artist(artistName);
-            artist = artistRepository.save(artist);
+
+            artist =
+                    artistRepository.save(artist);
         }
 
-        // Find or create album
+
+        // =========================
+        // GET RELEASE YEAR
+        // =========================
+
+        Short releaseYear = null;
+
+        if (releaseDate != null &&
+                releaseDate.length() >= 4) {
+
+            try {
+
+                releaseYear =
+                        Short.valueOf(
+                                releaseDate.substring(0, 4)
+                        );
+
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+
+        // =========================
+        // FIND OR CREATE ALBUM
+        // =========================
+
         Optional<Album> existingAlbum =
                 albumRepository.findByExternalId(
                         collectionId.toString()
@@ -113,58 +148,87 @@ public class ItunesController {
 
         if (existingAlbum.isPresent()) {
 
-            album = existingAlbum.get();
+            album =
+                    existingAlbum.get();
 
-            // Update artwork if we have a valid artwork URL
-            if (artworkUrl != null && !artworkUrl.isBlank()) {
-                album.setArtworkUrl(artworkUrl);
-                albumRepository.save(album);
+            // Make sure the album has the
+            // latest artwork from iTunes
+
+            if (artworkUrl != null &&
+                    !artworkUrl.isBlank()) {
+
+                album.setArtworkUrl(
+                        artworkUrl
+                );
             }
+
+            album.setTitle(albumName);
+
+            album.setArtistId(
+                    artist.getId()
+            );
+
+            if (releaseYear != null) {
+
+                album.setReleaseYear(
+                        releaseYear
+                );
+            }
+
+            album =
+                    albumRepository.save(album);
 
         } else {
 
-            Short releaseYear = null;
-
-            if (releaseDate != null && releaseDate.length() >= 4) {
-                try {
-                    releaseYear = Short.valueOf(
-                            releaseDate.substring(0, 4)
+            album =
+                    new Album(
+                            collectionId.toString(),
+                            artist.getId(),
+                            albumName,
+                            releaseYear,
+                            artworkUrl
                     );
-                } catch (NumberFormatException ignored) {
-                }
-            }
 
-            album = new Album(
-                    collectionId.toString(),
-                    artist.getId(),
-                    albumName,
-                    releaseYear,
-                    artworkUrl
-            );
-
-            album = albumRepository.save(album);
+            album =
+                    albumRepository.save(album);
         }
 
-        // Get songs from iTunes
-        ItunesTrackResponse trackResponse =
-                itunesService.getAlbumTracks(collectionId);
 
-        // Save songs
+        // =========================
+        // GET SONGS FROM ITUNES
+        // =========================
+
+        ItunesTrackResponse trackResponse =
+                itunesService.getAlbumTracks(
+                        collectionId
+                );
+
+
+        // =========================
+        // SAVE SONGS
+        // =========================
+
         if (trackResponse != null &&
                 trackResponse.getResults() != null) {
 
-            for (ItunesTrack track : trackResponse.getResults()) {
+            for (ItunesTrack track :
+                    trackResponse.getResults()) {
 
                 // Only save actual songs
+
                 if (track.getTrackId() == null) {
                     continue;
                 }
 
+
                 // Don't save the same song twice
+
                 boolean songExists =
                         songRepository
                                 .findByExternalId(
-                                        track.getTrackId().toString()
+                                        track
+                                                .getTrackId()
+                                                .toString()
                                 )
                                 .isPresent();
 
@@ -172,19 +236,78 @@ public class ItunesController {
                     continue;
                 }
 
-                Song song = new Song(
-                        track.getTrackId().toString(),
-                        album.getId(),
-                        track.getTrackName(),
-                        track.getTrackNumber(),
-                        track.getPreviewUrl(),
-                        track.getArtworkUrl100()
-                );
+
+                Song song =
+                        new Song(
+                                track
+                                        .getTrackId()
+                                        .toString(),
+
+                                album.getId(),
+
+                                track.getTrackName(),
+
+                                track.getTrackNumber(),
+
+                                track.getPreviewUrl(),
+
+                                track.getArtworkUrl100()
+                        );
 
                 songRepository.save(song);
             }
         }
 
+
+        // =========================
+        // GO TO ALBUM PROFILE
+        // =========================
+
         return "redirect:/albums/" + album.getId();
     }
+
+
+    @GetMapping("/album/from-artist")
+    public String getAlbumFromArtist(
+            @RequestParam String artistName,
+            @RequestParam String albumName
+    ) {
+
+        /*
+         * Search iTunes for the album.
+         */
+        ItunesAlbumResponse response =
+                itunesService.searchAlbums(
+                        artistName + " " + albumName
+                );
+
+        if (response == null ||
+                response.getResults() == null ||
+                response.getResults().isEmpty()) {
+
+            return "redirect:/artists";
+        }
+
+        /*
+         * Use the first iTunes result.
+         */
+        var album = response.getResults().get(0);
+
+        /*
+         * Save the album using the existing
+         * /album/save functionality.
+         *
+         * We redirect there with the iTunes
+         * collection ID.
+         */
+        return "redirect:/album/save"
+                + "?collectionId=" + album.getCollectionId()
+                + "&artistName=" + artistName
+                + "&albumName=" + album.getCollectionName()
+                + "&artworkUrl=" + album.getHighResolutionArtworkUrl()
+                + "&releaseDate=" + album.getReleaseDate();
+    }
+
+
 }
+

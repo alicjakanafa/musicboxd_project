@@ -2,17 +2,13 @@ package com.example.MusicBoxd.api.lastfm;
 
 import java.util.List;
 
-public class LastFmArtist {
+public class LastFmTopAlbum {
 
     private String name;
 
     private String mbid;
 
     private String url;
-
-    private String listeners;
-
-    private String playcount;
 
     private List<LastFmImage> image;
 
@@ -41,24 +37,6 @@ public class LastFmArtist {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-
-    public String getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(String listeners) {
-        this.listeners = listeners;
-    }
-
-
-    public String getPlaycount() {
-        return playcount;
-    }
-
-    public void setPlaycount(String playcount) {
-        this.playcount = playcount;
     }
 
 

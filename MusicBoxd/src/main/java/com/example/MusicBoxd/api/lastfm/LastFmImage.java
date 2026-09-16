@@ -1,8 +1,12 @@
 package com.example.MusicBoxd.api.lastfm;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LastFmImage {
 
+    @JsonProperty("#text")
     private String text;
+
     private String size;
 
     public String getText() {
