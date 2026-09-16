@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>My Profile</title>
+
+</head>
+
+<body>
+
+<h1>My Reviews</h1>
+
+<div th:if="${reviews.isEmpty()}">
+
+  <p>You haven't written any reviews yet.</p>
+
+</div>
+
+<div th:each="review : ${reviews}"
+     th:with="album=${albums.get(review.albumId)}">
+
+  <div th:if="${album != null}">
+
+    <img
+            th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
+            th:src="${album.artworkUrl}"
+            th:alt="${album.title}"
+            width="200"
+    >
+
+    <h2 th:text="${album.title}">
+      Album Title
+    </h2>
+
+    <p th:text="${album.releaseYear}">
+      Release Year
+    </p>
+
+  </div>
+
+  <div>
+
+    <p>
+      Rating:
+      <span th:text="${review.rating}">
+                5
+            </span>
+      / 5
+    </p>
+
+
+    <h3 th:if="${review.header != null and !review.header.isEmpty()}" th:text="${review.header}">
+      Review Header
+    </h3>
+
+
+    <p th:text="${review.content}">
+      Review content
+    </p>
+
+
+    <p th:if="${review.createdAt != null}" th:text="${review.createdAt}">
+      Review date
+    </p>
+
+  </div>
+
+
+  <hr>
+
+</div>
+
+</body>
+</html>
