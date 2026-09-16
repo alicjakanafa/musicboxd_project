@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register | MusicBoxd</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="register-page">
+
+    <section class="register-card">
+
+        <div class="register-form-section">
+
+            <h1>Create your MusicBoxd account</h1>
+
+            <p class="register-intro">
+                Track. Review. Discover. Build your music identity.
+            </p>
+
+            <form class="register-form">
+
+            <label class="sr-only" for="username">Username</label>
+            <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Username"
+                autocomplete="username"
+                required
+            >
+
+            <label class="sr-only" for="email">Email</label>
+            <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email"
+                autocomplete="email"
+                required
+            >
+
+            <label class="sr-only" for="password">Password</label>
+            <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Password"
+                autocomplete="new-password"
+                required
+            >
+
+            <label class="sr-only" for="confirm-password">Confirm password</label>
+            <input
+                id="confirm-password"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm password"
+                autocomplete="new-password"
+                required
+            >
+
+
+                <label class="terms">
+                    <input
+                        type="checkbox"
+                        name="termsAccepted"
+                        required
+                    >
+
+                    <span>
+                        I agree to the
+                        <a href="#">Terms &amp; Privacy Policy</a>
+                    </span>
+                </label>
+
+
+                <button type="submit" class="register-button">
+                    Create account
+                </button>
+
+            </form>
+
+
+            <div class="register-divider">
+                <span>or</span>
+            </div>
+
+
+            <p class="login-prompt">
+                Already have an account?
+                <a th:href="@{/login}">Log in</a>
+            </p>
+
+        </div>
+
+
+        <aside class="register-art">
+
+            <p class="art-message">
+                more<br>
+                music,<br>
+                more<br>
+                you
+            </p>
+
+            <img
+                th:src="@{/images/spotify-equalizer.svg}"
+                alt=""
+                class="signup-waveform"
+            >
+
+        </aside>
+
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

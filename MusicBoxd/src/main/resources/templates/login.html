@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Log in | MusicBoxd</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="login-page">
+
+    <section class="login-card">
+
+        <div class="login-form-section">
+
+            <h1>Log in to MusicBoxd</h1>
+
+            <p class="login-intro">
+                Track. Review. Discover. A more musical you awaits.
+            </p>
+
+            <form class="login-form">
+
+                <label class="sr-only" for="email">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    autocomplete="email"
+                    required
+                >
+
+                <label class="sr-only" for="password">Password</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <div class="login-options">
+
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember">
+                        <span>Remember me</span>
+                    </label>
+
+                    <a href="#" class="forgot-password">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+                <button type="submit" class="login-button">
+                    Log in
+                </button>
+
+            </form>
+
+            <div class="login-divider">
+                <span>or</span>
+            </div>
+
+            <p class="signup-prompt">
+                Don't have an account?
+                <a th:href="@{/register}">Sign up</a>
+            </p>
+
+        </div>
+
+
+        <aside class="login-art">
+
+            <p class="art-message">
+                good<br>
+                music<br>
+                goes<br>
+                further
+            </p>
+
+            <img
+                th:src="@{/images/login-vinyl.svg}"
+                alt=""
+                class="vinyl-image"
+            >
+
+        </aside>
+
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
