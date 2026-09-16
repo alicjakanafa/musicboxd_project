@@ -1,5 +1,6 @@
 package com.example.MusicBoxd.api.lastfm;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,11 +13,12 @@ public class LastFmService {
     private final String apiKey;
 
     public LastFmService(
-            RestTemplate restTemplate
+            RestTemplate restTemplate,
+             @Value("${lastfm.api.key}") String apiKey
     ) {
         this.restTemplate = restTemplate;
 
-        this.apiKey = System.getenv("LASTFM_API_KEY");
+        this.apiKey =  apiKey;
     }
 
 

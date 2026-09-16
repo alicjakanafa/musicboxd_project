@@ -30,7 +30,7 @@ class LastFmServiceTest {
                 new RestTemplate();
 
         lastFmService =
-                new LastFmService(restTemplate);
+                new LastFmService(restTemplate, "test-api-key");
 
         /*
          * LastFmService normally gets the API key
@@ -221,7 +221,7 @@ class LastFmServiceTest {
                 new RestTemplate();
 
         LastFmService serviceWithDifferentKey =
-                new LastFmService(restTemplate);
+                new LastFmService(restTemplate, "test-api-key");
 
         ReflectionTestUtils.setField(
                 serviceWithDifferentKey,
