@@ -103,28 +103,24 @@ public class ReviewController {
             @RequestParam String content
     ) {
 
-        // Check that the album exists
         albumRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("album not found")
                 );
 
-
         Review review = new Review();
 
-        // Currently using user 1 because authentication
-        // has not been set up yet
+        // Temporary hardcoded logged-in user
         review.setUserId(1L);
 
-        // Connect the review to the album
         review.setAlbumId(id);
-
         review.setRating(rating);
         review.setContent(content);
         review.setCreatedAt(LocalDateTime.now());
 
         reviewRepository.save(review);
 
-        return "redirect:/users/1/reviews";
+        return "redirect:/profile/1";
     }
+
 }
