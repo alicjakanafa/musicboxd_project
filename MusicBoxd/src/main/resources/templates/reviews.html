@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${album.title}">
+        Album
+    </title>
+</head>
+
+<body>
+
+<div class="album-information">
+
+    <h1 th:text="${album.title}">
+        Album Title
+    </h1>
+
+    <p th:text="${album.releaseYear}">
+        Release Year
+    </p>
+
+    <img
+            th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
+            th:src="${album.artworkUrl}"
+            th:alt="${album.title}"
+    >
+
+</div>
+
+
+<form
+        th:action="@{/reviews/{id}(id=${album.id})}"
+        method="post"
+>
+
+    <label for="rating">
+        Rating
+    </label>
+
+    <select
+            id="rating"
+            name="rating"
+            required
+    >
+        <option value="">Choose a rating</option>
+        <option value="1">1 / 5</option>
+        <option value="2">2 / 5</option>
+        <option value="3">3 / 5</option>
+        <option value="4">4 / 5</option>
+        <option value="5">5 / 5</option>
+    </select>
+
+
+    <label for="content">
+        Your Review
+    </label>
+
+    <textarea
+            id="content"
+            name="content"
+            placeholder="Write your review..."
+            required
+    ></textarea>
+
+
+    <button type="submit">
+        Submit Review
+    </button>
+
+</form>
+
+</body>
+</html>
