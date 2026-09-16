@@ -1,45 +1,37 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
 
-  <title th:text="${album.title}">
-    Album
-  </title>
+  <title th:text="${album.title}">Album</title>
 
-  <link
-          rel="stylesheet"
-          th:href="@{/css/album-profile.css}"
-  >
+  <link rel="stylesheet" th:href="@{/css/album-profile.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+
 
 </head>
 
-
 <body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <div class="album-page">
 
-  <!-- Album information -->
 
   <section class="album-header">
 
     <div class="album-art">
-
-      <!-- Album artwork -->
 
       <img
               th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
               th:src="${album.artworkUrl}"
               th:alt="${album.title}"
       >
-
-      <!-- Fallback if there is no artwork -->
 
       <div
               class="album-art-placeholder"
@@ -89,8 +81,6 @@
   </section>
 
 
-  <!-- Track list -->
-
   <section class="songs">
 
     <h2>Songs</h2>
@@ -102,27 +92,21 @@
 
       <div class="track-number">
 
-                <span
-                        th:text="${song.trackNumber}"
-                >
-                    1
-                </span>
+            <span th:text="${song.trackNumber}">
+                1
+            </span>
 
       </div>
 
 
       <div class="song-information">
 
-        <h3
-                th:text="${song.title}"
-        >
+        <h3 th:text="${song.title}">
           Song Title
         </h3>
 
       </div>
 
-
-      <!-- iTunes preview -->
 
       <div
               class="song-preview"
@@ -144,7 +128,10 @@
 
   </section>
 
+
 </div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 

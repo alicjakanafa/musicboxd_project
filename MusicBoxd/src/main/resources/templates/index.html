@@ -332,15 +332,27 @@
 
         <h2>Suggested Album of the Day</h2>
 
-        <div class="suggested-album">
+        <a
+                class="suggested-album"
+                th:href="@{/album/save(
+                collectionId=${suggestedAlbum.collectionId},
+                artistName=${suggestedAlbum.artistName},
+                albumName=${suggestedAlbum.collectionName},
+                artworkUrl=${suggestedAlbum.highResolutionArtworkUrl},
+                releaseDate=${suggestedAlbum.releaseDate}
+            )}"
+        >
 
             <img
-                    th:src="${suggestedAlbum.artworkUrl100}"
+                    th:if="${suggestedAlbum.highResolutionArtworkUrl != null}"
+                    th:src="${suggestedAlbum.highResolutionArtworkUrl}"
                     th:alt="${suggestedAlbum.collectionName}"
                     class="suggested-album-cover"
             >
 
-            <div class="suggested-album-info">
+            <div
+                    class="suggested-album-info"
+            >
 
                 <h3 th:text="${suggestedAlbum.collectionName}">
                     Album Name
@@ -360,12 +372,15 @@
                     Genre
                 </p>
 
+                <span class="suggested-album-link">
+                View Album →
+            </span>
+
             </div>
 
-        </div>
+        </a>
 
     </section>
-
 
     <!-- ========================================================= -->
     <!-- SEARCH -->
@@ -568,3 +583,4 @@
 
 </body>
 </html>
+
