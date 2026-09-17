@@ -4,7 +4,6 @@
 
 <head>
 
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -16,16 +15,13 @@
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
 
-
 </head>
 
 <body>
 
 <div class="page">
 
-
     <header th:replace="~{fragments/navbar :: navbar}"></header>
-
 
     <main class="container">
 
@@ -97,31 +93,30 @@
                     th:each="album : ${albums}"
             >
 
+                <!-- Last.fm artwork -->
+
                 <img
-                        th:if="${album.artworkUrl100 != null and !album.artworkUrl100.isEmpty()}"
-                        th:src="${album.highResolutionArtworkUrl}"
-                        th:alt="${album.collectionName}"
+                        th:if="${album.image != null and !album.image.isEmpty()}"
+                        th:src="${album.image.get(album.image.size() - 1).text}"
+                        th:alt="${album.name}"
                 >
 
 
-                <h2 th:text="${album.collectionName}">
+                <h2 th:text="${album.name}">
                     Album Name
                 </h2>
 
 
-                <p th:text="${album.artistName}">
+                <p th:text="${album.artist}">
                     Artist Name
                 </p>
 
 
                 <a
-                        th:href="@{/album/save(
-                        collectionId=${album.collectionId},
-                        artistName=${album.artistName},
-                        albumName=${album.collectionName},
-                        artworkUrl=${album.highResolutionArtworkUrl},
-                        releaseDate=${album.releaseDate}
-                    )}"
+                        th:href="@{/album/from-artist(
+                            artistName=${album.artist},
+                            albumName=${album.name}
+                        )}"
                 >
                     View Album
                     <span>→</span>
@@ -155,7 +150,6 @@
 
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-
 
 </div>
 

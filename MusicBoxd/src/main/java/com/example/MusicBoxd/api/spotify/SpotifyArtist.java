@@ -1,8 +1,12 @@
 package com.example.MusicBoxd.api.spotify;
 
+import java.util.List;
+
 public class SpotifyArtist {
 
     private String name;
+
+    private List<SpotifyImage> images;
 
     public String getName() {
         return name;
@@ -10,5 +14,13 @@ public class SpotifyArtist {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<SpotifyImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<SpotifyImage> images) {
+        this.images = images;
     }
 }

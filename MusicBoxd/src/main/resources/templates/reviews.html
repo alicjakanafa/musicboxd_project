@@ -2,16 +2,22 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title th:text="${album.title}">
-        Album
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title th:text="${album.title} + ' - Review'">
+        Album Review
     </title>
 
     <link rel="stylesheet" th:href="@{/css/review.css}">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
+
 </head>
 
 <body>
@@ -24,19 +30,32 @@
         New Review
     </h1>
 
-    <p th:if="${artist != null}">
+
     <section class="album-header">
 
 
         <div class="album-art">
 
             <img
-                    th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
-                    th:src="${album.artworkUrl}"
+                    th:if="${lastFmAlbum != null
+                    and lastFmAlbum.image != null
+                    and !lastFmAlbum.image.isEmpty()}"
+                    th:src="${lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text}"
                     th:alt="${album.title}"
             >
 
+            <div
+                    class="album-art-placeholder"
+                    th:if="${lastFmAlbum == null
+                    or lastFmAlbum.image == null
+                    or lastFmAlbum.image.isEmpty()}"
+            >
+                No artwork
+            </div>
+
         </div>
+
+
 
         <div class="album-information">
 
@@ -46,7 +65,7 @@
                 Album Title
             </h1>
 
-    <!-- Artist -->
+
             <p th:if="${artist != null}">
 
                 <a
@@ -58,11 +77,17 @@
 
             </p>
 
-            <p th:text="${album.releaseYear}">
+
+
+            <p
+                    th:if="${album.releaseYear != null}"
+                    th:text="${album.releaseYear}"
+            >
                 Release Year
             </p>
 
         </div>
+
     </section>
 
 
@@ -76,29 +101,65 @@
             Rating
         </h2>
 
+
         <div class="rating">
 
-            <input type="radio" id="rating5" name="rating" value="5">
+            <input
+                    type="radio"
+                    id="rating5"
+                    name="rating"
+                    value="5"
+            >
+
             <label for="rating5">★</label>
 
-            <input type="radio" id="rating4" name="rating" value="4">
+
+            <input
+                    type="radio"
+                    id="rating4"
+                    name="rating"
+                    value="4"
+            >
+
             <label for="rating4">★</label>
 
-            <input type="radio" id="rating3" name="rating" value="3">
+
+            <input
+                    type="radio"
+                    id="rating3"
+                    name="rating"
+                    value="3"
+            >
+
             <label for="rating3">★</label>
 
-            <input type="radio" id="rating2" name="rating" value="2">
+
+            <input
+                    type="radio"
+                    id="rating2"
+                    name="rating"
+                    value="2"
+            >
+
             <label for="rating2">★</label>
 
-            <input type="radio" id="rating1" name="rating" value="1">
+
+            <input
+                    type="radio"
+                    id="rating1"
+                    name="rating"
+                    value="1"
+            >
+
             <label for="rating1">★</label>
 
         </div>
 
 
-        <h2 for="content">
+        <h2>
             What are your thoughts?
         </h2>
+
 
         <textarea
                 id="content"
@@ -108,13 +169,17 @@
         ></textarea>
 
 
-        <button type="submit" class="review-button">
+        <button
+                type="submit"
+                class="review-button"
+        >
             Post Review
         </button>
 
     </form>
 
 </div>
+
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
