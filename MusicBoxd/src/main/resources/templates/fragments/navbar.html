@@ -6,16 +6,47 @@
         <a th:href="@{/profile}">Profile</a>
         <a th:href="@{/reviews}">Reviews</a>
         <a th:href="@{/lists}">Lists</a>
+        <a th:href="@{/friends}">Friends</a>
     </nav>
 
-    <a class="brand" th:href="@{/}">
+    <a
+            class="brand"
+            th:href="@{/}"
+            aria-label="MusicBoxd home"
+    >
         <span class="brand-name">MUSICBOXD</span>
-        <span class="brand-tagline">it’s letterboxd, but music</span>
+        <span class="brand-tagline">
+            it’s letterboxd, but music
+        </span>
     </a>
 
     <nav class="nav-right">
-        <a th:href="@{/login}">Login</a>
-        <a th:href="@{/register}">Register</a>
+
+        <!-- Logged in -->
+        <div
+                class="logged-in"
+                th:if="${#authorization.expression('isAuthenticated()')}"
+        >
+            <span class="welcome-message">
+                Welcome, <span th:text="${#authentication.name}">User</span>
+            </span>
+
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-button">
+                    Log out
+                </button>
+            </form>
+        </div>
+
+        <!-- Logged out -->
+        <div
+                class="logged-out"
+                th:if="${#authorization.expression('!isAuthenticated()')}"
+        >
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/register}">Register</a>
+        </div>
+
     </nav>
 
 </header>

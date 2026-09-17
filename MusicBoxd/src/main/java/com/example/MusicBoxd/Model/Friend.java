@@ -4,11 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "FRIENDS")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class Friend {
 
     @Id
@@ -21,6 +24,7 @@ public class Friend {
     @Column(name = "receiver_id")
     private Long receiverId;
 
+    @Column(name = "status")
     private String status;
 
     @Column(name = "created_at")
@@ -36,7 +40,4 @@ public class Friend {
         this.status = status;
         this.createdAt = LocalDateTime.now();
     }
-
 }
-
-
