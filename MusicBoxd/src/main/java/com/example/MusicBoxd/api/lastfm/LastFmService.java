@@ -66,6 +66,17 @@ public class LastFmService {
                 .build()
                 .toUriString();
 
+        String rawResponse =
+                restTemplate.getForObject(
+                        url,
+                        String.class
+                );
+
+        System.out.println("=================================");
+        System.out.println("LAST.FM RAW RESPONSE");
+        System.out.println(rawResponse);
+        System.out.println("=================================");
+
         return restTemplate.getForObject(
                 url,
                 LastFmArtistResponse.class
@@ -129,3 +140,4 @@ public class LastFmService {
         );
     }
 }
+

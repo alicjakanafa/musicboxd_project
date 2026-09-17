@@ -90,9 +90,7 @@ public class ItunesController {
             @RequestParam String releaseDate
     ) {
 
-        // =========================
-        // FIND OR CREATE ARTIST
-        // =========================
+
 
         Optional<Artist> existingArtist =
                 artistRepository.findByNameIgnoreCase(
@@ -114,9 +112,7 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // GET RELEASE YEAR
-        // =========================
+
 
         Short releaseYear = null;
 
@@ -135,9 +131,7 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // FIND OR CREATE ALBUM
-        // =========================
+
 
         Optional<Album> existingAlbum =
                 albumRepository.findByExternalId(
@@ -151,8 +145,7 @@ public class ItunesController {
             album =
                     existingAlbum.get();
 
-            // Make sure the album has the
-            // latest artwork from iTunes
+
 
             if (artworkUrl != null &&
                     !artworkUrl.isBlank()) {
@@ -194,9 +187,7 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // GET SONGS FROM ITUNES
-        // =========================
+
 
         ItunesTrackResponse trackResponse =
                 itunesService.getAlbumTracks(
@@ -204,9 +195,6 @@ public class ItunesController {
                 );
 
 
-        // =========================
-        // SAVE SONGS
-        // =========================
 
         if (trackResponse != null &&
                 trackResponse.getResults() != null) {
@@ -214,14 +202,14 @@ public class ItunesController {
             for (ItunesTrack track :
                     trackResponse.getResults()) {
 
-                // Only save actual songs
+
 
                 if (track.getTrackId() == null) {
                     continue;
                 }
 
 
-                // Don't save the same song twice
+
 
                 boolean songExists =
                         songRepository
@@ -259,10 +247,6 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // GO TO ALBUM PROFILE
-        // =========================
-
         return "redirect:/albums/" + album.getId();
     }
 
@@ -273,9 +257,6 @@ public class ItunesController {
             @RequestParam String albumName
     ) {
 
-        /*
-         * Search iTunes for the album.
-         */
         ItunesAlbumResponse response =
                 itunesService.searchAlbums(
                         artistName + " " + albumName
@@ -288,18 +269,28 @@ public class ItunesController {
             return "redirect:/artists";
         }
 
-        /*
-         * Use the first iTunes result.
-         */
-        var album = response.getResults().get(0);
+        var matchingAlbum = response.getResults()
+                .stream()
+                .filter(album ->
+                        album.getArtistName() != null &&
+                                album.getCollectionName() != null
+                )
+                .filter(album ->
+                        normalise(album.getArtistName())
+                                .equals(normalise(artistName))
+                )
+                .filter(album ->
+                        normalise(album.getCollectionName())
+                                .equals(normalise(albumName))
+                )
+                .findFirst();
 
-        /*
-         * Save the album using the existing
-         * /album/save functionality.
-         *
-         * We redirect there with the iTunes
-         * collection ID.
-         */
+        if (matchingAlbum.isEmpty()) {
+            return "redirect:/artists";
+        }
+
+        var album = matchingAlbum.get();
+
         return "redirect:/album/save"
                 + "?collectionId=" + album.getCollectionId()
                 + "&artistName=" + artistName
@@ -307,7 +298,25 @@ public class ItunesController {
                 + "&artworkUrl=" + album.getHighResolutionArtworkUrl()
                 + "&releaseDate=" + album.getReleaseDate();
     }
+    private String normalise(String text) {
 
+        return text
+                .toLowerCase()
+                .replace("&", "and")
+                .replaceAll(
+                        "\\((remastered|deluxe|explicit|clean|expanded|anniversary).*?\\)",
+                        ""
+                )
+                .replaceAll(
+                        "\\[(remastered|deluxe|explicit|clean|expanded|anniversary).*?\\]",
+                        ""
+                )
+                .replaceAll("[-–—]", " ")
+                .replaceAll("[^a-z0-9 ]", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
 
 }
+
 

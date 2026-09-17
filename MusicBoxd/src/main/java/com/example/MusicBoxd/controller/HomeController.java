@@ -32,7 +32,7 @@ public class HomeController {
             HttpSession session
     ) {
 
-        // Global Top 40
+
         LastFmResponse response =
                 lastFmService.getTopArtists();
 
@@ -43,7 +43,7 @@ public class HomeController {
                         .subList(0, 10)
         );
 
-        // Suggested Album of the Day
+
         ItunesAlbum suggestedAlbum =
                 itunesService.getDailyAlbum();
 
@@ -52,7 +52,7 @@ public class HomeController {
                 suggestedAlbum
         );
 
-        // Spotify
+
         String spotifyAccessToken =
                 (String) session.getAttribute(
                         "spotifyAccessToken"
