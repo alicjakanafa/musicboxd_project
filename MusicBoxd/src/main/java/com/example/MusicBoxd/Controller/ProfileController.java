@@ -36,7 +36,7 @@ public class ProfileController {
     ) {
 
         User user = new User();
-        user.setUsername("michael kirk");
+        user.setUsername("charlie jackson");
         user.setCreatedAt(LocalDateTime.now());
 
         List<Review> reviews = reviewRepository.findByUserId(id);
