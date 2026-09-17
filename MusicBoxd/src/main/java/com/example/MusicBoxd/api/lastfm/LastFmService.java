@@ -14,11 +14,10 @@ public class LastFmService {
 
     public LastFmService(
             RestTemplate restTemplate,
-             @Value("${lastfm.api.key}") String apiKey
+            @Value("${lastfm.api.key}") String apiKey
     ) {
         this.restTemplate = restTemplate;
-
-        this.apiKey =  apiKey;
+        this.apiKey = apiKey;
     }
 
 
@@ -32,10 +31,22 @@ public class LastFmService {
                 .fromUriString(
                         "https://ws.audioscrobbler.com/2.0/"
                 )
-                .queryParam("method", "chart.gettopartists")
-                .queryParam("api_key", apiKey)
-                .queryParam("format", "json")
-                .queryParam("limit", 40)
+                .queryParam(
+                        "method",
+                        "chart.gettopartists"
+                )
+                .queryParam(
+                        "api_key",
+                        apiKey
+                )
+                .queryParam(
+                        "format",
+                        "json"
+                )
+                .queryParam(
+                        "limit",
+                        40
+                )
                 .build()
                 .toUriString();
 
@@ -58,11 +69,26 @@ public class LastFmService {
                 .fromUriString(
                         "https://ws.audioscrobbler.com/2.0/"
                 )
-                .queryParam("method", "artist.getinfo")
-                .queryParam("artist", artistName)
-                .queryParam("api_key", apiKey)
-                .queryParam("format", "json")
-                .queryParam("autocorrect", 1)
+                .queryParam(
+                        "method",
+                        "artist.getinfo"
+                )
+                .queryParam(
+                        "artist",
+                        artistName
+                )
+                .queryParam(
+                        "api_key",
+                        apiKey
+                )
+                .queryParam(
+                        "format",
+                        "json"
+                )
+                .queryParam(
+                        "autocorrect",
+                        1
+                )
                 .build()
                 .toUriString();
 
@@ -72,10 +98,21 @@ public class LastFmService {
                         String.class
                 );
 
-        System.out.println("=================================");
-        System.out.println("LAST.FM RAW RESPONSE");
-        System.out.println(rawResponse);
-        System.out.println("=================================");
+        System.out.println(
+                "================================="
+        );
+
+        System.out.println(
+                "LAST.FM RAW RESPONSE"
+        );
+
+        System.out.println(
+                rawResponse
+        );
+
+        System.out.println(
+                "================================="
+        );
 
         return restTemplate.getForObject(
                 url,
@@ -96,12 +133,30 @@ public class LastFmService {
                 .fromUriString(
                         "https://ws.audioscrobbler.com/2.0/"
                 )
-                .queryParam("method", "artist.gettopalbums")
-                .queryParam("artist", artistName)
-                .queryParam("api_key", apiKey)
-                .queryParam("format", "json")
-                .queryParam("limit", 50)
-                .queryParam("autocorrect", 1)
+                .queryParam(
+                        "method",
+                        "artist.gettopalbums"
+                )
+                .queryParam(
+                        "artist",
+                        artistName
+                )
+                .queryParam(
+                        "api_key",
+                        apiKey
+                )
+                .queryParam(
+                        "format",
+                        "json"
+                )
+                .queryParam(
+                        "limit",
+                        50
+                )
+                .queryParam(
+                        "autocorrect",
+                        1
+                )
                 .build()
                 .toUriString();
 
@@ -113,31 +168,114 @@ public class LastFmService {
 
 
     // =========================
-    // ALBUM TRACKS
+    // ALBUM SEARCH
     // =========================
 
-    public LastFmAlbumResponse getAlbumInfo(
-            String artistName,
-            String albumName
+    public LastFmSearchResponse searchAlbums(
+            String query
     ) {
 
         String url = UriComponentsBuilder
                 .fromUriString(
                         "https://ws.audioscrobbler.com/2.0/"
                 )
-                .queryParam("method", "album.getinfo")
-                .queryParam("artist", artistName)
-                .queryParam("album", albumName)
-                .queryParam("api_key", apiKey)
-                .queryParam("format", "json")
-                .queryParam("autocorrect", 1)
+                .queryParam(
+                        "method",
+                        "album.search"
+                )
+                .queryParam(
+                        "album",
+                        query
+                )
+                .queryParam(
+                        "api_key",
+                        apiKey
+                )
+                .queryParam(
+                        "format",
+                        "json"
+                )
+                .queryParam(
+                        "limit",
+                        20
+                )
                 .build()
                 .toUriString();
 
-        return restTemplate.getForObject(
-                url,
-                LastFmAlbumResponse.class
-        );
+        try {
+
+            return restTemplate.getForObject(
+                    url,
+                    LastFmSearchResponse.class
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "LAST.FM SEARCH ERROR: " +
+                            e.getMessage()
+            );
+
+            return null;
+        }
+    }
+
+
+    // =========================
+    // ALBUM INFORMATION
+    // =========================
+
+    public LastFmAlbumResponse getAlbumInfo(
+            String artist,
+            String album
+    ) {
+
+        String url = UriComponentsBuilder
+                .fromUriString(
+                        "https://ws.audioscrobbler.com/2.0/"
+                )
+                .queryParam(
+                        "method",
+                        "album.getinfo"
+                )
+                .queryParam(
+                        "artist",
+                        artist
+                )
+                .queryParam(
+                        "album",
+                        album
+                )
+                .queryParam(
+                        "api_key",
+                        apiKey
+                )
+                .queryParam(
+                        "format",
+                        "json"
+                )
+                .queryParam(
+                        "autocorrect",
+                        1
+                )
+                .build()
+                .toUriString();
+
+        try {
+
+            return restTemplate.getForObject(
+                    url,
+                    LastFmAlbumResponse.class
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "LAST.FM ALBUM ERROR: " +
+                            e.getMessage()
+            );
+
+            return null;
+        }
     }
 }
-

@@ -3,16 +3,21 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
 
-  <title th:text="${album.title}">Album</title>
+  <title th:text="${album.title} + ' - MusicBoxd'">
+    Album - MusicBoxd
+  </title>
 
   <link rel="stylesheet" th:href="@{/css/album-profile.css}">
   <link rel="stylesheet" th:href="@{/css/navbar.css}">
   <link rel="stylesheet" th:href="@{/css/footer.css}">
-
 
 </head>
 
@@ -23,19 +28,25 @@
 <div class="album-page">
 
 
+  <!-- =========================
+       ALBUM HEADER
+       ========================= -->
+
   <section class="album-header">
 
     <div class="album-art">
 
+      <!-- LAST.FM ARTWORK -->
+
       <img
-              th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
-              th:src="${album.artworkUrl}"
+              th:if="${lastFmAlbum != null and lastFmAlbum.image != null and !lastFmAlbum.image.isEmpty()}"
+              th:src="${lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text}"
               th:alt="${album.title}"
       >
 
       <div
               class="album-art-placeholder"
-              th:if="${album.artworkUrl == null or album.artworkUrl.isEmpty()}"
+              th:if="${lastFmAlbum == null or lastFmAlbum.image == null or lastFmAlbum.image.isEmpty()}"
       >
         No artwork
       </div>
@@ -51,6 +62,9 @@
         Album Name
       </h1>
 
+
+      <!-- ARTIST -->
+
       <h2 th:if="${artist != null}">
 
         <a
@@ -62,12 +76,18 @@
 
       </h2>
 
+
+      <!-- RELEASE DATE FROM LAST.FM -->
+
       <p
-              th:if="${album.releaseYear != null}"
-              th:text="${album.releaseYear}"
+              th:if="${lastFmAlbum != null and lastFmAlbum.releasedate != null}"
+              th:text="${lastFmAlbum.releasedate}"
       >
-        2026
+        Release date
       </p>
+
+
+      <!-- REVIEW -->
 
       <a
               th:href="@{/reviews/{id}(id=${album.id})}"
@@ -76,49 +96,126 @@
         Review this album
       </a>
 
+
+      <!-- TOP 4 -->
+
+      <div class="top-four">
+
+        <h3>
+          Add to your Top 4
+        </h3>
+
+        <form
+                th:action="@{/albums/{id}/favourite(id=${album.id})}"
+                method="post"
+                class="top-four-form"
+        >
+
+          <select name="position">
+
+            <option value="1">
+              Top 4 — #1
+            </option>
+
+            <option value="2">
+              Top 4 — #2
+            </option>
+
+            <option value="3">
+              Top 4 — #3
+            </option>
+
+            <option value="4">
+              Top 4 — #4
+            </option>
+
+          </select>
+
+          <button
+                  type="submit"
+                  class="top-four-button"
+          >
+            Add to Top 4
+          </button>
+
+        </form>
+
+      </div>
+
     </div>
 
   </section>
 
 
+  <!-- =========================
+       SONGS
+       ========================= -->
+
   <section class="songs">
 
-    <h2>Songs</h2>
+    <h2>
+      Songs
+    </h2>
+
+
+    <!-- LAST.FM TRACKLIST -->
 
     <div
             class="song"
-            th:each="song : ${songs}"
+            th:each="song, status : ${lastFmAlbum.tracks.track}"
     >
+
+      <!-- TRACK NUMBER -->
 
       <div class="track-number">
 
-            <span th:text="${song.trackNumber}">
-                1
-            </span>
+                <span th:text="${status.count}">
+                    1
+                </span>
 
       </div>
 
 
+      <!-- SONG NAME -->
+
       <div class="song-information">
 
-        <h3 th:text="${song.title}">
+        <h3 th:text="${song.name}">
           Song Title
         </h3>
 
       </div>
 
 
+      <!-- DURATION -->
+
+      <div
+              class="song-duration"
+              th:if="${song.duration != null and !song.duration.isEmpty()}"
+      >
+
+                <span th:text="${song.formattedDuration}">
+                    0:00
+                </span>
+
+      </div>
+
+
+      <!-- ITUNES PREVIEW -->
+
       <div
               class="song-preview"
-              th:if="${song.songUrl != null}"
+              th:if="${trackPreviews[song.name] != null}"
       >
 
         <audio controls>
 
           <source
-                  th:src="${song.songUrl}"
+                  th:src="${trackPreviews[song.name]}"
                   type="audio/mpeg"
           >
+
+          Your browser does not support audio playback.
 
         </audio>
 
@@ -126,10 +223,129 @@
 
     </div>
 
+
+    <!-- NO TRACKS -->
+
+    <div
+            class="empty-message"
+            th:if="${lastFmAlbum == null or lastFmAlbum.tracks == null or lastFmAlbum.tracks.track == null or lastFmAlbum.tracks.track.isEmpty()}"
+    >
+
+      <p>
+        No tracklist available for this album.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       REVIEWS
+       ========================= -->
+
+  <section class="reviews">
+
+    <h2>
+      Reviews
+    </h2>
+
+
+    <!-- REVIEWS -->
+
+    <div
+            class="review-card"
+            th:each="review : ${reviews}"
+    >
+
+      <!-- REVIEW HEADER -->
+
+      <div class="review-header">
+
+        <div class="review-user">
+
+          <strong
+                  th:if="${reviewUsers[review.userId] != null}"
+                  th:text="${reviewUsers[review.userId].username}"
+          >
+            Username
+          </strong>
+
+          <strong
+                  th:if="${reviewUsers[review.userId] == null}"
+          >
+            User
+          </strong>
+
+        </div>
+
+
+        <!-- RATING -->
+
+        <div class="review-rating">
+
+                    <span
+                            th:text="${review.rating}"
+                    >
+                        0
+                    </span>
+
+          <span>
+                        / 5 ★
+                    </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- REVIEW CONTENT -->
+
+      <div class="review-content">
+
+        <p th:text="${review.content}">
+          Review content
+        </p>
+
+      </div>
+
+
+      <!-- REVIEW DATE -->
+
+      <div
+              class="review-date"
+              th:if="${review.createdAt != null}"
+      >
+
+                <span
+                        th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}"
+                >
+                    01 Jan 2026
+                </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- NO REVIEWS -->
+
+    <div
+            class="empty-message"
+            th:if="${reviews == null or reviews.isEmpty()}"
+    >
+
+      <p>
+        No reviews yet. Be the first to review this album.
+      </p>
+
+    </div>
+
   </section>
 
 
 </div>
+
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 

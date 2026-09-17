@@ -1,388 +1,937 @@
 <!doctype html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
 
-    <title>Profile | MusicBoxd</title>
+  <meta charset="UTF-8">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+  <title>Profile | MusicBoxd</title>
 
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" th:href="@{/css/navbar.css}" />
-    <link rel="stylesheet" th:href="@{/css/profile.css}" />
-  </head>
 
-  <body>
-    <header th:replace="~{fragments/navbar :: navbar}"></header>
+  <!-- Google Fonts -->
 
-    <main class="profile-page">
-      <section class="profile-hero">
-        <div class="profile-avatar">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin
+  >
+
+  <link
+          href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+  >
+
+
+  <!-- CSS -->
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/style.css}"
+  >
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/navbar.css}"
+  >
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/profile.css}"
+  >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+     ========================= -->
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+
+<main class="profile-page">
+
+
+  <!-- =========================
+       PROFILE HEADER
+       ========================= -->
+
+  <section class="profile-hero">
+
+
+    <!-- PROFILE AVATAR -->
+
+    <div class="profile-avatar">
+
+      <img
+              th:if="${user.profilePictureUrl != null
+                            and !user.profilePictureUrl.isEmpty()}"
+              th:src="${user.profilePictureUrl}"
+              alt="Profile picture"
+      >
+
+      <span
+              th:unless="${user.profilePictureUrl != null
+                                and !user.profilePictureUrl.isEmpty()}"
+              class="profile-initial"
+              th:text="${user.username != null
+                        and !user.username.isEmpty()
+                        ? #strings.toUpperCase(
+                            #strings.substring(user.username, 0, 1)
+                          )
+                        : '?'}"
+      >
+                M
+            </span>
+
+    </div>
+
+
+    <!-- USER INFORMATION -->
+
+    <div class="profile-info">
+
+      <h1 th:text="${user.username}">
+        yourusername
+      </h1>
+
+
+      <p
+              class="profile-bio"
+              th:text="${user.bio != null
+                        and !user.bio.isEmpty()
+                        ? user.bio
+                        : 'music listener, overthinker, and album collector'}"
+      >
+        music listener, overthinker, and album collector
+      </p>
+
+
+      <p class="profile-joined">
+
+        Joined
+
+        <span
+                th:if="${user.createdAt != null}"
+                th:text="${#temporals.format(
+                            user.createdAt,
+                            'MMMM yyyy'
+                        )}"
+        >
+                    March 2025
+                </span>
+
+      </p>
+
+    </div>
+
+
+    <!-- EDIT PROFILE -->
+
+    <button
+            type="button"
+            class="edit-profile-button"
+    >
+      Edit Profile
+    </button>
+
+
+    <!-- PROFILE STATS -->
+
+    <div class="profile-stats">
+
+
+      <!-- REVIEWS -->
+
+      <div class="profile-stat">
+
+        <strong
+                th:text="${reviews != null
+                            ? reviews.size()
+                            : 0}"
+        >
+          0
+        </strong>
+
+        <span>
+                    Reviews
+                </span>
+
+      </div>
+
+
+      <!-- LISTS -->
+
+      <div class="profile-stat">
+
+        <strong>
+          17
+        </strong>
+
+        <span>
+                    Lists
+                </span>
+
+      </div>
+
+
+      <!-- FOLLOWING -->
+
+      <div class="profile-stat">
+
+        <strong>
+          89
+        </strong>
+
+        <span>
+                    Following
+                </span>
+
+      </div>
+
+
+      <!-- FOLLOWERS -->
+
+      <div class="profile-stat">
+
+        <strong>
+          56
+        </strong>
+
+        <span>
+                    Followers
+                </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================
+       PROFILE DASHBOARD
+       ========================= -->
+
+  <div class="profile-dashboard">
+
+
+    <!-- =========================
+         RECENT REVIEWS
+         ========================= -->
+
+    <section class="profile-panel user-reviews">
+
+      <!-- SECTION HEADER -->
+
+      <div class="panel-heading">
+
+        <h2>
+          Recent Reviews
+        </h2>
+
+        <a href="#">
+          See all →
+        </a>
+
+      </div>
+
+
+      <!-- NO REVIEWS -->
+
+      <div
+              class="empty-state"
+              th:if="${reviews == null or reviews.isEmpty()}"
+      >
+
+        You haven't written any reviews yet.
+
+      </div>
+
+
+      <!-- SCROLLABLE REVIEWS -->
+
+      <div
+              class="review-scroll"
+              th:unless="${reviews == null or reviews.isEmpty()}"
+      >
+
+        <div class="review-grid">
+
+          <article
+                  class="review-card"
+                  th:each="review : ${reviews}"
+                  th:with="album=${albums.get(review.albumId)}"
+          >
+
+            <!-- ALBUM ARTWORK -->
+
+            <div class="review-artwork">
+
+              <!-- LAST.FM IMAGE -->
+
+              <img
+                      th:if="${lastFmArtwork != null
+                                        and lastFmArtwork[review.albumId] != null}"
+                      th:src="${lastFmArtwork[review.albumId]}"
+                      th:alt="${album != null
+                                        ? album.title
+                                        : 'Album artwork'}"
+              >
+
+              <!-- FALLBACK -->
+
+              <div
+                      class="album-placeholder"
+                      th:unless="${lastFmArtwork != null
+                                        and lastFmArtwork[review.albumId] != null}"
+              >
+              </div>
+
+            </div>
+
+
+            <!-- ALBUM TITLE -->
+
+            <h3
+                    th:text="${album != null
+                                    ? album.title
+                                    : 'Album unavailable'}"
+            >
+              Album title
+            </h3>
+
+
+            <!-- REVIEW TITLE -->
+
+            <p
+                    class="review-subtitle"
+                    th:if="${review.header != null
+                                    and !review.header.isEmpty()}"
+                    th:text="${review.header}"
+            >
+              Review title
+            </p>
+
+
+            <!-- REVIEW CONTENT -->
+
+            <p
+                    class="review-text"
+                    th:if="${review.content != null
+                                    and !review.content.isEmpty()}"
+                    th:text="${review.content}"
+            >
+              Review content
+            </p>
+
+
+            <!-- RATING -->
+
+            <div class="review-rating">
+
+              ★
+
+              <span
+                      th:text="${review.rating}"
+              >
+                        4.5
+                    </span>
+
+              / 5
+
+            </div>
+
+
+            <!-- REVIEW DATE -->
+
+            <small
+                    th:if="${review.createdAt != null}"
+                    th:text="${#temporals.format(
+                                    review.createdAt,
+                                    'dd MMM yyyy'
+                                )}"
+            >
+              16 Sep 2026
+            </small>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         TOP ARTISTS
+         ========================= -->
+
+    <section class="profile-panel top-artists">
+
+
+      <div class="panel-heading">
+
+        <h2>
+          Top Artists
+        </h2>
+
+        <span>
+                    Last 6 months
+                </span>
+
+      </div>
+
+
+      <!-- NO SPOTIFY DATA -->
+
+      <div
+              class="empty-state"
+              th:if="${topArtists == null or topArtists.isEmpty()}"
+      >
+
+        Connect Spotify to see your top artists.
+
+      </div>
+
+
+      <!-- ARTISTS -->
+
+      <div
+              class="artist-list"
+              th:unless="${topArtists == null or topArtists.isEmpty()}"
+      >
+
+
+        <div
+                class="artist-row"
+                th:each="artist, stat : ${topArtists}"
+        >
+
+
+          <!-- RANK -->
+
+          <strong
+                  th:text="${stat.count}"
+          >
+            1
+          </strong>
+
+
+          <!-- ARTIST IMAGE -->
+
           <img
-            th:if="${user.profilePictureUrl != null
-                    and !user.profilePictureUrl.isEmpty()}"
-            th:src="${user.profilePictureUrl}"
-            alt="Profile picture"
-          />
+                  th:if="${artist.images != null
+                                    and !artist.images.isEmpty()}"
+                  th:src="${artist.images.get(0).url}"
+                  th:alt="${artist.name}"
+                  class="artist-image"
+          >
+
+
+          <!-- IMAGE FALLBACK -->
+
+          <div
+                  th:unless="${artist.images != null
+                                         and !artist.images.isEmpty()}"
+                  class="artist-image-placeholder"
+          >
+          </div>
+
+
+          <!-- ARTIST NAME -->
 
           <span
-            th:unless="${user.profilePictureUrl != null
-                        and !user.profilePictureUrl.isEmpty()}"
-            class="profile-initial"
-            th:text="${user.username != null
-                and !user.username.isEmpty()
-                ? #strings.toUpperCase(
-                    #strings.substring(user.username, 0, 1)
-                  )
-                : '?'}"
+                  th:text="${artist.name}"
           >
-            M
-          </span>
+                        Artist name
+                    </span>
+
         </div>
 
-        <!-- user card starts -->
-
-        <div class="profile-info">
-          <h1 th:text="${user.username}">yourusername</h1>
-
-          <p
-            class="profile-bio"
-            th:text="${user.bio != null
-                and !user.bio.isEmpty()
-                ? user.bio
-                : 'music listener, overthinker, and album collector'}"
-          >
-            music listener, overthinker, and album collector
-          </p>
-
-          <p class="profile-joined">
-            Joined
-            <span
-              th:text="${#temporals.format(
-                    user.createdAt,
-                    'MMMM yyyy'
-                )}"
-            >
-              March 2025
-            </span>
-          </p>
-        </div>
-
-        <!-- currently this button does not lead to an edit profile page but that can be workshopped -->
-        <button type="button" class="edit-profile-button">Edit Profile</button>
-
-        <!-- these stats are hardcoded until otherwise -->
-        <div class="profile-stats">
-          <div class="profile-stat">
-            <strong>124</strong>
-            <span>Reviews</span>
-          </div>
-
-          <div class="profile-stat">
-            <strong>17</strong>
-            <span>Lists</span>
-          </div>
-
-          <div class="profile-stat">
-            <strong>89</strong>
-            <span>Following</span>
-          </div>
-
-          <div class="profile-stat">
-            <strong>56</strong>
-            <span>Followers</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- user card ends -->
-    
-      <!-- user reviews starts -->
-
-      <div class="profile-dashboard">
-        <section class="profile-panel user-reviews">
-          <div class="panel-heading">
-            <h2>User Reviews</h2>
-
-            <a href="#"> See all → </a>
-          </div>
-
-          <div
-            class="empty-state"
-            th:if="${reviews == null or reviews.isEmpty()}"
-          >
-            You haven't written any reviews yet.
-          </div>
-
-          <div
-            class="review-grid"
-            th:unless="${reviews == null or reviews.isEmpty()}"
-          >
-            <article
-              class="review-card"
-              th:each="review, reviewStat : ${reviews}"
-              th:if="${reviewStat.index < 4}"
-              th:with="album=${albums.get(review.albumId)}"
-            >
-              <div class="review-artwork">
-                <img
-                  th:if="${album != null
-                            and album.artworkUrl != null
-                            and !album.artworkUrl.isEmpty()}"
-                  th:src="${album.artworkUrl}"
-                  th:alt="${album.title}"
-                />
-
-                <div
-                  class="album-placeholder"
-                  th:unless="${album != null
-                               and album.artworkUrl != null
-                               and !album.artworkUrl.isEmpty()}"
-                ></div>
-              </div>
-
-              <h3
-                th:text="${album != null
-                    ? album.title
-                    : 'Album unavailable'}"
-              >
-                Album title
-              </h3>
-
-              <p
-                class="review-subtitle"
-                th:if="${review.header != null
-                       and !review.header.isEmpty()}"
-                th:text="${review.header}"
-              >
-                Review title
-              </p>
-
-              <div class="review-rating">
-                ★
-                <span th:text="${review.rating}"> 4.5 </span>
-                / 5
-              </div>
-
-              <small
-                th:if="${review.createdAt != null}"
-                th:text="${#temporals.format(
-                    review.createdAt,
-                    'dd MMM yyyy'
-                )}"
-              >
-                16 Sep 2026
-              </small>
-            </article>
-          </div>
-        </section>
-
-        <!-- user reviews ends -->
-
-        <!-- top artists section starts -->
-
-        <section class="profile-panel top-artists">
-          <div class="panel-heading">
-            <h2>Top Artists</h2>
-            <span>Last 6 months</span>
-          </div>
-
-          <div class="artist-list">
-            <div class="artist-row">
-              <strong>1</strong>
-              <div class="artist-image-placeholder"></div>
-              <span>Charli xcx</span>
-            </div>
-
-            <div class="artist-row">
-              <strong>2</strong>
-              <div class="artist-image-placeholder"></div>
-              <span>Billie Eilish</span>
-            </div>
-
-            <div class="artist-row">
-              <strong>3</strong>
-              <div class="artist-image-placeholder"></div>
-              <span>Radiohead</span>
-            </div>
-
-            <div class="artist-row">
-              <strong>4</strong>
-              <div class="artist-image-placeholder"></div>
-              <span>Phoebe Bridgers</span>
-            </div>
-
-            <div class="artist-row">
-              <strong>5</strong>
-              <div class="artist-image-placeholder"></div>
-              <span>The 1975</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- top artists section ends here -->
-
-        <!-- favourite albums starts here -->
-
-        <section class="profile-panel favourite-albums">
-          <div class="panel-heading">
-            <h2>Favourite Albums</h2>
-          </div>
-
-          <div class="album-grid">
-            <article class="album-card">
-              <div class="album-placeholder"></div>
-              <h3>Melodrama</h3>
-              <p>Lorde</p>
-            </article>
-
-            <article class="album-card">
-              <div class="album-placeholder"></div>
-              <h3>Titanic Rising</h3>
-              <p>Weyes Blood</p>
-            </article>
-
-            <article class="album-card">
-              <div class="album-placeholder"></div>
-              <h3>Blonde</h3>
-              <p>Frank Ocean</p>
-            </article>
-
-            <article class="album-card">
-              <div class="album-placeholder"></div>
-              <h3>Punisher</h3>
-              <p>Phoebe Bridgers</p>
-            </article>
-          </div>
-        </section>
-
-        <!-- favourite albums ends here -->
-
-        <!-- listening statistics :) hardcoded tho! -->
-
-        <section class="profile-panel listening-stats-panel">
-          <div class="panel-heading">
-            <h2>Listening Stats</h2>
-            <span>Last 6 months</span>
-          </div>
-
-          <div class="listening-stats-grid">
-            <div class="listening-stat">
-              <strong>2,487</strong>
-              <span>Scrobbles</span>
-            </div>
-
-            <div class="listening-stat">
-              <strong>68</strong>
-              <span>New Artists</span>
-            </div>
-
-            <div class="listening-stat">
-              <strong>312</strong>
-              <span>Albums</span>
-            </div>
-
-            <div class="listening-stat">
-              <strong>24</strong>
-              <span>Genres</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- listening stats ends here -->
-
-        <!-- user-made lists start here -->
-
-        <section class="profile-panel my-lists">
-          <div class="panel-heading">
-            <h2>My Lists</h2>
-            <a href="#">See all →</a>
-          </div>
-
-          <div class="lists-grid">
-            <article class="list-card">
-              <div class="list-placeholder"></div>
-              <h3>Current Favourites</h3>
-              <p>42 songs</p>
-            </article>
-
-            <article class="list-card">
-              <div class="list-placeholder"></div>
-              <h3>Road Trip</h3>
-              <p>87 songs</p>
-            </article>
-
-            <article class="list-card">
-              <div class="list-placeholder"></div>
-              <h3>Sad Girl Hours</h3>
-              <p>64 songs</p>
-            </article>
-
-            <article class="list-card">
-              <div class="list-placeholder"></div>
-              <h3>Workout</h3>
-              <p>28 songs</p>
-            </article>
-          </div>
-        </section>
-
-        <!-- user-made lists ends here -->
-
-        <!-- following starts -->
-
-        <section class="profile-panel following">
-          <div class="panel-heading">
-            <h2>Following</h2>
-            <a href="#">See all →</a>
-          </div>
-
-          <div class="following-list">
-            <div class="following-row">
-              <div class="following-avatar">A</div>
-
-              <div class="following-info">
-                <strong>albumfiend</strong>
-                <span>120 reviews</span>
-              </div>
-
-              <button>Follow</button>
-            </div>
-
-            <div class="following-row">
-              <div class="following-avatar">I</div>
-
-              <div class="following-info">
-                <strong>indiehead</strong>
-                <span>music for a better day</span>
-              </div>
-
-              <button>Follow</button>
-            </div>
-
-            <div class="following-row">
-              <div class="following-avatar">P</div>
-
-              <div class="following-info">
-                <strong>popgirlie</strong>
-                <span>mostly pop, sometimes sad</span>
-              </div>
-
-              <button>Follow</button>
-            </div>
-          </div>
-        </section>
-        <!-- following ends here -->
       </div>
-    </main>
 
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-  </body>
+    </section>
+
+
+
+    <!-- =========================
+         TOP 4
+         ========================= -->
+
+    <section class="profile-panel favourite-albums">
+
+
+      <div class="panel-heading">
+
+        <h2>
+          Top 4
+        </h2>
+
+      </div>
+
+
+      <!-- NO FAVOURITES -->
+
+      <div
+              class="empty-state"
+              th:if="${favouriteAlbums == null
+                            or favouriteAlbums.isEmpty()}"
+      >
+
+        <p>
+          You haven't chosen your Top 4 albums yet.
+        </p>
+
+      </div>
+
+
+      <!-- FAVOURITE ALBUMS -->
+
+      <div
+              class="album-grid"
+              th:unless="${favouriteAlbums == null
+                                or favouriteAlbums.isEmpty()}"
+      >
+
+
+        <article
+                class="album-card"
+                th:each="album : ${favouriteAlbums}"
+        >
+
+
+          <!-- ALBUM LINK -->
+
+          <a
+                  th:href="@{/albums/{id}(id=${album.id})}"
+                  class="album-link"
+          >
+
+
+            <!-- =========================
+                 LAST.FM ARTWORK
+                 ========================= -->
+
+            <img
+                    th:if="${lastFmArtwork != null
+                                        and lastFmArtwork[album.id] != null}"
+                    th:src="${lastFmArtwork[album.id]}"
+                    th:alt="${album.title}"
+                    class="album-artwork"
+            >
+
+
+            <!-- ARTWORK FALLBACK -->
+
+            <div
+                    class="album-placeholder"
+                    th:unless="${lastFmArtwork != null
+                                             and lastFmArtwork[album.id] != null}"
+            >
+            </div>
+
+          </a>
+
+
+          <!-- ALBUM INFORMATION -->
+
+          <div class="album-card-info">
+
+
+            <h3
+                    th:text="${album.title}"
+            >
+              Album title
+            </h3>
+
+
+            <!-- REMOVE FROM TOP 4 -->
+
+            <form
+                    th:action="@{/albums/{id}/favourite/remove(id=${album.id})}"
+                    method="post"
+            >
+
+              <button
+                      type="submit"
+                      class="profile-remove-button"
+              >
+                Remove
+              </button>
+
+            </form>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         LISTENING STATISTICS
+         ========================= -->
+
+    <section class="profile-panel listening-statistics">
+
+
+      <div class="panel-heading">
+
+        <h2>
+          Listening Statistics
+        </h2>
+
+        <span>
+                    Spotify
+                </span>
+
+      </div>
+
+
+      <!-- SPOTIFY NOT CONNECTED -->
+
+      <div
+              class="empty-state"
+              th:if="${spotifyConnected == null
+                            or !spotifyConnected}"
+      >
+
+        Connect Spotify to see your listening statistics.
+
+      </div>
+
+
+      <!-- SPOTIFY CONNECTED -->
+
+      <div
+              class="listening-stats-grid"
+              th:if="${spotifyConnected == true}"
+      >
+
+
+        <!-- RECENT TRACKS -->
+
+        <div class="listening-stat">
+
+          <strong
+                  th:text="${recentTracksCount != null
+                                ? recentTracksCount
+                                : 0}"
+          >
+            0
+          </strong>
+
+          <span>
+                        Recent Tracks
+                    </span>
+
+        </div>
+
+
+        <!-- UNIQUE ARTISTS -->
+
+        <div class="listening-stat">
+
+          <strong
+                  th:text="${uniqueArtistsCount != null
+                                ? uniqueArtistsCount
+                                : 0}"
+          >
+            0
+          </strong>
+
+          <span>
+                        Unique Artists
+                    </span>
+
+        </div>
+
+
+        <!-- UNIQUE TRACKS -->
+
+        <div class="listening-stat">
+
+          <strong
+                  th:text="${uniqueTracksCount != null
+                                ? uniqueTracksCount
+                                : 0}"
+          >
+            0
+          </strong>
+
+          <span>
+                        Unique Tracks
+                    </span>
+
+        </div>
+
+
+        <!-- LISTENING MINUTES -->
+
+        <div class="listening-stat">
+
+          <strong
+                  th:text="${listeningMinutes != null
+                                ? listeningMinutes
+                                : 0}"
+          >
+            0
+          </strong>
+
+          <span>
+                        Minutes Listened
+                    </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         MY LISTS
+         ========================= -->
+
+    <section class="profile-panel my-lists">
+
+
+      <div class="panel-heading">
+
+        <h2>
+          My Lists
+        </h2>
+
+        <a href="#">
+          See all →
+        </a>
+
+      </div>
+
+
+      <div class="lists-grid">
+
+
+        <!-- CURRENT FAVOURITES -->
+
+        <article class="list-card">
+
+          <div class="list-placeholder"></div>
+
+          <h3>
+            Current Favourites
+          </h3>
+
+          <p>
+            42 songs
+          </p>
+
+        </article>
+
+
+        <!-- ROAD TRIP -->
+
+        <article class="list-card">
+
+          <div class="list-placeholder"></div>
+
+          <h3>
+            Road Trip
+          </h3>
+
+          <p>
+            87 songs
+          </p>
+
+        </article>
+
+
+        <!-- SAD GIRL HOURS -->
+
+        <article class="list-card">
+
+          <div class="list-placeholder"></div>
+
+          <h3>
+            Sad Girl Hours
+          </h3>
+
+          <p>
+            64 songs
+          </p>
+
+        </article>
+
+
+        <!-- WORKOUT -->
+
+        <article class="list-card">
+
+          <div class="list-placeholder"></div>
+
+          <h3>
+            Workout
+          </h3>
+
+          <p>
+            28 songs
+          </p>
+
+        </article>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         FOLLOWING
+         ========================= -->
+
+    <section class="profile-panel following">
+
+
+      <div class="panel-heading">
+
+        <h2>
+          Following
+        </h2>
+
+        <a href="#">
+          See all →
+        </a>
+
+      </div>
+
+
+      <div class="following-list">
+
+
+        <!-- USER 1 -->
+
+        <div class="following-row">
+
+          <div class="following-avatar">
+            A
+          </div>
+
+
+          <div class="following-info">
+
+            <strong>
+              albumfiend
+            </strong>
+
+            <span>
+                            120 reviews
+                        </span>
+
+          </div>
+
+
+          <button>
+            Follow
+          </button>
+
+        </div>
+
+
+        <!-- USER 2 -->
+
+        <div class="following-row">
+
+          <div class="following-avatar">
+            I
+          </div>
+
+
+          <div class="following-info">
+
+            <strong>
+              indiehead
+            </strong>
+
+            <span>
+                            music for a better day
+                        </span>
+
+          </div>
+
+
+          <button>
+            Follow
+          </button>
+
+        </div>
+
+
+        <!-- USER 3 -->
+
+        <div class="following-row">
+
+          <div class="following-avatar">
+            P
+          </div>
+
+
+          <div class="following-info">
+
+            <strong>
+              popgirlie
+            </strong>
+
+            <span>
+                            mostly pop, sometimes sad
+                        </span>
+
+          </div>
+
+
+          <button>
+            Follow
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  </div>
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+     ========================= -->
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+
+</body>
+
 </html>
