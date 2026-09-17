@@ -6,32 +6,38 @@ import com.example.MusicBoxd.Model.Song;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.Repository.SongRepository;
-import com.example.MusicBoxd.api.itunes.ItunesAlbumResponse;
 import com.example.MusicBoxd.api.itunes.ItunesService;
 import com.example.MusicBoxd.api.itunes.ItunesTrack;
 import com.example.MusicBoxd.api.itunes.ItunesTrackResponse;
+import com.example.MusicBoxd.api.lastfm.LastFmAlbum;
+import com.example.MusicBoxd.api.lastfm.LastFmSearchResponse;
+import com.example.MusicBoxd.api.lastfm.LastFmService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class ItunesController {
 
     private final ItunesService itunesService;
+    private final LastFmService lastFmService;
     private final ArtistRepository artistRepository;
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
 
     public ItunesController(
             ItunesService itunesService,
+            LastFmService lastFmService,
             ArtistRepository artistRepository,
             AlbumRepository albumRepository,
             SongRepository songRepository
     ) {
         this.itunesService = itunesService;
+        this.lastFmService = lastFmService;
         this.artistRepository = artistRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
@@ -43,21 +49,37 @@ public class ItunesController {
             Model model
     ) {
 
-        ItunesAlbumResponse response =
-                itunesService.searchAlbums(query);
-
-        model.addAttribute(
-                "albums",
-                response.getResults()
-        );
+        LastFmSearchResponse response =
+                lastFmService.searchAlbums(query);
 
         model.addAttribute(
                 "query",
                 query
         );
 
+        if (response != null &&
+                response.getResults() != null &&
+                response.getResults().getAlbummatches() != null &&
+                response.getResults().getAlbummatches().getAlbum() != null) {
+
+            model.addAttribute(
+                    "albums",
+                    response.getResults()
+                            .getAlbummatches()
+                            .getAlbum()
+            );
+
+        } else {
+
+            model.addAttribute(
+                    "albums",
+                    List.of()
+            );
+        }
+
         return "album-search";
     }
+
 
     @GetMapping("/search/tracks")
     public String searchTracks(
@@ -81,6 +103,11 @@ public class ItunesController {
         return "track-search";
     }
 
+
+    // =========================================================
+    // SAVE ALBUM FROM ITUNES
+    // =========================================================
+
     @GetMapping("/album/save")
     public String saveAlbum(
             @RequestParam Long collectionId,
@@ -90,28 +117,14 @@ public class ItunesController {
             @RequestParam String releaseDate
     ) {
 
-
-
-        Optional<Artist> existingArtist =
-                artistRepository.findByNameIgnoreCase(
-                        artistName
-                );
-
-        Artist artist;
-
-        if (existingArtist.isPresent()) {
-
-            artist = existingArtist.get();
-
-        } else {
-
-            artist = new Artist(artistName);
-
-            artist =
-                    artistRepository.save(artist);
-        }
-
-
+        Artist artist =
+                artistRepository
+                        .findByNameIgnoreCase(artistName)
+                        .orElseGet(() ->
+                                artistRepository.save(
+                                        new Artist(artistName)
+                                )
+                        );
 
 
         Short releaseYear = null;
@@ -131,35 +144,29 @@ public class ItunesController {
         }
 
 
-
-
         Optional<Album> existingAlbum =
                 albumRepository.findByExternalId(
                         collectionId.toString()
                 );
 
+
         Album album;
+
 
         if (existingAlbum.isPresent()) {
 
-            album =
-                    existingAlbum.get();
+            album = existingAlbum.get();
 
+            album.setTitle(albumName);
+            album.setArtistId(artist.getId());
 
 
             if (artworkUrl != null &&
                     !artworkUrl.isBlank()) {
 
-                album.setArtworkUrl(
-                        artworkUrl
-                );
+                album.setArtworkUrl(artworkUrl);
             }
 
-            album.setTitle(albumName);
-
-            album.setArtistId(
-                    artist.getId()
-            );
 
             if (releaseYear != null) {
 
@@ -167,6 +174,7 @@ public class ItunesController {
                         releaseYear
                 );
             }
+
 
             album =
                     albumRepository.save(album);
@@ -182,74 +190,26 @@ public class ItunesController {
                             artworkUrl
                     );
 
+
             album =
                     albumRepository.save(album);
         }
 
 
+        saveSongs(
+                album,
+                collectionId
+        );
 
 
-        ItunesTrackResponse trackResponse =
-                itunesService.getAlbumTracks(
-                        collectionId
-                );
-
-
-
-        if (trackResponse != null &&
-                trackResponse.getResults() != null) {
-
-            for (ItunesTrack track :
-                    trackResponse.getResults()) {
-
-
-
-                if (track.getTrackId() == null) {
-                    continue;
-                }
-
-
-
-
-                boolean songExists =
-                        songRepository
-                                .findByExternalId(
-                                        track
-                                                .getTrackId()
-                                                .toString()
-                                )
-                                .isPresent();
-
-                if (songExists) {
-                    continue;
-                }
-
-
-                Song song =
-                        new Song(
-                                track
-                                        .getTrackId()
-                                        .toString(),
-
-                                album.getId(),
-
-                                track.getTrackName(),
-
-                                track.getTrackNumber(),
-
-                                track.getPreviewUrl(),
-
-                                track.getArtworkUrl100()
-                        );
-
-                songRepository.save(song);
-            }
-        }
-
-
-        return "redirect:/albums/" + album.getId();
+        return "redirect:/albums/" +
+                album.getId();
     }
 
+
+    // =========================================================
+    // CREATE ALBUM FROM LAST.FM
+    // =========================================================
 
     @GetMapping("/album/from-artist")
     public String getAlbumFromArtist(
@@ -257,66 +217,345 @@ public class ItunesController {
             @RequestParam String albumName
     ) {
 
-        ItunesAlbumResponse response =
-                itunesService.searchAlbums(
-                        artistName + " " + albumName
+        System.out.println(
+                "ALBUM CLICKED"
+        );
+
+        System.out.println(
+                "ARTIST: " +
+                        artistName
+        );
+
+        System.out.println(
+                "ALBUM: " +
+                        albumName
+        );
+
+
+        // -----------------------------------------------------
+        // FIND OR CREATE ARTIST
+        // -----------------------------------------------------
+
+        Artist artist =
+                artistRepository
+                        .findByNameIgnoreCase(
+                                artistName
+                        )
+                        .orElseGet(() ->
+                                artistRepository.save(
+                                        new Artist(
+                                                artistName
+                                        )
+                                )
+                        );
+
+
+        // -----------------------------------------------------
+        // CHECK IF ALBUM ALREADY EXISTS
+        // -----------------------------------------------------
+
+        Optional<Album> existingAlbum =
+                albumRepository
+                        .findByArtistId(
+                                artist.getId()
+                        )
+                        .stream()
+                        .filter(album ->
+                                album.getTitle()
+                                        .equalsIgnoreCase(
+                                                albumName
+                                        )
+                        )
+                        .findFirst();
+
+
+        if (existingAlbum.isPresent()) {
+
+            Album album =
+                    existingAlbum.get();
+
+
+            /*
+             * If the album already exists but does
+             * not have artwork, try to get it from Last.fm.
+             */
+
+            if (album.getArtworkUrl() == null ||
+                    album.getArtworkUrl().isBlank()) {
+
+                String artworkUrl =
+                        getLastFmArtwork(
+                                artistName,
+                                albumName
+                        );
+
+
+                if (artworkUrl != null &&
+                        !artworkUrl.isBlank()) {
+
+                    album.setArtworkUrl(
+                            artworkUrl
+                    );
+
+                    albumRepository.save(
+                            album
+                    );
+                }
+            }
+
+
+            return "redirect:/albums/" +
+                    album.getId();
+        }
+
+
+        // -----------------------------------------------------
+        // GET ARTWORK FROM LAST.FM
+        // -----------------------------------------------------
+
+        String artworkUrl =
+                getLastFmArtwork(
+                        artistName,
+                        albumName
                 );
 
-        if (response == null ||
-                response.getResults() == null ||
-                response.getResults().isEmpty()) {
 
-            return "redirect:/artists";
-        }
+        System.out.println(
+                "LAST.FM ARTWORK: " +
+                        artworkUrl
+        );
 
-        var matchingAlbum = response.getResults()
-                .stream()
-                .filter(album ->
-                        album.getArtistName() != null &&
-                                album.getCollectionName() != null
-                )
-                .filter(album ->
-                        normalise(album.getArtistName())
-                                .equals(normalise(artistName))
-                )
-                .filter(album ->
-                        normalise(album.getCollectionName())
-                                .equals(normalise(albumName))
-                )
-                .findFirst();
 
-        if (matchingAlbum.isEmpty()) {
-            return "redirect:/artists";
-        }
+        // -----------------------------------------------------
+        // CREATE ALBUM
+        // -----------------------------------------------------
 
-        var album = matchingAlbum.get();
+        Album album =
+                new Album(
+                        "lastfm:" +
+                                artistName +
+                                ":" +
+                                albumName,
 
-        return "redirect:/album/save"
-                + "?collectionId=" + album.getCollectionId()
-                + "&artistName=" + artistName
-                + "&albumName=" + album.getCollectionName()
-                + "&artworkUrl=" + album.getHighResolutionArtworkUrl()
-                + "&releaseDate=" + album.getReleaseDate();
+                        artist.getId(),
+
+                        albumName,
+
+                        null,
+
+                        artworkUrl
+                );
+
+
+        Album savedAlbum =
+                albumRepository.save(
+                        album
+                );
+
+
+        return "redirect:/albums/" +
+                savedAlbum.getId();
     }
-    private String normalise(String text) {
+
+
+    // =========================================================
+    // GET LAST.FM ARTWORK
+    // =========================================================
+
+    private String getLastFmArtwork(
+            String artistName,
+            String albumName
+    ) {
+
+        try {
+
+            var response =
+                    lastFmService.getAlbumInfo(
+                            artistName,
+                            albumName
+                    );
+
+
+            if (response == null ||
+                    response.getAlbum() == null) {
+
+                System.out.println(
+                        "No Last.fm album found for: " +
+                                artistName +
+                                " - " +
+                                albumName
+                );
+
+                return null;
+            }
+
+
+            LastFmAlbum album =
+                    response.getAlbum();
+
+
+            if (album.getImage() == null ||
+                    album.getImage().isEmpty()) {
+
+                System.out.println(
+                        "Last.fm album has no images: " +
+                                albumName
+                );
+
+                return null;
+            }
+
+
+            /*
+             * Last.fm normally returns several image sizes.
+             *
+             * Start from the end because this is normally
+             * the largest image available.
+             */
+
+            for (
+                    int i =
+                    album.getImage().size() - 1;
+
+                    i >= 0;
+
+                    i--
+            ) {
+
+                String imageUrl =
+                        album
+                                .getImage()
+                                .get(i)
+                                .getText();
+
+
+                if (imageUrl != null &&
+                        !imageUrl.isBlank()) {
+
+                    return imageUrl;
+                }
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "LAST.FM ARTWORK ERROR: " +
+                            e.getMessage()
+            );
+        }
+
+
+        return null;
+    }
+
+
+    // =========================================================
+    // SAVE SONGS
+    // =========================================================
+
+    private void saveSongs(
+            Album album,
+            Long collectionId
+    ) {
+
+        ItunesTrackResponse trackResponse =
+                itunesService.getAlbumTracks(
+                        collectionId
+                );
+
+
+        if (trackResponse == null ||
+                trackResponse.getResults() == null) {
+
+            return;
+        }
+
+
+        for (ItunesTrack track :
+                trackResponse.getResults()) {
+
+            if (track.getTrackId() == null) {
+                continue;
+            }
+
+
+            boolean songExists =
+                    songRepository
+                            .findByExternalId(
+                                    track.getTrackId()
+                                            .toString()
+                            )
+                            .isPresent();
+
+
+            if (songExists) {
+                continue;
+            }
+
+
+            Song song =
+                    new Song(
+                            track.getTrackId()
+                                    .toString(),
+
+                            album.getId(),
+
+                            track.getTrackName(),
+
+                            track.getTrackNumber(),
+
+                            track.getPreviewUrl(),
+
+                            track.getArtworkUrl100()
+                    );
+
+
+            songRepository.save(
+                    song
+            );
+        }
+    }
+
+
+    // =========================================================
+    // NORMALISE
+    // =========================================================
+
+    private String normalise(
+            String text
+    ) {
+
+        if (text == null) {
+            return "";
+        }
+
 
         return text
                 .toLowerCase()
-                .replace("&", "and")
+                .replace(
+                        "&",
+                        "and"
+                )
                 .replaceAll(
-                        "\\((remastered|deluxe|explicit|clean|expanded|anniversary).*?\\)",
+                        "\\([^)]*(remaster|deluxe|explicit|clean|expanded|anniversary)[^)]*\\)",
                         ""
                 )
                 .replaceAll(
-                        "\\[(remastered|deluxe|explicit|clean|expanded|anniversary).*?\\]",
+                        "\\[[^\\]]*(remaster|deluxe|explicit|clean|expanded|anniversary)[^\\]]*\\]",
                         ""
                 )
-                .replaceAll("[-–—]", " ")
-                .replaceAll("[^a-z0-9 ]", "")
-                .replaceAll("\\s+", " ")
+                .replaceAll(
+                        "[-–—]",
+                        " "
+                )
+                .replaceAll(
+                        "[^a-z0-9 ]",
+                        ""
+                )
+                .replaceAll(
+                        "\\s+",
+                        " "
+                )
                 .trim();
     }
-
 }
-
-
