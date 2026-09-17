@@ -4,11 +4,12 @@
 
 <head>
 
-
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
 
     <title th:text="${artist.name} + ' - MusicBoxd'">
         Artist - MusicBoxd
@@ -18,19 +19,17 @@
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
 
-
 </head>
 
 <body>
 
 <div class="artist-page">
 
-
-    <!-- Shared MusicBoxd navbar -->
     <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 
     <!-- Artist information -->
+
     <header class="artist-header">
 
         <div class="artist-information">
@@ -47,12 +46,21 @@
                     class="artist-listeners"
                     th:if="${artistInfo != null}"
             >
-
-            <span th:text="${artistInfo.listeners}">
-                0
-            </span>
-
+                <span th:text="${artistInfo.listeners}">
+                    0
+                </span>
+                listeners
             </p>
+
+            <!-- Scroll to events button -->
+
+            <button
+                    class="events-button"
+                    onclick="scrollToEvents()"
+                    th:if="${!#lists.isEmpty(concerts)}"
+            >
+                Upcoming Events ↓
+            </button>
 
         </div>
 
@@ -61,61 +69,111 @@
 
     <main>
 
+
+        <!-- ALBUMS -->
+
         <section class="albums-section">
 
             <div class="section-header">
 
-                <h2>
-                    Albums
-                </h2>
+                <div>
+                    <p class="section-label">
+                        DISCOGRAPHY
+                    </p>
 
-                <span
-                        th:text="${#lists.size(albums)} + ' albums'"
-                >
-                0 albums
-            </span>
+                    <h2>
+                        Albums
+                    </h2>
+                </div>
+
+                <div class="album-header-right">
+
+                    <span
+                            class="album-count"
+                            th:text="${#lists.size(albums)} + ' albums'"
+                    >
+                        0 albums
+                    </span>
+
+                    <a
+                            class="view-all-button"
+                            th:href="@{/artist/{id}/albums(
+                                id=${artist.id}
+                            )}"
+                    >
+                        View all →
+                    </a>
+
+                </div>
 
             </div>
 
 
-            <div class="album-grid">
+            <!-- Horizontal album carousel -->
 
-                <a
-                        class="album-card"
-                        th:each="album : ${albums}"
-                        th:href="@{/album/from-artist(
-                        artistName=${artist.name},
-                        albumName=${album.name}
-                    )}"
+            <div class="album-carousel-wrapper">
+
+                <button
+                        class="carousel-button carousel-left"
+                        onclick="scrollAlbums(-1)"
+                        aria-label="Previous albums"
+                >
+                    ‹
+                </button>
+
+
+                <div
+                        class="album-carousel"
+                        id="albumCarousel"
                 >
 
-                    <div class="album-art">
+                    <a
+                            class="album-card"
+                            th:each="album : ${albums}"
+                            th:href="@{/album/from-artist(
+                                artistName=${artist.name},
+                                albumName=${album.name}
+                            )}"
+                    >
 
-                        <img
-                                th:if="${album.image != null and !album.image.isEmpty()}"
-                                th:src="${album.image.get(album.image.size() - 1).text}"
-                                th:alt="${album.name}"
-                        >
+                        <div class="album-art">
 
-                        <div
-                                class="album-art-placeholder"
-                                th:if="${album.image == null or album.image.isEmpty()}"
-                        >
-                            No artwork
+                            <img
+                                    th:if="${album.image != null and !album.image.isEmpty()}"
+                                    th:src="${album.image.get(album.image.size() - 1).text}"
+                                    th:alt="${album.name}"
+                            >
+
+                            <div
+                                    class="album-art-placeholder"
+                                    th:if="${album.image == null or album.image.isEmpty()}"
+                            >
+                                No artwork
+                            </div>
+
                         </div>
 
-                    </div>
+
+                        <div class="album-information">
+
+                            <h3 th:text="${album.name}">
+                                Album Name
+                            </h3>
+
+                        </div>
+
+                    </a>
+
+                </div>
 
 
-                    <div class="album-information">
-
-                        <h3 th:text="${album.name}">
-                            Album Name
-                        </h3>
-
-                    </div>
-
-                </a>
+                <button
+                        class="carousel-button carousel-right"
+                        onclick="scrollAlbums(1)"
+                        aria-label="Next albums"
+                >
+                    ›
+                </button>
 
             </div>
 
@@ -133,17 +191,38 @@
 
         </section>
 
-        <section class="albums-section">
+
+
+        <!-- UPCOMING EVENTS -->
+
+        <section
+                class="albums-section events-section"
+                id="upcoming-events"
+        >
 
             <div class="section-header">
 
-                <h2>Upcoming Events</h2>
+                <div>
 
-                <span th:text="${#lists.size(concerts)} + ' events'">
-            0 events
-        </span>
+                    <p class="section-label">
+                        LIVE MUSIC
+                    </p>
+
+                    <h2>
+                        Upcoming Events
+                    </h2>
+
+                </div>
+
+                <span
+                        class="album-count"
+                        th:text="${#lists.size(concerts)} + ' events'"
+                >
+                    0 events
+                </span>
 
             </div>
+
 
             <div class="event-list">
 
@@ -157,18 +236,19 @@
 
                     <div class="event-date">
 
-                <span
-                        th:if="${concert.date != null}"
-                        th:text="${concert.date}"
-                >
-                    01 Jan 2027
-                </span>
+                        <span
+                                th:if="${concert.date != null}"
+                                th:text="${concert.date}"
+                        >
+                            01 Jan 2027
+                        </span>
 
                         <span th:if="${concert.date == null}">
-                    Date TBA
-                </span>
+                            Date TBA
+                        </span>
 
                     </div>
+
 
                     <div class="event-information">
 
@@ -177,42 +257,145 @@
                         </h3>
 
                         <p th:if="${concert.venue != null}">
-                    <span th:text="${concert.venue}">
-                        Venue
-                    </span>
+
+                            <span th:text="${concert.venue}">
+                                Venue
+                            </span>
 
                             <span th:if="${concert.city != null}">
-                        ,
-                        <span th:text="${concert.city}">
-                            City
-                        </span>
-                    </span>
+                                ,
+                                <span th:text="${concert.city}">
+                                    City
+                                </span>
+                            </span>
+
                         </p>
 
                     </div>
 
+
                     <span class="ticket-link">
-                View tickets
-            </span>
+                        View tickets
+                    </span>
 
                 </a>
 
             </div>
 
+
             <div
                     class="empty-message"
                     th:if="${#lists.isEmpty(concerts)}"
             >
-                <p>No upcoming events found for this artist.</p>
+
+                <p>
+                    No upcoming events found for this artist.
+                </p>
+
             </div>
 
         </section>
 
     </main>
 
+
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </div>
+
+
+<script>
+
+    function scrollToEvents() {
+
+        document
+            .getElementById("upcoming-events")
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+    }
+
+
+    function scrollAlbums(direction) {
+
+        const carousel =
+            document.getElementById("albumCarousel");
+
+        const scrollAmount = 300;
+
+        carousel.scrollBy({
+            left: direction * scrollAmount,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    const carousel =
+        document.getElementById("albumCarousel");
+
+
+    let autoScroll;
+
+
+    function startAutoScroll() {
+
+        autoScroll = setInterval(() => {
+
+            if (
+                carousel.scrollLeft +
+                carousel.clientWidth >=
+                carousel.scrollWidth - 10
+            ) {
+
+                carousel.scrollTo({
+                    left: 0,
+                    behavior: "smooth"
+                });
+
+            } else {
+
+                carousel.scrollBy({
+                    left: 260,
+                    behavior: "smooth"
+                });
+
+            }
+
+        }, 3500);
+
+    }
+
+
+    function stopAutoScroll() {
+
+        clearInterval(autoScroll);
+
+    }
+
+
+    carousel.addEventListener(
+        "mouseenter",
+        stopAutoScroll
+    );
+
+    carousel.addEventListener(
+        "mouseleave",
+        startAutoScroll
+    );
+
+    carousel.addEventListener(
+        "touchstart",
+        stopAutoScroll
+    );
+
+
+    startAutoScroll();
+
+</script>
+
 
 </body>
 
