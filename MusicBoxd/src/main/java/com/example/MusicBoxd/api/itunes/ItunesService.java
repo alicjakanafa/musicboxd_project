@@ -16,32 +16,63 @@ public class ItunesService {
     private final RestTemplate restTemplate;
 
     public ItunesService() {
-        this.restTemplate = new RestTemplate();
 
-        for (var converter : restTemplate.getMessageConverters()) {
+        this.restTemplate =
+                new RestTemplate();
 
-            if (converter instanceof JacksonJsonHttpMessageConverter jsonConverter) {
+        for (var converter :
+                restTemplate.getMessageConverters()) {
+
+            if (converter instanceof
+                    JacksonJsonHttpMessageConverter
+                            jsonConverter) {
 
                 var mediaTypes =
-                        new ArrayList<>(jsonConverter.getSupportedMediaTypes());
+                        new ArrayList<>(
+                                jsonConverter
+                                        .getSupportedMediaTypes()
+                        );
 
-                mediaTypes.add(MediaType.valueOf("text/javascript"));
+                mediaTypes.add(
+                        MediaType.valueOf(
+                                "text/javascript"
+                        )
+                );
 
-                jsonConverter.setSupportedMediaTypes(mediaTypes);
+                jsonConverter.setSupportedMediaTypes(
+                        mediaTypes
+                );
             }
         }
     }
 
-    public ItunesAlbumResponse searchAlbums(String searchTerm) {
+    public ItunesAlbumResponse searchAlbums(
+            String searchTerm
+    ) {
 
-        String url = UriComponentsBuilder
-                .fromUriString("https://itunes.apple.com/search")
-                .queryParam("term", searchTerm)
-                .queryParam("media", "music")
-                .queryParam("entity", "album")
-                .queryParam("limit", 20)
-                .build()
-                .toUriString();
+        String url =
+                UriComponentsBuilder
+                        .fromUriString(
+                                "https://itunes.apple.com/search"
+                        )
+                        .queryParam(
+                                "term",
+                                searchTerm
+                        )
+                        .queryParam(
+                                "media",
+                                "music"
+                        )
+                        .queryParam(
+                                "entity",
+                                "album"
+                        )
+                        .queryParam(
+                                "limit",
+                                20
+                        )
+                        .build()
+                        .toUriString();
 
         return restTemplate.getForObject(
                 url,
@@ -49,16 +80,67 @@ public class ItunesService {
         );
     }
 
-    public ItunesTrackResponse searchTracks(String searchTerm) {
+    public ItunesAlbumResponse searchAlbumsByArtist(
+            String artistName
+    ) {
 
-        String url = UriComponentsBuilder
-                .fromUriString("https://itunes.apple.com/search")
-                .queryParam("term", searchTerm)
-                .queryParam("media", "music")
-                .queryParam("entity", "song")
-                .queryParam("limit", 20)
-                .build()
-                .toUriString();
+        String url =
+                UriComponentsBuilder
+                        .fromUriString(
+                                "https://itunes.apple.com/search"
+                        )
+                        .queryParam(
+                                "term",
+                                artistName
+                        )
+                        .queryParam(
+                                "media",
+                                "music"
+                        )
+                        .queryParam(
+                                "entity",
+                                "album"
+                        )
+                        .queryParam(
+                                "limit",
+                                200
+                        )
+                        .build()
+                        .toUriString();
+
+        return restTemplate.getForObject(
+                url,
+                ItunesAlbumResponse.class
+        );
+    }
+
+    public ItunesTrackResponse searchTracks(
+            String searchTerm
+    ) {
+
+        String url =
+                UriComponentsBuilder
+                        .fromUriString(
+                                "https://itunes.apple.com/search"
+                        )
+                        .queryParam(
+                                "term",
+                                searchTerm
+                        )
+                        .queryParam(
+                                "media",
+                                "music"
+                        )
+                        .queryParam(
+                                "entity",
+                                "song"
+                        )
+                        .queryParam(
+                                "limit",
+                                20
+                        )
+                        .build()
+                        .toUriString();
 
         return restTemplate.getForObject(
                 url,
@@ -80,25 +162,42 @@ public class ItunesService {
                 "r&b"
         };
 
-        // Use today's date as the random seed
         Random random =
-                new Random(LocalDate.now().toEpochDay());
+                new Random(
+                        LocalDate.now().toEpochDay()
+                );
 
-        // Choose today's genre
         int randomIndex =
-                random.nextInt(searchTerms.length);
+                random.nextInt(
+                        searchTerms.length
+                );
 
         String randomSearchTerm =
                 searchTerms[randomIndex];
 
-        String url = UriComponentsBuilder
-                .fromUriString("https://itunes.apple.com/search")
-                .queryParam("term", randomSearchTerm)
-                .queryParam("media", "music")
-                .queryParam("entity", "album")
-                .queryParam("limit", 50)
-                .build()
-                .toUriString();
+        String url =
+                UriComponentsBuilder
+                        .fromUriString(
+                                "https://itunes.apple.com/search"
+                        )
+                        .queryParam(
+                                "term",
+                                randomSearchTerm
+                        )
+                        .queryParam(
+                                "media",
+                                "music"
+                        )
+                        .queryParam(
+                                "entity",
+                                "album"
+                        )
+                        .queryParam(
+                                "limit",
+                                50
+                        )
+                        .build()
+                        .toUriString();
 
         ItunesAlbumResponse response =
                 restTemplate.getForObject(
@@ -113,23 +212,38 @@ public class ItunesService {
             return null;
         }
 
-        var albums = response.getResults();
+        var albums =
+                response.getResults();
 
-        // Choose today's album
         int randomAlbumIndex =
-                random.nextInt(albums.size());
+                random.nextInt(
+                        albums.size()
+                );
 
-        return albums.get(randomAlbumIndex);
+        return albums.get(
+                randomAlbumIndex
+        );
     }
 
-    public ItunesTrackResponse getAlbumTracks(Long collectionId) {
+    public ItunesTrackResponse getAlbumTracks(
+            Long collectionId
+    ) {
 
-        String url = UriComponentsBuilder
-                .fromUriString("https://itunes.apple.com/lookup")
-                .queryParam("id", collectionId)
-                .queryParam("entity", "song")
-                .build()
-                .toUriString();
+        String url =
+                UriComponentsBuilder
+                        .fromUriString(
+                                "https://itunes.apple.com/lookup"
+                        )
+                        .queryParam(
+                                "id",
+                                collectionId
+                        )
+                        .queryParam(
+                                "entity",
+                                "song"
+                        )
+                        .build()
+                        .toUriString();
 
         return restTemplate.getForObject(
                 url,

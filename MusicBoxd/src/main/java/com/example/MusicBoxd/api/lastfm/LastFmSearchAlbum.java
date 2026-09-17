@@ -2,18 +2,12 @@ package com.example.MusicBoxd.api.lastfm;
 
 import java.util.List;
 
-public class LastFmTopAlbum {
+public class LastFmSearchAlbum {
 
     private String name;
-
-    private String mbid;
-
+    private String artist;
     private String url;
-
     private List<LastFmImage> image;
-
-    private LastFmArtist artist;
-
 
     public String getName() {
         return name;
@@ -23,12 +17,12 @@ public class LastFmTopAlbum {
         this.name = name;
     }
 
-    public String getMbid() {
-        return mbid;
+    public String getArtist() {
+        return artist;
     }
 
-    public void setMbid(String mbid) {
-        this.mbid = mbid;
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 
     public String getUrl() {
@@ -45,13 +39,5 @@ public class LastFmTopAlbum {
 
     public void setImage(List<LastFmImage> image) {
         this.image = image;
-    }
-
-    public LastFmArtist getArtist() {
-        return artist;
-    }
-
-    public void setArtist(LastFmArtist artist) {
-        this.artist = artist;
     }
 }
