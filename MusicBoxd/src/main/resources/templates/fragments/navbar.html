@@ -3,10 +3,29 @@
 <header class="site-header" th:fragment="navbar">
 
     <nav class="nav-left">
+
         <a th:href="@{/profile}">Profile</a>
         <a th:href="@{/reviews}">Reviews</a>
         <a th:href="@{/lists}">Lists</a>
         <a th:href="@{/friends}">Friends</a>
+
+        <form
+                class="album-search"
+                th:action="@{/search}"
+                method="get"
+        >
+            <input
+                    type="search"
+                    name="query"
+                    placeholder="Search albums..."
+                    aria-label="Search albums"
+            >
+
+            <button type="submit" aria-label="Search">
+                🔍
+            </button>
+        </form>
+
     </nav>
 
     <a
