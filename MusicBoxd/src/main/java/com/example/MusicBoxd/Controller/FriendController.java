@@ -279,3 +279,4 @@ public class FriendController {
         return "redirect:/friends";
     }
 }
+
