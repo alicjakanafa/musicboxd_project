@@ -20,7 +20,6 @@
 
 <div class="page">
 
-  <!-- Shared MusicBoxd navbar -->
   <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 
@@ -82,7 +81,6 @@
 
         <div class="artist-info">
 
-          <!-- MusicBoxd artist profile -->
           <h3 class="artist-name">
 
             <a
@@ -97,32 +95,41 @@
 
           <div class="artist-stats">
 
-                        <span
-                                th:text="${#numbers.formatInteger(artist.listeners, 3, 'COMMA')}"
-                        >
-                            0
-                        </span>
+            <p th:if="${artist.listeners != null}">
 
-            listeners
+                            <span
+                                    th:text="${#numbers.formatInteger(artist.listeners, 3, 'COMMA')}"
+                            >
+                                0
+                            </span>
+
+              listeners
+
+            </p>
+
 
             <span class="stat-divider">
                             •
                         </span>
 
-            <span
-                    th:text="${#numbers.formatInteger(artist.playcount, 3, 'COMMA')}"
-            >
-                            0
-                        </span>
 
-            plays
+            <p th:if="${artist.playcount != null}">
+
+                            <span
+                                    th:text="${#numbers.formatInteger(artist.playcount, 3, 'COMMA')}"
+                            >
+                                0
+                            </span>
+
+              plays
+
+            </p>
 
           </div>
 
         </div>
 
 
-        <!-- Last.fm profile -->
         <a
                 class="artist-link"
                 th:href="${artist.url}"
@@ -167,7 +174,6 @@
   </main>
 
 
-  <!-- Shared MusicBoxd footer -->
   <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </div>

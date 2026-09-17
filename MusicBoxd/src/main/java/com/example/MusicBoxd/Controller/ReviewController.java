@@ -77,11 +77,11 @@ public class ReviewController {
                         new RuntimeException("album not found")
                 );
 
-        // Add album to the page
+
         model.addAttribute("album", album);
 
 
-        // Find the artist connected to this album
+
         if (album.getArtistId() != null) {
 
             Artist artist = artistRepository
@@ -110,7 +110,7 @@ public class ReviewController {
 
         Review review = new Review();
 
-        // Temporary hardcoded logged-in user
+
         review.setUserId(1L);
 
         review.setAlbumId(id);

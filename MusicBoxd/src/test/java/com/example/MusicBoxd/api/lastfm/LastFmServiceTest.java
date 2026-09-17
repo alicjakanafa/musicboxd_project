@@ -60,38 +60,42 @@ class LastFmServiceTest {
     void getTopArtistsBuildsExpectedRequestAndParsesResponse() {
 
         String responseBody = """
-                {
-                  "artists": {
-                    "artist": [
+            {
+              "artists": {
+                "artist": [
+                  {
+                    "name": "Radiohead",
+                    "stats": {
+                      "playcount": "12345678",
+                      "listeners": "2345678"
+                    },
+                    "mbid": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+                    "url": "https://www.last.fm/music/Radiohead",
+                    "image": [
                       {
-                        "name": "Radiohead",
-                        "playcount": "12345678",
-                        "listeners": "2345678",
-                        "mbid": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
-                        "url": "https://www.last.fm/music/Radiohead",
-                        "image": [
-                          {
-                            "text": "https://example.com/small.jpg",
-                            "size": "small"
-                          },
-                          {
-                            "text": "https://example.com/large.jpg",
-                            "size": "large"
-                          }
-                        ]
+                        "text": "https://example.com/small.jpg",
+                        "size": "small"
                       },
                       {
-                        "name": "Taylor Swift",
-                        "playcount": "98765432",
-                        "listeners": "5432198",
-                        "mbid": "20244d07-534f-4eff-b4d4-930878889970",
-                        "url": "https://www.last.fm/music/Taylor+Swift",
-                        "image": []
+                        "text": "https://example.com/large.jpg",
+                        "size": "large"
                       }
                     ]
+                  },
+                  {
+                    "name": "Taylor Swift",
+                    "stats": {
+                      "playcount": "98765432",
+                      "listeners": "5432198"
+                    },
+                    "mbid": "20244d07-534f-4eff-b4d4-930878889970",
+                    "url": "https://www.last.fm/music/Taylor+Swift",
+                    "image": []
                   }
-                }
-                """;
+                ]
+              }
+            }
+            """;
 
         mockServer
                 .expect(
@@ -159,11 +163,20 @@ class LastFmServiceTest {
         assertThat(radiohead.getName())
                 .isEqualTo("Radiohead");
 
-        assertThat(radiohead.getPlaycount())
-                .isEqualTo("12345678");
+        assertThat(radiohead.getStats())
+                .isNotNull();
 
-        assertThat(radiohead.getListeners())
-                .isEqualTo("2345678");
+        assertThat(
+                radiohead
+                        .getStats()
+                        .getPlaycount()
+        ).isEqualTo("12345678");
+
+        assertThat(
+                radiohead
+                        .getStats()
+                        .getListeners()
+        ).isEqualTo("2345678");
 
         assertThat(radiohead.getMbid())
                 .isEqualTo(

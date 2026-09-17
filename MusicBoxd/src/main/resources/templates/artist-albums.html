@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title th:text="${artist.name} + ' Albums - MusicBoxd'">
+    Artist Albums - MusicBoxd
+  </title>
+
+  <link rel="stylesheet" th:href="@{/css/artist-albums.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+
+</head>
+
+<body>
+
+<div class="artist-albums-page">
+
+  <header th:replace="~{fragments/navbar :: navbar}"></header>
+
+
+  <main>
+
+    <section class="albums-header">
+
+      <a
+              class="back-button"
+              th:href="@{/artists/{id}(id=${artist.id})}"
+      >
+        ← Back to artist
+      </a>
+
+      <p class="section-label">
+        DISCOGRAPHY
+      </p>
+
+      <h1 th:text="${artist.name}">
+        Artist Name
+      </h1>
+
+      <p
+              class="album-count"
+              th:text="${#lists.size(albums)} + ' albums'"
+      >
+        0 albums
+      </p>
+
+    </section>
+
+
+    <section class="albums-section">
+
+      <div class="album-grid">
+
+        <a
+                class="album-card"
+                th:each="album : ${albums}"
+                th:href="@{/album/from-artist(
+                            artistName=${artist.name},
+                            albumName=${album.name}
+                        )}"
+        >
+
+          <div class="album-art">
+
+            <img
+                    th:if="${album.image != null and !album.image.isEmpty()}"
+                    th:src="${album.image.get(album.image.size() - 1).text}"
+                    th:alt="${album.name}"
+            >
+
+            <div
+                    class="album-art-placeholder"
+                    th:if="${album.image == null or album.image.isEmpty()}"
+            >
+              No artwork
+            </div>
+
+          </div>
+
+          <div class="album-information">
+
+            <h2 th:text="${album.name}">
+              Album Name
+            </h2>
+
+          </div>
+
+        </a>
+
+      </div>
+
+
+      <div
+              class="empty-message"
+              th:if="${#lists.isEmpty(albums)}"
+      >
+        <p>
+          No albums found for this artist.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+</body>
+
+</html>l>
