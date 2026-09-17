@@ -7,9 +7,6 @@
 
     padding: 0 5%;
 
-    /*
-     * Visible blue gradient across the entire navbar
-     */
     background:
             linear-gradient(
                     90deg,
@@ -325,6 +322,59 @@
 
 .logout-button:hover::after {
     transform: scaleX(1);
+}
+.album-search {
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+    height: 34px;
+}
+
+.album-search input {
+    width: 150px;
+    height: 34px;
+    padding: 0 12px;
+
+    background: #101821;
+    border: 1px solid #30475d;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+
+    color: #f5f7fa;
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+    transition: width 0.2s ease, border-color 0.2s ease;
+}
+
+.album-search input::placeholder {
+    color: #697583;
+}
+
+.album-search input:focus {
+    width: 190px;
+    border-color: #4d9bd6;
+}
+
+.album-search button {
+    width: 38px;
+    height: 34px;
+
+    padding: 0;
+
+    background: #2f6f9f;
+    border: 1px solid #4d9bd6;
+    border-radius: 0 8px 8px 0;
+
+    color: #ffffff;
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.album-search button:hover {
+    background: #4d9bd6;
 }
 
 /* =========================

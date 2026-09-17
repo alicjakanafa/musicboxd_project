@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Friends | MusicBoxd</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/friends.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="friends-page">
+
+    <section class="friends-header">
+        <h1>Friends</h1>
+        <p>Connect with friends and see what they're listening to.</p>
+    </section>
+
+
+    <!-- SEND FRIEND REQUEST -->
+
+    <section class="friends-card add-friend-card">
+
+        <div>
+            <h2>Add a Friend</h2>
+            <p>Enter a user's ID to send them a friend request.</p>
+        </div>
+
+        <form
+                th:action="@{/friends/request}"
+                method="post"
+                class="friend-request-form"
+        >
+
+            <input
+                    type="number"
+                    name="receiverId"
+                    placeholder="User ID"
+                    min="1"
+                    required
+            >
+
+            <button type="submit">
+                Add Friend
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- FRIEND REQUESTS -->
+
+    <section
+            class="friends-card"
+            th:if="${!pendingRequests.isEmpty()}"
+    >
+
+        <div class="section-heading">
+            <div>
+                <h2>Friend Requests</h2>
+                <p>People who want to connect with you.</p>
+            </div>
+
+            <span
+                    class="request-count"
+                    th:text="${pendingRequests.size()}"
+            >
+                0
+            </span>
+        </div>
+
+
+        <div class="friend-list">
+
+            <div
+                    class="friend-row"
+                    th:each="request : ${pendingRequests}"
+            >
+
+                <div class="friend-avatar">
+                    👤
+                </div>
+
+                <div class="friend-info">
+
+                    <h3>
+                        User
+                        <span th:text="${request.requesterId}">
+                            1
+                        </span>
+                    </h3>
+
+                    <p>
+                        Wants to be your friend
+                    </p>
+
+                </div>
+
+
+                <div class="friend-actions">
+
+                    <form
+                            th:action="@{/friends/accept/{id}(id=${request.id})}"
+                            method="post"
+                    >
+                        <button
+                                type="submit"
+                                class="accept-button"
+                        >
+                            Accept
+                        </button>
+                    </form>
+
+
+                    <form
+                            th:action="@{/friends/decline/{id}(id=${request.id})}"
+                            method="post"
+                    >
+                        <button
+                                type="submit"
+                                class="decline-button"
+                        >
+                            Decline
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SENT REQUESTS -->
+
+    <section
+            class="friends-card"
+            th:if="${!sentRequests.isEmpty()}"
+    >
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Sent Requests</h2>
+                <p>Friend requests you've sent.</p>
+            </div>
+
+            <span
+                    class="request-count"
+                    th:text="${sentRequests.size()}"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div class="friend-list">
+
+            <div
+                    class="friend-row"
+                    th:each="request : ${sentRequests}"
+            >
+
+                <div class="friend-avatar">
+                    👤
+                </div>
+
+                <div class="friend-info">
+
+                    <h3>
+                        User
+                        <span th:text="${request.receiverId}">
+                            2
+                        </span>
+                    </h3>
+
+                    <p>
+                        Friend request pending
+                    </p>
+
+                </div>
+
+                <span class="pending-label">
+                    Pending
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- YOUR FRIENDS -->
+
+    <section class="friends-card">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Your Friends</h2>
+                <p>People you're connected with on MusicBoxd.</p>
+            </div>
+
+            <span
+                    class="request-count"
+                    th:text="${friendIds.size()}"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div
+                class="empty-friends"
+                th:if="${friendIds.isEmpty()}"
+        >
+
+            <div class="empty-icon">
+                ♫
+            </div>
+
+            <h3>No friends yet</h3>
+
+            <p>
+                Add someone using their user ID to start building
+                your MusicBoxd network.
+            </p>
+
+        </div>
+
+
+        <div
+                class="friend-list"
+                th:if="${!friendIds.isEmpty()}"
+        >
+
+            <div
+                    class="friend-row"
+                    th:each="friendId : ${friendIds}"
+            >
+
+                <div class="friend-avatar">
+                    👤
+                </div>
+
+                <div class="friend-info">
+
+                    <h3>
+                        User
+                        <span th:text="${friendId}">
+                            2
+                        </span>
+                    </h3>
+
+                    <p>
+                        MusicBoxd friend
+                    </p>
+
+                </div>
+
+                <form
+                        th:action="@{/friends/remove/{id}(id=${friendId})}"
+                        method="post"
+                >
+
+                    <button
+                            type="submit"
+                            class="remove-button"
+                    >
+                        Remove
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
+
