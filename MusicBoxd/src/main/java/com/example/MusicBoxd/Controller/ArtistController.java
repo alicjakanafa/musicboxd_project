@@ -6,6 +6,8 @@ import com.example.MusicBoxd.api.lastfm.LastFmArtistResponse;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
 import com.example.MusicBoxd.api.lastfm.LastFmTopAlbum;
 import com.example.MusicBoxd.api.lastfm.LastFmTopAlbumsResponse;
+import com.example.MusicBoxd.api.ticketmaster.Concert;
+import com.example.MusicBoxd.api.ticketmaster.TicketmasterService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +25,18 @@ public class ArtistController {
 
     private final ArtistRepository artistRepository;
     private final LastFmService lastFmService;
+    private final TicketmasterService ticketmasterService;
 
     public ArtistController(
             ArtistRepository artistRepository,
-            LastFmService lastFmService
+            LastFmService lastFmService,
+            TicketmasterService ticketmasterService
     ) {
         this.artistRepository = artistRepository;
         this.lastFmService = lastFmService;
+        this.ticketmasterService = ticketmasterService;
     }
+
 
     @GetMapping("/{id}")
     public String showArtist(
@@ -79,10 +85,22 @@ public class ArtistController {
                             .getAlbum();
         }
 
-        model.addAttribute(
-                "artist",
-                currentArtist
-        );
+        /*
+         * Get upcoming concerts from Ticketmaster.
+         */
+        List<Concert> concerts = new ArrayList<>();
+
+        String attractionId =
+                ticketmasterService.getAttractionId(artistName);
+
+        if (attractionId != null) {
+            concerts =
+                    ticketmasterService.getShowsByAttractionId(
+                            attractionId
+                    );
+        }
+
+        model.addAttribute("artist", currentArtist);
 
         model.addAttribute(
                 "artistInfo",
@@ -91,10 +109,8 @@ public class ArtistController {
                         : null
         );
 
-        model.addAttribute(
-                "albums",
-                albums
-        );
+        model.addAttribute("albums", albums);
+        model.addAttribute("concerts", concerts);
 
         return "artist-profile";
     }
