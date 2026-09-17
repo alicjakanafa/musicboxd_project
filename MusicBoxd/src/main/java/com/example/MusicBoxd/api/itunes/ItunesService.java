@@ -80,11 +80,11 @@ public class ItunesService {
                 "r&b"
         };
 
-        // Use today's date as the random seed
+
         Random random =
                 new Random(LocalDate.now().toEpochDay());
 
-        // Choose today's genre
+
         int randomIndex =
                 random.nextInt(searchTerms.length);
 
@@ -115,7 +115,7 @@ public class ItunesService {
 
         var albums = response.getResults();
 
-        // Choose today's album
+
         int randomAlbumIndex =
                 random.nextInt(albums.size());
 

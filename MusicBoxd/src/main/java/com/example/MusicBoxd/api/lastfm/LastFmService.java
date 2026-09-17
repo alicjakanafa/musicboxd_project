@@ -22,10 +22,6 @@ public class LastFmService {
     }
 
 
-    // =========================
-    // TOP 40
-    // =========================
-
     public LastFmResponse getTopArtists() {
 
         String url = UriComponentsBuilder
@@ -46,9 +42,6 @@ public class LastFmService {
     }
 
 
-    // =========================
-    // ARTIST INFORMATION
-    // =========================
 
     public LastFmArtistResponse getArtistInfo(
             String artistName
@@ -73,9 +66,7 @@ public class LastFmService {
     }
 
 
-    // =========================
-    // ARTIST ALBUMS
-    // =========================
+
 
     public LastFmTopAlbumsResponse getArtistAlbums(
             String artistName
@@ -101,9 +92,6 @@ public class LastFmService {
     }
 
 
-    // =========================
-    // ALBUM TRACKS
-    // =========================
 
     public LastFmAlbumResponse getAlbumInfo(
             String artistName,

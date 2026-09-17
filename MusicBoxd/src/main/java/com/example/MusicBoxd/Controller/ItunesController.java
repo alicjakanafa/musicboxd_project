@@ -90,9 +90,6 @@ public class ItunesController {
             @RequestParam String releaseDate
     ) {
 
-        // =========================
-        // FIND OR CREATE ARTIST
-        // =========================
 
         Optional<Artist> existingArtist =
                 artistRepository.findByNameIgnoreCase(
@@ -114,9 +111,6 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // GET RELEASE YEAR
-        // =========================
 
         Short releaseYear = null;
 
@@ -135,9 +129,6 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // FIND OR CREATE ALBUM
-        // =========================
 
         Optional<Album> existingAlbum =
                 albumRepository.findByExternalId(
@@ -151,8 +142,7 @@ public class ItunesController {
             album =
                     existingAlbum.get();
 
-            // Make sure the album has the
-            // latest artwork from iTunes
+
 
             if (artworkUrl != null &&
                     !artworkUrl.isBlank()) {
@@ -194,19 +184,12 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // GET SONGS FROM ITUNES
-        // =========================
-
         ItunesTrackResponse trackResponse =
                 itunesService.getAlbumTracks(
                         collectionId
                 );
 
 
-        // =========================
-        // SAVE SONGS
-        // =========================
 
         if (trackResponse != null &&
                 trackResponse.getResults() != null) {
@@ -214,14 +197,13 @@ public class ItunesController {
             for (ItunesTrack track :
                     trackResponse.getResults()) {
 
-                // Only save actual songs
+
 
                 if (track.getTrackId() == null) {
                     continue;
                 }
 
 
-                // Don't save the same song twice
 
                 boolean songExists =
                         songRepository
@@ -259,9 +241,7 @@ public class ItunesController {
         }
 
 
-        // =========================
-        // GO TO ALBUM PROFILE
-        // =========================
+
 
         return "redirect:/albums/" + album.getId();
     }
@@ -273,9 +253,6 @@ public class ItunesController {
             @RequestParam String albumName
     ) {
 
-        /*
-         * Search iTunes for the album.
-         */
         ItunesAlbumResponse response =
                 itunesService.searchAlbums(
                         artistName + " " + albumName
@@ -288,18 +265,10 @@ public class ItunesController {
             return "redirect:/artists";
         }
 
-        /*
-         * Use the first iTunes result.
-         */
+
         var album = response.getResults().get(0);
 
-        /*
-         * Save the album using the existing
-         * /album/save functionality.
-         *
-         * We redirect there with the iTunes
-         * collection ID.
-         */
+
         return "redirect:/album/save"
                 + "?collectionId=" + album.getCollectionId()
                 + "&artistName=" + artistName

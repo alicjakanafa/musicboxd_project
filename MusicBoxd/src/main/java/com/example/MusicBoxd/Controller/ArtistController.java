@@ -116,12 +116,6 @@ public class ArtistController {
     }
 
 
-    /*
-     * Find an artist by their name and
-     * send them to their MusicBoxd profile.
-     *
-     * Used by the Top 40 page.
-     */
     @GetMapping("/from-name")
     public String showArtistByName(
             @RequestParam String name

@@ -36,11 +36,7 @@ public class SpotifyController {
     private String redirectUri;
 
 
-    /*
-     * ---------------------------------------------------------
-     * SPOTIFY LOGIN
-     * ---------------------------------------------------------
-     */
+
 
     @GetMapping("/spotify/login")
     public String spotifyLogin() {
@@ -76,11 +72,6 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * SPOTIFY CALLBACK
-     * ---------------------------------------------------------
-     */
 
     @GetMapping("/spotify/callback")
     public String spotifyCallback(
@@ -161,11 +152,7 @@ public class SpotifyController {
 
         return "redirect:/";
     }
-    /*
-     * ---------------------------------------------------------
-     * GET SPOTIFY DATA
-     * ---------------------------------------------------------
-     */
+
 
     public void getSpotifyData(
             String accessToken,
@@ -188,11 +175,7 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * RECENTLY PLAYED
-     * ---------------------------------------------------------
-     */
+
 
     private void getRecentlyPlayed(
             String accessToken,
@@ -244,11 +227,7 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * CURRENTLY PLAYING
-     * ---------------------------------------------------------
-     */
+
 
     private SpotifyCurrentlyPlayingResponse getCurrentlyPlaying(
             String accessToken
@@ -281,14 +260,7 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * CURRENTLY PLAYING FOR JAVASCRIPT
-     *
-     * This endpoint allows the homepage to ask Spotify
-     * what is currently playing without refreshing the page.
-     * ---------------------------------------------------------
-     */
+
 
     @GetMapping("/spotify/player/current")
     @ResponseBody
@@ -301,9 +273,7 @@ public class SpotifyController {
                         "spotifyAccessToken"
                 );
 
-        /*
-         * User has not connected Spotify.
-         */
+
 
         if (accessToken == null) {
 
@@ -317,9 +287,6 @@ public class SpotifyController {
                         accessToken
                 );
 
-        /*
-         * Spotify has nothing currently playing.
-         */
 
         if (
                 currentlyPlaying == null
@@ -337,11 +304,6 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * PLAY
-     * ---------------------------------------------------------
-     */
 
     @PostMapping("/spotify/player/play")
     @ResponseBody
@@ -357,11 +319,7 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * PAUSE
-     * ---------------------------------------------------------
-     */
+
 
     @PostMapping("/spotify/player/pause")
     @ResponseBody
@@ -377,11 +335,7 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * NEXT TRACK
-     * ---------------------------------------------------------
-     */
+
 
     @PostMapping("/spotify/player/next")
     @ResponseBody
@@ -397,11 +351,6 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * PREVIOUS TRACK
-     * ---------------------------------------------------------
-     */
 
     @PostMapping("/spotify/player/previous")
     @ResponseBody
@@ -417,11 +366,7 @@ public class SpotifyController {
     }
 
 
-    /*
-     * ---------------------------------------------------------
-     * SEND COMMAND TO SPOTIFY
-     * ---------------------------------------------------------
-     */
+
 
     private ResponseEntity<Void> sendPlayerCommand(
             HttpSession session,
@@ -435,9 +380,7 @@ public class SpotifyController {
                 );
 
 
-        /*
-         * The user hasn't connected Spotify.
-         */
+
 
         if (accessToken == null) {
 
