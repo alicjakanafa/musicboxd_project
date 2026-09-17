@@ -8,98 +8,114 @@
     <title th:text="${album.title}">
         Album
     </title>
+
+    <link rel="stylesheet" th:href="@{/css/review.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 
 <body>
 
-<div class="album-information">
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
-    <h1 th:text="${album.title}">
-        Album Title
+<div class="album-page">
+
+    <h1>
+        New Review
     </h1>
 
+    <section class="album-header">
+
+
+        <div class="album-art">
+
+            <img
+                    th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
+                    th:src="${album.artworkUrl}"
+                    th:alt="${album.title}"
+            >
+
+        </div>
+
+        <div class="album-information">
+
+            <p>ALBUM</p>
+
+            <h1 th:text="${album.title}">
+                Album Title
+            </h1>
+
     <!-- Artist -->
-    <p th:if="${artist != null}">
+            <p th:if="${artist != null}">
 
-        <a
-                th:href="@{/artists/{id}(id=${artist.id})}"
-                th:text="${artist.name}"
-        >
-            Artist Name
-        </a>
+                <a
+                        th:href="@{/artists/{id}(id=${artist.id})}"
+                        th:text="${artist.name}"
+                >
+                    Artist Name
+                </a>
 
-    </p>
+            </p>
 
-    <p th:text="${album.releaseYear}">
-        Release Year
-    </p>
+            <p th:text="${album.releaseYear}">
+                Release Year
+            </p>
 
-    <img
-            th:if="${album.artworkUrl != null and !album.artworkUrl.isEmpty()}"
-            th:src="${album.artworkUrl}"
-            th:alt="${album.title}"
+        </div>
+    </section>
+
+
+    <form
+            class="review-form"
+            th:action="@{/reviews/{id}(id=${album.id})}"
+            method="post"
     >
+
+        <h2>
+            Rating
+        </h2>
+
+        <div class="rating">
+
+            <input type="radio" id="rating5" name="rating" value="5">
+            <label for="rating5">★</label>
+
+            <input type="radio" id="rating4" name="rating" value="4">
+            <label for="rating4">★</label>
+
+            <input type="radio" id="rating3" name="rating" value="3">
+            <label for="rating3">★</label>
+
+            <input type="radio" id="rating2" name="rating" value="2">
+            <label for="rating2">★</label>
+
+            <input type="radio" id="rating1" name="rating" value="1">
+            <label for="rating1">★</label>
+
+        </div>
+
+
+        <h2 for="content">
+            What are your thoughts?
+        </h2>
+
+        <textarea
+                id="content"
+                name="content"
+                placeholder="Write your review..."
+                required
+        ></textarea>
+
+
+        <button type="submit" class="review-button">
+            Post Review
+        </button>
+
+    </form>
 
 </div>
 
-
-<form
-        th:action="@{/reviews/{id}(id=${album.id})}"
-        method="post"
->
-
-    <label for="rating">
-        Rating
-    </label>
-
-    <select
-            id="rating"
-            name="rating"
-            required
-    >
-        <option value="">
-            Choose a rating
-        </option>
-
-        <option value="1">
-            1 / 5
-        </option>
-
-        <option value="2">
-            2 / 5
-        </option>
-
-        <option value="3">
-            3 / 5
-        </option>
-
-        <option value="4">
-            4 / 5
-        </option>
-
-        <option value="5">
-            5 / 5
-        </option>
-    </select>
-
-
-    <label for="content">
-        Your Review
-    </label>
-
-    <textarea
-            id="content"
-            name="content"
-            placeholder="Write your review..."
-            required
-    ></textarea>
-
-
-    <button type="submit">
-        Submit Review
-    </button>
-
-</form>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 
