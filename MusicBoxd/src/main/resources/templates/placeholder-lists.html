@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>My Lists</title>
+</head>
+<body>
+
+<main>
+  <h1>My Lists</h1>
+
+  <p>
+    <a th:href="@{/lists/placeholder-list-form}">Create a new list</a>
+  </p>
+
+  <div th:if="${lists == null or lists.isEmpty()}">
+    <p>You haven't created any lists yet.</p>
+  </div>
+
+  <div th:each="list : ${lists}">
+    <h2>
+      <a th:href="@{/lists/{id}(id=${list.id})}"
+         th:text="${list.title}">
+        List title
+      </a>
+    </h2>
+
+    <p th:text="${list.description}">List description</p>
+
+    <hr>
+  </div>
+</main>
+
+</body>
+</html>

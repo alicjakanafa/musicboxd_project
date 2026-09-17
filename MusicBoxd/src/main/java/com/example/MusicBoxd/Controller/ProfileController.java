@@ -62,4 +62,9 @@ public class ProfileController {
 
         return "profile-page";
     }
+
+        @GetMapping("/placeholder-list-form")
+        public String placeholderListForm() {
+            return "placeholder-list-form";
+        }
 }
