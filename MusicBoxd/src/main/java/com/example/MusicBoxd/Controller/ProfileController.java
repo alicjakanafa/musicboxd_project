@@ -35,9 +35,13 @@ public class ProfileController {
             Model model
     ) {
 
-        User user = new User();
-        user.setUsername("michael kirk");
-        user.setCreatedAt(LocalDateTime.now());
+        User user = userRepository
+                .findById(id)
+                .orElse(null);
+
+        if (user == null) {
+            return "redirect:/";
+        }
 
         List<Review> reviews = reviewRepository.findByUserId(id);
 
