@@ -570,3 +570,49 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+.event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.event-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 8px;
+    background-color: #1c1c1c;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.event-card:hover {
+    background-color: #292929;
+}
+
+.event-date {
+    min-width: 110px;
+    font-weight: 600;
+}
+
+.event-information {
+    flex: 1;
+}
+
+.event-information h3,
+.event-information p {
+    margin: 0;
+}
+
+.event-information p {
+    margin-top: 0.4rem;
+    color: #aaaaaa;
+}
+
+.ticket-link {
+    color: #4caf50;
+    font-weight: 600;
+}

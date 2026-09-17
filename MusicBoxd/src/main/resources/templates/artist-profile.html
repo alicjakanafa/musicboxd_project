@@ -133,12 +133,84 @@
 
         </section>
 
+        <section class="albums-section">
+
+            <div class="section-header">
+
+                <h2>Upcoming Events</h2>
+
+                <span th:text="${#lists.size(concerts)} + ' events'">
+            0 events
+        </span>
+
+            </div>
+
+            <div class="event-list">
+
+                <a
+                        class="event-card"
+                        th:each="concert : ${concerts}"
+                        th:href="${concert.ticketUrl()}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                >
+
+                    <div class="event-date">
+
+                <span
+                        th:if="${concert.date != null}"
+                        th:text="${concert.date}"
+                >
+                    01 Jan 2027
+                </span>
+
+                        <span th:if="${concert.date == null}">
+                    Date TBA
+                </span>
+
+                    </div>
+
+                    <div class="event-information">
+
+                        <h3 th:text="${concert.name}">
+                            Event name
+                        </h3>
+
+                        <p th:if="${concert.venue != null}">
+                    <span th:text="${concert.venue}">
+                        Venue
+                    </span>
+
+                            <span th:if="${concert.city != null}">
+                        ,
+                        <span th:text="${concert.city}">
+                            City
+                        </span>
+                    </span>
+                        </p>
+
+                    </div>
+
+                    <span class="ticket-link">
+                View tickets
+            </span>
+
+                </a>
+
+            </div>
+
+            <div
+                    class="empty-message"
+                    th:if="${#lists.isEmpty(concerts)}"
+            >
+                <p>No upcoming events found for this artist.</p>
+            </div>
+
+        </section>
+
     </main>
 
-
-    <!-- Shared MusicBoxd footer -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-
 
 </div>
 
