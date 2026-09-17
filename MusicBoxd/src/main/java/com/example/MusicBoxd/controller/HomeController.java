@@ -45,7 +45,7 @@ public class HomeController {
 
         // Suggested Album of the Day
         ItunesAlbum suggestedAlbum =
-                itunesService.getRandomAlbum();
+                itunesService.getDailyAlbum();
 
         model.addAttribute(
                 "suggestedAlbum",

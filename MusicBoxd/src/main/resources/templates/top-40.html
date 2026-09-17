@@ -80,19 +80,6 @@
         </div>
 
 
-        <div class="artist-image-wrapper">
-
-          <img
-                  class="artist-image"
-                  th:if="${artist.image != null and !artist.image.isEmpty()}"
-                  th:src="${artist.image.get(artist.image.size() - 2).text}"
-                  th:alt="${artist.name}"
-                  onerror="this.style.display='none'"
-          >
-
-        </div>
-
-
         <div class="artist-info">
 
           <!-- MusicBoxd artist profile -->

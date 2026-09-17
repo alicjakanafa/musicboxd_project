@@ -46,11 +46,7 @@
 
   border-radius: 50%;
 
-  background: linear-gradient(
-    145deg,
-    var(--primary-left),
-    var(--primary-right)
-  );
+  background: linear-gradient(145deg, var(--primary), var(--primary-light));
 }
 
 .profile-avatar img {
@@ -101,17 +97,27 @@
   border: 0;
   border-radius: 999px;
 
-  background: linear-gradient(
-    to right,
-    var(--primary-left),
-    var(--primary-right)
-  );
+  background: var(--primary);
+  color: var(--text);
 
   font-family: inherit;
   font-size: 1rem;
   font-weight: 700;
 
   cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.edit-profile-button:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.edit-profile-button:active {
+  transform: translateY(0);
 }
 
 .profile-stats {
@@ -236,11 +242,7 @@
 .album-placeholder {
   border-radius: 16px;
 
-  background: linear-gradient(
-    145deg,
-    var(--primary-left),
-    var(--primary-right)
-  );
+  background: linear-gradient(145deg, var(--primary), var(--primary-light));
 }
 
 .review-card h3,
@@ -353,11 +355,7 @@
 
   border-radius: 15px;
 
-  background: linear-gradient(
-    145deg,
-    var(--primary-left),
-    var(--primary-right)
-  );
+  background: linear-gradient(145deg, var(--primary), var(--primary-light));
 }
 
 /* FRIENDS/FOLLOWING */

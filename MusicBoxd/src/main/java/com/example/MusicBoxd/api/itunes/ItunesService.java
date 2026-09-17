@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Random;
 
 @Service
 public class ItunesService {
@@ -64,7 +66,7 @@ public class ItunesService {
         );
     }
 
-    public ItunesAlbum getRandomAlbum() {
+    public ItunesAlbum getDailyAlbum() {
 
         String[] searchTerms = {
                 "pop",
@@ -78,8 +80,13 @@ public class ItunesService {
                 "r&b"
         };
 
+        // Use today's date as the random seed
+        Random random =
+                new Random(LocalDate.now().toEpochDay());
+
+        // Choose today's genre
         int randomIndex =
-                (int) (Math.random() * searchTerms.length);
+                random.nextInt(searchTerms.length);
 
         String randomSearchTerm =
                 searchTerms[randomIndex];
@@ -99,10 +106,18 @@ public class ItunesService {
                         ItunesAlbumResponse.class
                 );
 
+        if (response == null ||
+                response.getResults() == null ||
+                response.getResults().isEmpty()) {
+
+            return null;
+        }
+
         var albums = response.getResults();
 
+        // Choose today's album
         int randomAlbumIndex =
-                (int) (Math.random() * albums.size());
+                random.nextInt(albums.size());
 
         return albums.get(randomAlbumIndex);
     }
@@ -122,7 +137,3 @@ public class ItunesService {
         );
     }
 }
-
-
-
-
