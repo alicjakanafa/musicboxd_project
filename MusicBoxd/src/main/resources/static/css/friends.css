@@ -1,0 +1,358 @@
+.friends-page {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 55px 0 80px;
+}
+
+
+/* =========================
+   PAGE HEADER
+   ========================= */
+
+.friends-header {
+    margin-bottom: 30px;
+}
+
+.friends-header h1 {
+    margin: 0 0 8px;
+    font-size: 36px;
+    letter-spacing: -1px;
+}
+
+.friends-header p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+
+/* =========================
+   CARDS
+   ========================= */
+
+.friends-card {
+    margin-bottom: 24px;
+    padding: 28px;
+    background:
+            linear-gradient(
+                    145deg,
+                    #151f2a,
+                    #101821
+            );
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.friends-card h2 {
+    margin: 0 0 6px;
+    font-size: 21px;
+}
+
+.friends-card p {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+
+/* =========================
+   ADD FRIEND
+   ========================= */
+
+.add-friend-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.friend-request-form {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.friend-request-form input {
+    width: 140px;
+    padding: 12px 14px;
+    background: #0b121b;
+    color: var(--text);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+}
+
+.friend-request-form input:focus {
+    border-color: var(--primary);
+    box-shadow:
+            0 0 0 3px rgba(77, 155, 214, 0.12);
+}
+
+.friend-request-form button {
+    padding: 12px 18px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.friend-request-form button:hover {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   SECTION HEADING
+   ========================= */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.section-heading h2 {
+    margin-bottom: 5px;
+}
+
+.request-count {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(77, 155, 214, 0.15);
+    color: var(--primary-light);
+    border: 1px solid rgba(77, 155, 214, 0.3);
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* =========================
+   FRIEND LIST
+   ========================= */
+
+.friend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.friend-row {
+    min-height: 78px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #101821;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease;
+}
+
+.friend-row:hover {
+    background: #151f2a;
+    border-color: var(--border-light);
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   AVATAR
+   ========================= */
+
+.friend-avatar {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+            linear-gradient(
+                    145deg,
+                    #245b82,
+                    #173b59
+            );
+    border: 1px solid #30475d;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+
+/* =========================
+   FRIEND INFO
+   ========================= */
+
+.friend-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.friend-info h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+.friend-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+
+/* =========================
+   ACTIONS
+   ========================= */
+
+.friend-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.friend-actions form {
+    margin: 0;
+}
+
+.friend-actions button,
+.remove-button {
+    padding: 9px 14px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.accept-button {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: white;
+}
+
+.accept-button:hover {
+    background: var(--primary-light);
+}
+
+.decline-button,
+.remove-button {
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-muted);
+}
+
+.decline-button:hover,
+.remove-button:hover {
+    background: #192532;
+    color: var(--text);
+}
+
+
+/* =========================
+   PENDING
+   ========================= */
+
+.pending-label {
+    padding: 7px 11px;
+    border-radius: 20px;
+    background: rgba(77, 155, 214, 0.1);
+    color: var(--primary-light);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   EMPTY STATE
+   ========================= */
+
+.empty-friends {
+    padding: 45px 20px;
+    text-align: center;
+    border: 1px dashed var(--border-light);
+    border-radius: 14px;
+    background: #101821;
+}
+
+.empty-icon {
+    margin-bottom: 12px;
+    font-size: 32px;
+    color: var(--primary);
+}
+
+.empty-friends h3 {
+    margin: 0 0 7px;
+    font-size: 18px;
+}
+
+.empty-friends p {
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 700px) {
+
+    .friends-page {
+        width: min(100% - 24px, 1100px);
+        padding-top: 30px;
+    }
+
+    .friends-header h1 {
+        font-size: 30px;
+    }
+
+    .friends-card {
+        padding: 20px;
+    }
+
+    .add-friend-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .friend-request-form {
+        width: 100%;
+    }
+
+    .friend-request-form input {
+        flex: 1;
+        width: auto;
+    }
+
+    .friend-row {
+        align-items: flex-start;
+    }
+
+    .friend-actions {
+        flex-direction: column;
+    }
+
+    .friend-actions button,
+    .remove-button {
+        white-space: nowrap;
+    }
+}

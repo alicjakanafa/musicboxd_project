@@ -4,11 +4,8 @@
 
 body {
     margin: 0;
-
     font-family: Arial, Helvetica, sans-serif;
-
     background: #080d14;
-
     color: #ffffff;
 }
 
@@ -63,9 +60,7 @@ HEADER
 
 .brand-name {
     color: #4d9bd6;
-
     font-weight: 800;
-
     letter-spacing: -0.5px;
 }
 
@@ -89,9 +84,7 @@ LIVE INDICATOR
     color: #78b7e8;
 
     font-size: 11px;
-
     font-weight: bold;
-
     letter-spacing: 1.2px;
 }
 
@@ -132,9 +125,7 @@ HERO
     color: #4d9bd6;
 
     font-size: 12px;
-
     font-weight: bold;
-
     letter-spacing: 2px;
 
     margin-bottom: 15px;
@@ -176,11 +167,9 @@ CHART HEADER
     display: flex;
 
     justify-content: space-between;
-
     align-items: flex-end;
 
     margin-bottom: 20px;
-
     padding-bottom: 20px;
 
     border-bottom: 1px solid #1d2a38;
@@ -188,7 +177,6 @@ CHART HEADER
 
 .chart-header h2 {
     margin: 0 0 6px;
-
     font-size: 22px;
 }
 
@@ -202,7 +190,6 @@ CHART HEADER
 
 .chart-source {
     color: #5e6975;
-
     font-size: 13px;
 }
 
@@ -216,9 +203,7 @@ ARTIST LIST
 
 .artist-list {
     display: flex;
-
     flex-direction: column;
-
     gap: 9px;
 }
 
@@ -230,7 +215,6 @@ ARTIST CARD
     min-height: 100px;
 
     display: flex;
-
     align-items: center;
 
     padding: 12px 18px;
@@ -238,7 +222,6 @@ ARTIST CARD
     background: #101821;
 
     border: 1px solid #1c2936;
-
     border-radius: 10px;
 
     transition:
@@ -299,7 +282,6 @@ RANK
     text-align: center;
 
     font-size: 21px;
-
     font-weight: 800;
 
     color: #4d5865;
@@ -307,7 +289,6 @@ RANK
 
 .top-three .rank {
     color: #4d9bd6;
-
     font-size: 25px;
 }
 
@@ -351,7 +332,6 @@ ARTIST INFO
 
 .artist-info {
     flex: 1;
-
     min-width: 0;
 }
 
@@ -361,24 +341,37 @@ ARTIST INFO
     color: #ffffff;
 
     font-size: 19px;
-
     font-weight: 700;
 
     white-space: nowrap;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
+/* =========================================
+ARTIST STATS
+========================================= */
+
 .artist-stats {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
     color: #697583;
 
     font-size: 13px;
+
+    white-space: nowrap;
+}
+
+.artist-stats p {
+    margin: 0;
 }
 
 .artist-stats span {
-    color: #a5b0bb;
+    color: #78b7e8;
 
     font-weight: 600;
 }
@@ -386,7 +379,7 @@ ARTIST INFO
 .stat-divider {
     color: #46515d !important;
 
-    margin: 0 5px;
+    margin: 0 2px;
 }
 
 /* =========================================
@@ -413,7 +406,6 @@ LAST.FM LINK
     text-decoration: none;
 
     font-size: 12px;
-
     font-weight: 600;
 
     transition:
@@ -552,6 +544,8 @@ MOBILE
 
     .artist-stats {
         font-size: 11px;
+
+        gap: 5px;
     }
 
     .artist-link {
