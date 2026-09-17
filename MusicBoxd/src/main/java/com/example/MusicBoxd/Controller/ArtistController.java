@@ -2,6 +2,8 @@ package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Artist;
 import com.example.MusicBoxd.Repository.ArtistRepository;
+import com.example.MusicBoxd.api.itunes.ItunesService;
+import com.example.MusicBoxd.api.itunes.ItunesTrackResponse;
 import com.example.MusicBoxd.api.lastfm.LastFmArtistResponse;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
 import com.example.MusicBoxd.api.lastfm.LastFmTopAlbum;
@@ -26,17 +28,19 @@ public class ArtistController {
     private final ArtistRepository artistRepository;
     private final LastFmService lastFmService;
     private final TicketmasterService ticketmasterService;
+    private final ItunesService itunesService;
 
     public ArtistController(
             ArtistRepository artistRepository,
             LastFmService lastFmService,
-            TicketmasterService ticketmasterService
+            TicketmasterService ticketmasterService,
+            ItunesService itunesService
     ) {
         this.artistRepository = artistRepository;
         this.lastFmService = lastFmService;
         this.ticketmasterService = ticketmasterService;
+        this.itunesService = itunesService;
     }
-
 
     @GetMapping("/{id}")
     public String showArtist(
@@ -56,17 +60,37 @@ public class ArtistController {
         String artistName =
                 currentArtist.getName();
 
-        /*
-         * Get artist information from Last.fm
-         */
+        // Get artist information from Last.fm
         LastFmArtistResponse artistResponse =
                 lastFmService.getArtistInfo(
                         artistName
                 );
 
-        /*
-         * Get all of the artist's albums from Last.fm
-         */
+        // Debug listener information
+        System.out.println(
+                "ARTIST NAME: " + artistName
+        );
+
+        if (artistResponse != null &&
+                artistResponse.getArtist() != null &&
+                artistResponse.getArtist().getStats() != null) {
+
+            System.out.println(
+                    "LISTENERS: " +
+                            artistResponse
+                                    .getArtist()
+                                    .getStats()
+                                    .getListeners()
+            );
+
+        } else {
+
+            System.out.println(
+                    "LAST.FM ARTIST RESPONSE IS NULL"
+            );
+        }
+
+        // Get artist albums from Last.fm
         LastFmTopAlbumsResponse albumResponse =
                 lastFmService.getArtistAlbums(
                         artistName
@@ -85,23 +109,52 @@ public class ArtistController {
                             .getAlbum();
         }
 
-        /*
-         * Get upcoming concerts from Ticketmaster.
-         */
-        List<Concert> concerts = new ArrayList<>();
+        // Get popular songs from iTunes
+        ItunesTrackResponse trackResponse =
+                itunesService.searchTracks(
+                        artistName
+                );
+
+        model.addAttribute(
+                "popularSingles",
+                trackResponse != null &&
+                        trackResponse.getResults() != null
+                        ? trackResponse
+                        .getResults()
+                        .stream()
+                        .filter(track ->
+                                track.getPreviewUrl() != null
+                        )
+                        .limit(5)
+                        .toList()
+                        : List.of()
+        );
+
+        // Get upcoming concerts from Ticketmaster
+        List<Concert> concerts =
+                new ArrayList<>();
 
         String attractionId =
-                ticketmasterService.getAttractionId(artistName);
+                ticketmasterService.getAttractionId(
+                        artistName
+                );
 
         if (attractionId != null) {
+
             concerts =
-                    ticketmasterService.getShowsByAttractionId(
-                            attractionId
-                    );
+                    ticketmasterService
+                            .getShowsByAttractionId(
+                                    attractionId
+                            );
         }
 
-        model.addAttribute("artist", currentArtist);
+        // Add artist to model
+        model.addAttribute(
+                "artist",
+                currentArtist
+        );
 
+        // Add Last.fm artist information
         model.addAttribute(
                 "artistInfo",
                 artistResponse != null
@@ -109,19 +162,33 @@ public class ArtistController {
                         : null
         );
 
-        model.addAttribute("albums", albums);
-        model.addAttribute("concerts", concerts);
+        // Add listener count separately
+        model.addAttribute(
+                "listeners",
+                artistResponse != null &&
+                        artistResponse.getArtist() != null &&
+                        artistResponse.getArtist().getStats() != null
+                        ? artistResponse
+                        .getArtist()
+                        .getStats()
+                        .getListeners()
+                        : null
+        );
+
+        // Add albums and concerts
+        model.addAttribute(
+                "albums",
+                albums
+        );
+
+        model.addAttribute(
+                "concerts",
+                concerts
+        );
 
         return "artist-profile";
     }
 
-
-    /*
-     * Find an artist by their name and
-     * send them to their MusicBoxd profile.
-     *
-     * Used by the Top 40 page.
-     */
     @GetMapping("/from-name")
     public String showArtistByName(
             @RequestParam String name
@@ -136,6 +203,54 @@ public class ArtistController {
                                 )
                         );
 
-        return "redirect:/artists/" + artist.getId();
+        return "redirect:/artists/" +
+                artist.getId();
+    }
+
+    @GetMapping("/{id}/albums")
+    public String showAllAlbums(
+            @PathVariable Long id,
+            Model model
+    ) {
+
+        Optional<Artist> artist =
+                artistRepository.findById(id);
+
+        if (artist.isEmpty()) {
+            return "redirect:/";
+        }
+
+        Artist currentArtist =
+                artist.get();
+
+        List<LastFmTopAlbum> albums =
+                new ArrayList<>();
+
+        LastFmTopAlbumsResponse response =
+                lastFmService.getArtistAlbums(
+                        currentArtist.getName()
+                );
+
+        if (response != null &&
+                response.getTopalbums() != null &&
+                response.getTopalbums().getAlbum() != null) {
+
+            albums =
+                    response
+                            .getTopalbums()
+                            .getAlbum();
+        }
+
+        model.addAttribute(
+                "artist",
+                currentArtist
+        );
+
+        model.addAttribute(
+                "albums",
+                albums
+        );
+
+        return "artist-albums";
     }
 }
