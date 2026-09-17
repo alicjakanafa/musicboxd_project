@@ -1,39 +1,145 @@
-.site-header {
-    min-height: 145px;
-    padding: 20px 30px;
+/* =========================
+   MUSICBOXD NAVBAR
+   ========================= */
 
-    background: linear-gradient(
-        to right,
-        var(--primary-left),
-        var(--primary-right)
-    );
+.site-header {
+    min-height: 78px;
+
+    padding: 0 5%;
+
+    /*
+     * Visible blue gradient across the entire navbar
+     */
+    background:
+            linear-gradient(
+                    90deg,
+                    #0b1825 0%,
+                    #173b59 25%,
+                    #245b82 50%,
+                    #173b59 75%,
+                    #0b1825 100%
+            );
+
+    border-bottom: 1px solid #30475d;
 
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: end;
+
+    grid-template-columns:
+        1fr
+        auto
+        1fr;
+
+    align-items: center;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    box-shadow:
+            0 4px 20px rgba(0, 0, 0, 0.35);
 }
+
+
+/* =========================
+   GRADIENT ACCENT LINE
+   ========================= */
+
+.site-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -1px;
+
+    width: 100%;
+
+    height: 3px;
+
+    background:
+            linear-gradient(
+                    90deg,
+                    #2f6f9f 0%,
+                    #4d9bd6 25%,
+                    #78b7e8 50%,
+                    #4d9bd6 75%,
+                    #2f6f9f 100%
+            );
+}
+
+
+/* =========================
+   BRAND
+   ========================= */
 
 .brand {
     align-self: center;
 
     display: flex;
+
     flex-direction: column;
 
     text-align: center;
-    color: var(--text);
+
+    color: #ffffff;
+
     text-decoration: none;
+
+    transition:
+            opacity 0.2s ease;
+}
+
+.brand:hover {
+    opacity: 0.9;
 }
 
 .brand-name {
-    font-family: "Audiowide", sans-serif;
-    font-size: 40px;
+    font-family:
+            "Audiowide",
+            sans-serif;
+
+    font-size: 26px;
+
     font-weight: 400;
-    font-style: normal;
+
+    letter-spacing: 0.5px;
+
+    color: #ffffff;
+
+    text-shadow:
+            0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .brand-tagline {
-    font-family: sans-serif;
-    font-size: 16px;
+    margin-top: 2px;
+
+    font-family:
+            "DM Sans",
+            Arial,
+            sans-serif;
+
+    font-size: 10px;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================
+   NAVIGATION
+   ========================= */
+
+.nav-left,
+.nav-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
 }
 
 .nav-left {
@@ -44,13 +150,269 @@
     justify-self: end;
 }
 
-.nav-left,
-.nav-right {
-    display: flex;
-    gap: 20px;
-}
+
+/* =========================
+   NAV LINKS
+   ========================= */
 
 .site-header nav a {
-    color: var(--text);
+    position: relative;
+
+    padding: 9px 12px;
+
+    color: rgba(255, 255, 255, 0.72);
+
     text-decoration: none;
+
+    font-family:
+            "DM Sans",
+            Arial,
+            sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    border-radius: 8px;
+
+    transition:
+            color 0.2s ease,
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.site-header nav a:hover {
+    color: #ffffff;
+
+    background:
+            rgba(255, 255, 255, 0.1);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   LINK HOVER LINE
+   ========================= */
+
+.site-header nav a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 12px;
+
+    right: 12px;
+
+    bottom: 4px;
+
+    height: 2px;
+
+    background: #78b7e8;
+
+    border-radius: 2px;
+
+    transform: scaleX(0);
+
+    transform-origin: center;
+
+    transition:
+            transform 0.2s ease;
+}
+
+.site-header nav a:hover::after {
+    transform: scaleX(1);
+}
+
+/* =========================
+   LOGGED IN AREA
+   ========================= */
+
+.logged-in,
+.logged-out {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.welcome-message {
+    color: rgba(255, 255, 255, 0.85);
+
+    font-family:
+            "DM Sans",
+            Arial,
+            sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   LOG OUT BUTTON
+   ========================= */
+
+.logout-button {
+    position: relative;
+
+    padding: 9px 12px;
+
+    color: rgba(255, 255, 255, 0.72);
+
+    background: transparent;
+
+    border: none;
+
+    font-family:
+            "DM Sans",
+            Arial,
+            sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition:
+            color 0.2s ease,
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.logout-button:hover {
+    color: #ffffff;
+
+    background:
+            rgba(255, 255, 255, 0.1);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   LOG OUT HOVER LINE
+   ========================= */
+
+.logout-button::after {
+    content: "";
+
+    position: absolute;
+
+    left: 12px;
+    right: 12px;
+
+    bottom: 4px;
+
+    height: 2px;
+
+    background: #78b7e8;
+
+    border-radius: 2px;
+
+    transform: scaleX(0);
+
+    transform-origin: center;
+
+    transition:
+            transform 0.2s ease;
+}
+
+.logout-button:hover::after {
+    transform: scaleX(1);
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 700px) {
+
+    .site-header {
+        min-height: 70px;
+
+        padding: 0 18px;
+
+        grid-template-columns:
+            1fr
+            auto;
+    }
+
+    .brand {
+        grid-column: 1 / -1;
+
+        grid-row: 1;
+
+        position: absolute;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+    }
+
+    .brand-name {
+        font-size: 21px;
+    }
+
+    .brand-tagline {
+        display: none;
+    }
+
+    .nav-left {
+        grid-column: 1;
+
+        grid-row: 1;
+
+        justify-self: start;
+    }
+
+    .nav-right {
+        grid-column: 2;
+
+        grid-row: 1;
+
+        justify-self: end;
+    }
+
+    .nav-left,
+    .nav-right {
+        gap: 2px;
+    }
+
+    .site-header nav a {
+        padding: 8px;
+
+        font-size: 12px;
+    }
+
+    .site-header nav a::after {
+        display: none;
+    }
+}
+
+
+/* =========================
+   SMALL MOBILE
+   ========================= */
+
+@media (max-width: 480px) {
+
+    .site-header {
+        padding: 0 12px;
+    }
+
+    .brand-name {
+        font-size: 18px;
+    }
+
+    .site-header nav a {
+        padding: 7px 6px;
+
+        font-size: 11px;
+    }
 }
