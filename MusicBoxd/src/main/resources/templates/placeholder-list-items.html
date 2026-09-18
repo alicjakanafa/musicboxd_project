@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${list.title}">List</title>
+</head>
+<body>
+
+<main>
+  <h1 th:text="${list.title}">List title</h1>
+  <p th:text="${list.description}">List description</p>
+
+  <h2>In this list</h2>
+
+  <div th:if="${items == null or items.isEmpty()}">
+    <p>Nothing added yet.</p>
+  </div>
+
+  <ul>
+    <li th:each="item : ${items}"
+        th:if="${item.albumId != null and albums[item.albumId] != null}">
+
+      <h3 th:text="${albums[item.albumId].title}" th:href>
+        Album title
+      </h3>
+
+      <img
+              th:if="${albums[item.albumId].artworkUrl != null}"
+              th:src="${albums[item.albumId].artworkUrl}"
+              th:alt="${albums[item.albumId].title}"
+              width="150"
+      >
+
+      <p th:text="${albums[item.albumId].releaseYear}">
+        Release year
+      </p>
+
+
+    </li>
+  </ul>
+
+  <h3>Add an album</h3>
+
+
+  <input type="text" id="albumSearch" placeholder="Search for an album...">
+  <div id="searchResults"></div>
+
+  <p>
+    <a th:href="@{/lists}">Back to lists</a>
+  </p>
+</main>
+
+<div th:fragment="searchResults">
+  <ul>
+    <li th:each="album : ${results}">
+
+    <span th:text="${album.collectionName + ' — ' + album.artistName}">
+        Album — Artist
+    </span>
+
+      <form
+              th:action="@{/lists/{id}/albums(id=${listId})}"
+              method="post"
+              style="display:inline"
+      >
+
+        <input
+                type="hidden"
+                name="albumId"
+                th:value="${album.collectionId}"
+        >
+
+        <input
+                type="hidden"
+                name="title"
+                th:value="${album.collectionName}"
+        >
+
+        <input
+                type="hidden"
+                name="artworkUrl"
+                th:value="${album.highResolutionArtworkUrl}"
+        >
+
+        <input
+                type="hidden"
+                name="releaseDate"
+                th:value="${album.releaseDate}"
+        >
+
+        <button type="submit">Add</button>
+
+      </form>
+
+    </li>
+    <p th:if="${results == null or results.isEmpty()}">No results.</p>
+  </ul>
+</div>
+
+<script th:inline="javascript">
+  const listId = /*[[${list.id}]]*/ 0;
+  const input = document.getElementById('albumSearch');
+  const resultsBox = document.getElementById('searchResults');
+  let debounceTimer;
+
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const term = input.value.trim();
+
+    if (term.length < 2) {
+      resultsBox.innerHTML = '';
+      return;
+    }
+
+    debounceTimer = setTimeout(() => {
+      fetch(`/lists/${listId}/search?q=${encodeURIComponent(term)}`)
+              .then(res => res.text())
+              .then(html => { resultsBox.innerHTML = html; });
+    }, 300);
+  });
+</script>
+
+</body>
+</html>
