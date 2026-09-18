@@ -13,12 +13,15 @@ import com.example.MusicBoxd.Repository.UserRepository;
 import com.example.MusicBoxd.api.lastfm.LastFmAlbum;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
 import com.example.MusicBoxd.api.spotify.SpotifyTopArtistsResponse;
+
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +57,12 @@ public class ProfileController {
     public String profiles(
             @PathVariable Long id,
             Model model,
-            HttpSession session
+            HttpSession session,
+            @RequestParam(
+                    name = "artistRange",
+                    defaultValue = "medium_term"
+            )
+            String artistRange
     ) {
 
         User user =
@@ -85,7 +93,8 @@ public class ProfileController {
          */
 
         List<Review> reviews =
-                reviewRepository.findByUserIdOrderByCreatedAtDesc(id);
+                reviewRepository
+                        .findByUserIdOrderByCreatedAtDesc(id);
 
         System.out.println(
                 "REVIEWS FOUND: " + reviews.size()
@@ -160,9 +169,7 @@ public class ProfileController {
                         albumId,
                         artworkUrl
                 );
-
             }
-
         }
 
 
@@ -210,11 +217,9 @@ public class ProfileController {
                                     album.getId(),
                                     artworkUrl
                             );
-
                         }
 
                     });
-
         }
 
 
@@ -252,7 +257,7 @@ public class ProfileController {
 
         /*
          * =========================
-         * SPOTIFY
+         * SPOTIFY DEFAULT VALUES
          * =========================
          */
 
@@ -261,13 +266,6 @@ public class ProfileController {
                         "spotifyAccessToken"
                 );
 
-
-        /*
-         * Default values.
-         *
-         * These make sure the profile page
-         * still works if Spotify isn't connected.
-         */
 
         model.addAttribute(
                 "spotifyConnected",
@@ -302,6 +300,30 @@ public class ProfileController {
 
         /*
          * =========================
+         * DEFAULT ARTIST RANGE
+         * =========================
+         *
+         * medium_term = Last 6 months
+         */
+
+        if (
+                !artistRange.equals("short_term")
+                        && !artistRange.equals("medium_term")
+                        && !artistRange.equals("long_term")
+        ) {
+
+            artistRange = "medium_term";
+        }
+
+
+        model.addAttribute(
+                "artistRange",
+                artistRange
+        );
+
+
+        /*
+         * =========================
          * LOAD SPOTIFY DATA
          * =========================
          */
@@ -329,12 +351,14 @@ public class ProfileController {
 
 
                 /*
-                 * Top artists
+                 * Top artists using selected
+                 * time period.
                  */
 
                 SpotifyTopArtistsResponse topArtistsResponse =
                         spotifyController.getTopArtists(
-                                spotifyAccessToken
+                                spotifyAccessToken,
+                                artistRange
                         );
 
 
@@ -347,7 +371,6 @@ public class ProfileController {
                             "topArtists",
                             topArtistsResponse.getItems()
                     );
-
                 }
 
 
@@ -365,6 +388,11 @@ public class ProfileController {
                         "SPOTIFY PROFILE DATA LOADED"
                 );
 
+                System.out.println(
+                        "TOP ARTIST RANGE: " +
+                                artistRange
+                );
+
             } catch (Exception e) {
 
                 System.out.println(
@@ -374,11 +402,6 @@ public class ProfileController {
 
                 e.printStackTrace();
 
-
-                /*
-                 * If Spotify fails, we don't want
-                 * the whole profile page to crash.
-                 */
 
                 model.addAttribute(
                         "spotifyConnected",
@@ -392,7 +415,6 @@ public class ProfileController {
             System.out.println(
                     "SPOTIFY NOT CONNECTED"
             );
-
         }
 
 
@@ -590,7 +612,6 @@ public class ProfileController {
 
                     return imageUrl;
                 }
-
             }
 
         } catch (Exception e) {
@@ -601,7 +622,6 @@ public class ProfileController {
                             ": " +
                             e.getMessage()
             );
-
         }
 
 

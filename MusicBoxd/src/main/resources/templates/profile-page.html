@@ -367,6 +367,23 @@
               16 Sep 2026
             </small>
 
+            <!-- REMOVE REVIEW -->
+
+            <form
+                    th:action="@{/reviews/{id}/delete(id=${review.id})}"
+                    method="post"
+                    class="review-delete-form"
+            >
+
+              <button
+                      type="submit"
+                      class="profile-remove-button"
+              >
+                Remove
+              </button>
+
+            </form>
+
           </article>
 
         </div>
@@ -383,16 +400,48 @@
 
     <section class="profile-panel top-artists">
 
-
       <div class="panel-heading">
 
         <h2>
           Top Artists
         </h2>
 
-        <span>
-                    Last 6 months
-                </span>
+        <form
+                method="get"
+                th:action="@{/profile/{id}(id=${user.id})}"
+                class="artist-range-form"
+        >
+
+          <select
+                  name="artistRange"
+                  onchange="this.form.submit()"
+                  class="artist-range-select"
+          >
+
+            <option
+                    value="short_term"
+                    th:selected="${artistRange == 'short_term'}"
+            >
+              Last 4 weeks
+            </option>
+
+            <option
+                    value="medium_term"
+                    th:selected="${artistRange == 'medium_term'}"
+            >
+              Last 6 months
+            </option>
+
+            <option
+                    value="long_term"
+                    th:selected="${artistRange == 'long_term'}"
+            >
+              The past year
+            </option>
+
+          </select>
+
+        </form>
 
       </div>
 
@@ -416,12 +465,10 @@
               th:unless="${topArtists == null or topArtists.isEmpty()}"
       >
 
-
         <div
                 class="artist-row"
                 th:each="artist, stat : ${topArtists}"
         >
-
 
           <!-- RANK -->
 
@@ -436,7 +483,7 @@
 
           <img
                   th:if="${artist.images != null
-                                    and !artist.images.isEmpty()}"
+                                      and !artist.images.isEmpty()}"
                   th:src="${artist.images.get(0).url}"
                   th:alt="${artist.name}"
                   class="artist-image"
@@ -447,7 +494,7 @@
 
           <div
                   th:unless="${artist.images != null
-                                         and !artist.images.isEmpty()}"
+                                           and !artist.images.isEmpty()}"
                   class="artist-image-placeholder"
           >
           </div>
@@ -458,17 +505,14 @@
           <span
                   th:text="${artist.name}"
           >
-                        Artist name
-                    </span>
+                Artist name
+            </span>
 
         </div>
 
       </div>
 
     </section>
-
-
-
     <!-- =========================
          TOP 4
          ========================= -->
@@ -930,6 +974,154 @@
      ========================= -->
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script>
+
+  document.addEventListener(
+          "DOMContentLoaded",
+          function () {
+
+            const scrollContainer =
+                    document.querySelector(
+                            ".review-scroll"
+                    );
+
+            const reviewGrid =
+                    document.querySelector(
+                            ".review-scroll .review-grid"
+                    );
+
+            if (
+                    !scrollContainer ||
+                    !reviewGrid
+            ) {
+              return;
+            }
+
+            const reviews =
+                    Array.from(
+                            reviewGrid.children
+                    );
+
+            if (reviews.length <= 1) {
+              return;
+            }
+
+
+
+
+            reviews.forEach(
+                    function (review) {
+
+                      const clone =
+                              review.cloneNode(true);
+
+                      clone.setAttribute(
+                              "aria-hidden",
+                              "true"
+                      );
+
+                      reviewGrid.appendChild(
+                              clone
+                      );
+                    }
+            );
+
+
+            let animationFrame;
+
+            let lastTime = performance.now();
+
+            const speed = 60;
+
+
+
+            let originalWidth =
+                    reviewGrid.scrollWidth / 2;
+
+
+            function scrollReviews(
+                    currentTime
+            ) {
+
+              const deltaTime =
+                      currentTime - lastTime;
+
+              lastTime = currentTime;
+
+
+
+
+              scrollContainer.scrollLeft +=
+                      speed * (deltaTime / 1000);
+
+
+
+              if (
+                      scrollContainer.scrollLeft >=
+                      originalWidth
+              ) {
+
+                scrollContainer.scrollLeft -=
+                        originalWidth;
+              }
+
+
+              animationFrame =
+                      requestAnimationFrame(
+                              scrollReviews
+                      );
+            }
+
+
+            animationFrame =
+                    requestAnimationFrame(
+                            scrollReviews
+                    );
+
+
+            window.addEventListener(
+                    "resize",
+                    function () {
+
+                      originalWidth =
+                              reviewGrid.scrollWidth / 2;
+
+                    }
+            );
+
+
+            scrollContainer.addEventListener(
+                    "mouseenter",
+                    function () {
+
+                      cancelAnimationFrame(
+                              animationFrame
+                      );
+
+                    }
+            );
+
+
+            scrollContainer.addEventListener(
+                    "mouseleave",
+                    function () {
+
+                      lastTime =
+                              performance.now();
+
+                      animationFrame =
+                              requestAnimationFrame(
+                                      scrollReviews
+                              );
+
+                    }
+            );
+
+          }
+  );
+
+</script>
 
 
 </body>
