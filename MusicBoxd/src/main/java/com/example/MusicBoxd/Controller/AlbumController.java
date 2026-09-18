@@ -10,10 +10,12 @@ import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
 import com.example.MusicBoxd.Repository.UserFavouriteAlbumRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
+import com.example.MusicBoxd.api.itunes.ItunesAlbum;
 import com.example.MusicBoxd.api.itunes.ItunesService;
 import com.example.MusicBoxd.api.itunes.ItunesTrackResponse;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +24,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/albums")
@@ -58,6 +59,103 @@ public class AlbumController {
         this.itunesService = itunesService;
     }
 
+    // =========================
+    // SAVE ITUNES ALBUM
+    // =========================
+
+    @GetMapping("/save")
+    public String saveItunesAlbum(
+            @RequestParam Long collectionId,
+            @RequestParam String artistName,
+            @RequestParam String albumName,
+            @RequestParam String artworkUrl,
+            @RequestParam String releaseDate
+    ) {
+
+        /*
+         * Check whether this album already exists.
+         *
+         * collectionId is the iTunes ID and is stored
+         * as our external ID.
+         */
+        String externalId =
+                collectionId.toString();
+
+        var existingAlbum =
+                albumRepository
+                        .findByExternalId(externalId);
+
+        if (existingAlbum.isPresent()) {
+
+            return "redirect:/albums/" +
+                    existingAlbum.get().getId();
+        }
+
+        /*
+         * Find the artist or create them.
+         */
+        Artist artist =
+                artistRepository
+                        .findByNameIgnoreCase(
+                                artistName
+                        )
+                        .orElseGet(() ->
+                                artistRepository.save(
+                                        new Artist(
+                                                artistName
+                                        )
+                                )
+                        );
+
+        /*
+         * Convert the iTunes release date into
+         * the year used by our Album model.
+         */
+        Short releaseYear = null;
+
+        if (
+                releaseDate != null &&
+                        !releaseDate.isBlank()
+        ) {
+
+            try {
+
+                releaseYear =
+                        Short.valueOf(
+                                releaseDate.substring(
+                                        0,
+                                        4
+                                )
+                        );
+
+            } catch (Exception ignored) {
+                // Leave releaseYear as null.
+            }
+        }
+
+        /*
+         * Create the MusicBoxd album.
+         */
+        Album album =
+                new Album(
+                        externalId,
+                        artist.getId(),
+                        albumName,
+                        releaseYear,
+                        artworkUrl
+                );
+
+        Album savedAlbum =
+                albumRepository.save(album);
+
+        /*
+         * Send the user to the real MusicBoxd
+         * album profile.
+         */
+        return "redirect:/albums/" +
+                savedAlbum.getId();
+    }
+
 
     // =========================
     // ALBUM PROFILE
@@ -69,7 +167,7 @@ public class AlbumController {
             Model model
     ) {
 
-        Optional<Album> album =
+        var album =
                 albumRepository.findById(id);
 
         if (album.isEmpty()) {
@@ -79,12 +177,14 @@ public class AlbumController {
         Album currentAlbum =
                 album.get();
 
+        /*
+         * Find artist.
+         */
+        if (currentAlbum.getArtistId() == null) {
+            return "redirect:/";
+        }
 
-        // =========================
-        // FIND ARTIST
-        // =========================
-
-        Optional<Artist> artist =
+        var artist =
                 artistRepository.findById(
                         currentAlbum.getArtistId()
                 );
@@ -96,17 +196,18 @@ public class AlbumController {
         Artist currentArtist =
                 artist.get();
 
-
-        // =========================
-        // LAST.FM ALBUM INFORMATION
-        // =========================
-
+        /*
+         * Last.fm album information.
+         *
+         * This is allowed to fail. The album page
+         * should still work if Last.fm doesn't
+         * recognise the album.
+         */
         var lastFmAlbumResponse =
                 lastFmService.getAlbumInfo(
                         currentArtist.getName(),
                         currentAlbum.getTitle()
                 );
-
 
         model.addAttribute(
                 "album",
@@ -118,8 +219,10 @@ public class AlbumController {
                 currentArtist
         );
 
-
-        if (lastFmAlbumResponse != null) {
+        if (
+                lastFmAlbumResponse != null &&
+                        lastFmAlbumResponse.getAlbum() != null
+        ) {
 
             model.addAttribute(
                     "lastFmAlbum",
@@ -134,24 +237,26 @@ public class AlbumController {
             );
         }
 
-
-        // =========================
-        // SONG PREVIEWS
-        // =========================
-
+        /*
+         * Song previews.
+         */
         Map<String, String> trackPreviews =
                 new HashMap<>();
 
-        if (lastFmAlbumResponse != null &&
-                lastFmAlbumResponse.getAlbum() != null &&
-                lastFmAlbumResponse.getAlbum().getTracks() != null &&
-                lastFmAlbumResponse.getAlbum().getTracks().getTrack() != null) {
+        if (
+                lastFmAlbumResponse != null &&
+                        lastFmAlbumResponse.getAlbum() != null &&
+                        lastFmAlbumResponse.getAlbum().getTracks() != null &&
+                        lastFmAlbumResponse.getAlbum().getTracks().getTrack() != null
+        ) {
 
-            for (var track :
+            for (
+                    var track :
                     lastFmAlbumResponse
                             .getAlbum()
                             .getTracks()
-                            .getTrack()) {
+                            .getTrack()
+            ) {
 
                 ItunesTrackResponse response =
                         itunesService.searchTracks(
@@ -160,8 +265,10 @@ public class AlbumController {
                                         + track.getName()
                         );
 
-                if (response != null &&
-                        response.getResults() != null) {
+                if (
+                        response != null &&
+                                response.getResults() != null
+                ) {
 
                     response.getResults()
                             .stream()
@@ -184,11 +291,9 @@ public class AlbumController {
                 trackPreviews
         );
 
-
-        // =========================
-        // REVIEWS
-        // =========================
-
+        /*
+         * Reviews.
+         */
         List<Review> reviews =
                 reviewRepository
                         .findByAlbumIdOrderByCreatedAtDesc(
@@ -200,18 +305,18 @@ public class AlbumController {
                 reviews
         );
 
-
-        // =========================
-        // REVIEW USERS
-        // =========================
-
+        /*
+         * Review users.
+         */
         Map<Long, User> reviewUsers =
                 new HashMap<>();
 
         for (Review review : reviews) {
 
             userRepository
-                    .findById(review.getUserId())
+                    .findById(
+                            review.getUserId()
+                    )
                     .ifPresent(user ->
                             reviewUsers.put(
                                     review.getUserId(),
@@ -224,7 +329,6 @@ public class AlbumController {
                 "reviewUsers",
                 reviewUsers
         );
-
 
         return "album-profile";
     }
@@ -241,13 +345,8 @@ public class AlbumController {
             Authentication authentication
     ) {
 
-        String oktaUserId =
-                authentication.getName();
-
         User user =
-                userRepository
-                        .findByOktaUserId(oktaUserId)
-                        .orElseThrow();
+                getCurrentUser(authentication);
 
         favouriteAlbumRepository
                 .findByUserIdAndAlbumId(
@@ -264,7 +363,8 @@ public class AlbumController {
                 )
                 .stream()
                 .filter(favourite ->
-                        favourite.getPosition().equals(position)
+                        favourite.getPosition()
+                                .equals(position)
                 )
                 .findFirst()
                 .ifPresent(
@@ -278,9 +378,12 @@ public class AlbumController {
                         position
                 );
 
-        favouriteAlbumRepository.save(favourite);
+        favouriteAlbumRepository.save(
+                favourite
+        );
 
-        return "redirect:/profile/" + user.getId();
+        return "redirect:/profile/" +
+                user.getId();
     }
 
 
@@ -294,13 +397,8 @@ public class AlbumController {
             Authentication authentication
     ) {
 
-        String oktaUserId =
-                authentication.getName();
-
         User user =
-                userRepository
-                        .findByOktaUserId(oktaUserId)
-                        .orElseThrow();
+                getCurrentUser(authentication);
 
         favouriteAlbumRepository
                 .findByUserIdAndAlbumId(
@@ -311,6 +409,32 @@ public class AlbumController {
                         favouriteAlbumRepository::delete
                 );
 
-        return "redirect:/profile/" + user.getId();
+        return "redirect:/profile/" +
+                user.getId();
+    }
+
+
+    // =========================
+    // CURRENT USER
+    // =========================
+
+    private User getCurrentUser(
+            Authentication authentication
+    ) {
+
+        OidcUser principal =
+                (OidcUser)
+                        authentication.getPrincipal();
+
+        String oktaUserId =
+                principal.getSubject();
+
+        return userRepository
+                .findByOktaUserId(oktaUserId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Current user not found"
+                        )
+                );
     }
 }
