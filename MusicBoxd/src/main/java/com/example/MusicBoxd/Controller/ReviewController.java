@@ -10,6 +10,7 @@ import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.Repository.FriendRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
+import com.example.MusicBoxd.api.lastfm.LastFmService;
 import com.example.MusicBoxd.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -47,6 +48,9 @@ public class ReviewController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private LastFmService lastFmService;
 
 
     // =========================================================
@@ -110,6 +114,10 @@ public class ReviewController {
             Model model
     ) {
 
+        // -----------------------------------------------------
+        // Find album
+        // -----------------------------------------------------
+
         Album album =
                 albumRepository
                         .findById(id)
@@ -125,24 +133,62 @@ public class ReviewController {
         );
 
 
+        // -----------------------------------------------------
+        // Find artist
+        // -----------------------------------------------------
+
+        Artist artist = null;
+
         if (album.getArtistId() != null) {
 
-            Artist artist =
+            artist =
                     artistRepository
                             .findById(
                                     album.getArtistId()
                             )
                             .orElse(null);
+        }
 
-            model.addAttribute(
-                    "artist",
-                    artist
-            );
+        model.addAttribute(
+                "artist",
+                artist
+        );
+
+
+        // -----------------------------------------------------
+        // Get album artwork from Last.fm
+        // -----------------------------------------------------
+
+        if (artist != null) {
+
+            try {
+
+                var lastFmAlbum =
+                        lastFmService.getAlbumInfo(
+                                artist.getName(),
+                                album.getTitle()
+                        );
+
+                model.addAttribute(
+                        "lastFmAlbum",
+                        lastFmAlbum
+                );
+
+            } catch (Exception e) {
+
+                // If Last.fm cannot find the album,
+                // don't crash the review page.
+
+                model.addAttribute(
+                        "lastFmAlbum",
+                        null
+                );
+            }
 
         } else {
 
             model.addAttribute(
-                    "artist",
+                    "lastFmAlbum",
                     null
             );
         }
@@ -152,7 +198,9 @@ public class ReviewController {
     }
 
 
-
+    // =========================================================
+    // SAVE REVIEW
+    // =========================================================
 
     @PostMapping("/reviews/{id}")
     public String saveReview(
@@ -162,7 +210,9 @@ public class ReviewController {
             Authentication authentication
     ) {
 
-
+        // -----------------------------------------------------
+        // Find album
+        // -----------------------------------------------------
 
         Album album =
                 albumRepository
@@ -174,6 +224,9 @@ public class ReviewController {
                         );
 
 
+        // -----------------------------------------------------
+        // Get currently logged-in user
+        // -----------------------------------------------------
 
         OidcUser principal =
                 (OidcUser) authentication.getPrincipal();
@@ -193,6 +246,9 @@ public class ReviewController {
                         );
 
 
+        // -----------------------------------------------------
+        // Create review
+        // -----------------------------------------------------
 
         Review review =
                 new Review();
@@ -218,6 +274,9 @@ public class ReviewController {
         );
 
 
+        // -----------------------------------------------------
+        // Save review
+        // -----------------------------------------------------
 
         Review savedReview =
                 reviewRepository.save(
@@ -225,6 +284,9 @@ public class ReviewController {
                 );
 
 
+        // -----------------------------------------------------
+        // Notify friends
+        // -----------------------------------------------------
 
         List<Friend> friendships =
                 friendRepository
@@ -239,6 +301,7 @@ public class ReviewController {
             Long friendId = null;
 
 
+            // Current user sent the original request
             if (
                     user.getId().equals(
                             friendship.getRequesterId()
@@ -249,6 +312,8 @@ public class ReviewController {
                         friendship.getReceiverId();
             }
 
+
+            // Current user received the original request
             else if (
                     user.getId().equals(
                             friendship.getReceiverId()
@@ -259,6 +324,8 @@ public class ReviewController {
                         friendship.getRequesterId();
             }
 
+
+            // Not one of this user's friendships
             if (friendId == null) {
                 continue;
             }
@@ -272,6 +339,10 @@ public class ReviewController {
             );
         }
 
+
+        // -----------------------------------------------------
+        // Return to user's profile
+        // -----------------------------------------------------
 
         return "redirect:/profile/" + user.getId();
     }
