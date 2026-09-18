@@ -2,11 +2,18 @@ package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Album;
 import com.example.MusicBoxd.Model.Artist;
+import com.example.MusicBoxd.Model.Friend;
 import com.example.MusicBoxd.Model.Review;
+import com.example.MusicBoxd.Model.User;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
+import com.example.MusicBoxd.Repository.FriendRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
+import com.example.MusicBoxd.Repository.UserRepository;
+import com.example.MusicBoxd.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +39,19 @@ public class ReviewController {
     @Autowired
     private ArtistRepository artistRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
+
+    // =========================================================
+    // GET USER REVIEWS
+    // =========================================================
 
     @GetMapping("/users/{userId}/reviews")
     public String getUserReviews(
@@ -42,28 +62,47 @@ public class ReviewController {
         List<Review> reviews =
                 reviewRepository.findByUserId(userId);
 
-        Map<Long, Album> albums = new HashMap<>();
+        Map<Long, Album> albums =
+                new HashMap<>();
 
         for (Review review : reviews) {
 
-            Long albumId = review.getAlbumId();
+            Long albumId =
+                    review.getAlbumId();
 
             if (albumId != null) {
 
-                Album album = albumRepository
-                        .findById(albumId)
-                        .orElse(null);
+                Album album =
+                        albumRepository
+                                .findById(albumId)
+                                .orElse(null);
 
-                albums.put(albumId, album);
+                if (album != null) {
+                    albums.put(
+                            albumId,
+                            album
+                    );
+                }
             }
         }
 
-        model.addAttribute("reviews", reviews);
-        model.addAttribute("albums", albums);
+        model.addAttribute(
+                "reviews",
+                reviews
+        );
+
+        model.addAttribute(
+                "albums",
+                albums
+        );
 
         return "profile-page";
     }
 
+
+    // =========================================================
+    // SHOW REVIEW PAGE
+    // =========================================================
 
     @GetMapping("/reviews/{id}")
     public String reviewAlbum(
@@ -71,24 +110,41 @@ public class ReviewController {
             Model model
     ) {
 
-        Album album = albumRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("album not found")
-                );
+        Album album =
+                albumRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Album not found"
+                                )
+                        );
 
-
-        model.addAttribute("album", album);
-
+        model.addAttribute(
+                "album",
+                album
+        );
 
 
         if (album.getArtistId() != null) {
 
-            Artist artist = artistRepository
-                    .findById(album.getArtistId())
-                    .orElse(null);
+            Artist artist =
+                    artistRepository
+                            .findById(
+                                    album.getArtistId()
+                            )
+                            .orElse(null);
 
-            model.addAttribute("artist", artist);
+            model.addAttribute(
+                    "artist",
+                    artist
+            );
+
+        } else {
+
+            model.addAttribute(
+                    "artist",
+                    null
+            );
         }
 
 
@@ -96,31 +152,127 @@ public class ReviewController {
     }
 
 
+
+
     @PostMapping("/reviews/{id}")
     public String saveReview(
             @PathVariable Long id,
             @RequestParam BigDecimal rating,
-            @RequestParam String content
+            @RequestParam String content,
+            Authentication authentication
     ) {
 
-        albumRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("album not found")
+
+
+        Album album =
+                albumRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Album not found"
+                                )
+                        );
+
+
+
+        OidcUser principal =
+                (OidcUser) authentication.getPrincipal();
+
+        String oktaUserId =
+                principal.getSubject();
+
+
+        User user =
+                userRepository
+                        .findByOktaUserId(oktaUserId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found for Okta ID: "
+                                                + oktaUserId
+                                )
+                        );
+
+
+
+        Review review =
+                new Review();
+
+        review.setUserId(
+                user.getId()
+        );
+
+        review.setAlbumId(
+                album.getId()
+        );
+
+        review.setRating(
+                rating
+        );
+
+        review.setContent(
+                content
+        );
+
+        review.setCreatedAt(
+                LocalDateTime.now()
+        );
+
+
+
+        Review savedReview =
+                reviewRepository.save(
+                        review
                 );
 
-        Review review = new Review();
 
 
-        review.setUserId(1L);
+        List<Friend> friendships =
+                friendRepository
+                        .findByStatus("ACCEPTED");
 
-        review.setAlbumId(id);
-        review.setRating(rating);
-        review.setContent(content);
-        review.setCreatedAt(LocalDateTime.now());
 
-        reviewRepository.save(review);
+        for (
+                Friend friendship :
+                friendships
+        ) {
 
-        return "redirect:/profile/1";
+            Long friendId = null;
+
+
+            if (
+                    user.getId().equals(
+                            friendship.getRequesterId()
+                    )
+            ) {
+
+                friendId =
+                        friendship.getReceiverId();
+            }
+
+            else if (
+                    user.getId().equals(
+                            friendship.getReceiverId()
+                    )
+            ) {
+
+                friendId =
+                        friendship.getRequesterId();
+            }
+
+            if (friendId == null) {
+                continue;
+            }
+
+
+            notificationService.notifyFriendReviewed(
+                    friendId,
+                    user.getId(),
+                    savedReview.getId(),
+                    user.getUsername()
+            );
+        }
+
+
+        return "redirect:/profile/" + user.getId();
     }
-
 }
