@@ -32,7 +32,7 @@ public class Notification {
     private String notificationText;
 
     @Column(name = "is_read")
-    private boolean isRead;
+    private boolean read;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -49,7 +49,7 @@ public class Notification {
         this.relatedId = relatedId;
         this.type = type;
         this.notificationText = notificationText;
-        this.isRead = false;
+        this.read = false;
         this.createdAt = LocalDateTime.now();
     }
 }

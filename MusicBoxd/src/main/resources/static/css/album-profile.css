@@ -1,6 +1,6 @@
-/* =========================
+/* =========================================================
    MUSICBOXD - ALBUM PROFILE
-   ========================= */
+   ========================================================= */
 
 * {
     box-sizing: border-box;
@@ -8,9 +8,14 @@
 
 body {
     margin: 0;
+
     background: #080d14;
-    color: #f5f5f5;
-    font-family: Arial, Helvetica, sans-serif;
+    color: #f5f7fa;
+
+    font-family:
+            Arial,
+            Helvetica,
+            sans-serif;
 }
 
 a {
@@ -18,40 +23,78 @@ a {
     text-decoration: none;
 }
 
-.album-page {
-    min-height: 100vh;
-    background: #080d14;
+button,
+select {
+    font-family: inherit;
 }
 
 
-/* =========================
-   HEADER
-   ========================= */
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.album-page {
+    min-height: 100vh;
+
+    background:
+            radial-gradient(
+                    circle at 20% 0%,
+                    rgba(77, 155, 214, 0.08),
+                    transparent 35%
+            ),
+            #080d14;
+}
+
+
+/* =========================================================
+   ALBUM HEADER
+   ========================================================= */
 
 .album-header {
-    max-width: 1200px;
+    max-width: 1250px;
+
     margin: 0 auto;
-    padding: 70px 40px 50px;
+
+    padding: 70px 40px 60px;
 
     display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 60px;
+
+    grid-template-columns:
+            minmax(280px, 400px)
+            1fr;
+
+    gap: 65px;
 
     border-bottom: 1px solid #1c2936;
 }
 
 
-/* =========================
-   ALBUM ART
-   ========================= */
+/* =========================================================
+   ALBUM COVER
+   ========================================================= */
+
+.album-cover-wrapper {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: center;
+}
 
 .album-art {
     width: 100%;
+
+    max-width: 400px;
+
     aspect-ratio: 1 / 1;
+
     overflow: hidden;
 
     background: #101821;
+
     border: 1px solid #30475d;
+
+    box-shadow:
+            0 25px 60px rgba(0, 0, 0, 0.35);
 }
 
 .album-art img {
@@ -62,11 +105,12 @@ a {
 
     object-fit: cover;
 
-    transition: transform 0.3s ease;
+    transition:
+            transform 0.4s ease;
 }
 
 .album-art:hover img {
-    transform: scale(1.03);
+    transform: scale(1.025);
 }
 
 .album-art-placeholder {
@@ -74,6 +118,7 @@ a {
     height: 100%;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -83,373 +128,382 @@ a {
 }
 
 
-/* =========================
+/* =========================================================
    ALBUM INFORMATION
-   ========================= */
+   ========================================================= */
 
 .album-information {
     display: flex;
+
     flex-direction: column;
+
     justify-content: center;
+
     align-items: flex-start;
 }
 
-.album-information > p:first-child {
-    margin: 0 0 15px;
+.album-label {
+    margin-bottom: 15px;
 
     color: #4d9bd6;
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11px;
+
+    font-weight: 800;
+
     letter-spacing: 3px;
 }
 
 .album-information h1 {
     margin: 0;
 
+    max-width: 850px;
+
     color: #ffffff;
 
-    font-size: clamp(42px, 6vw, 76px);
+    font-size:
+            clamp(42px, 6vw, 78px);
+
     line-height: 0.95;
-    letter-spacing: -2px;
+
+    letter-spacing: -3px;
 }
 
-.album-information h2 {
-    margin: 25px 0 10px;
+.album-artist {
+    margin-top: 25px;
+
+    color: #78b7e8;
 
     font-size: 25px;
-    font-weight: 500;
+
+    font-weight: 600;
+
+    transition:
+            color 0.2s ease;
 }
 
-.album-information h2 a {
-    color: #4d9bd6;
-
-    transition: color 0.2s ease;
+.album-artist:hover {
+    color: #ffffff;
 }
 
-.album-information h2 a:hover {
-    color: #78b7e8;
-}
-
-.album-information p:not(:first-child) {
-    margin: 0 0 30px;
+.album-release-date {
+    margin: 12px 0 0;
 
     color: #8b96a3;
 
-    font-size: 15px;
+    font-size: 14px;
 }
 
 
-/* =========================
-   REVIEW BUTTON
-   ========================= */
+/* =========================================================
+   ALBUM ACTIONS
+   ========================================================= */
 
-.review-button {
+.album-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 35px;
+}
+
+.album-action-button {
+    min-height: 44px;
+
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
-    padding: 13px 22px;
+    gap: 8px;
 
-    background: #4d9bd6;
-    color: #080d14;
+    padding: 11px 17px;
+
+    border-radius: 8px;
 
     font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
 
-    border: 1px solid #4d9bd6;
+    font-weight: 700;
+
+    cursor: pointer;
 
     transition:
+            transform 0.2s ease,
             background 0.2s ease,
-            color 0.2s ease,
-            transform 0.2s ease;
+            border-color 0.2s ease,
+            color 0.2s ease;
 }
 
-.review-button:hover {
-    background: #78b7e8;
-    border-color: #78b7e8;
-
+.album-action-button:hover {
     transform: translateY(-2px);
 }
 
+.album-action-button.primary {
+    background: #4d9bd6;
 
-/* =========================
+    color: #080d14;
+
+    border: 1px solid #4d9bd6;
+}
+
+.album-action-button.primary:hover {
+    background: #78b7e8;
+
+    border-color: #78b7e8;
+}
+
+.album-action-button.secondary {
+    background: #101821;
+
+    color: #f5f7fa;
+
+    border: 1px solid #30475d;
+}
+
+.album-action-button.secondary:hover {
+    background: #151f2a;
+
+    border-color: #4d9bd6;
+
+    color: #78b7e8;
+}
+
+.album-action-button.secondary.active {
+    background: rgba(77, 155, 214, 0.12);
+
+    border-color: #4d9bd6;
+
+    color: #78b7e8;
+}
+
+.action-icon {
+    font-size: 16px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
    TOP 4
-   ========================= */
+   ========================================================= */
 
 .top-four {
     width: 100%;
-    max-width: 500px;
+
+    max-width: 550px;
 
     margin-top: 25px;
+
     padding: 20px;
 
     background: #101821;
 
     border: 1px solid #1c2936;
-    border-radius: 16px;
+
+    border-radius: 12px;
+}
+
+.top-four-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 17px;
+}
+
+.top-four-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(77, 155, 214, 0.12);
+
+    color: #78b7e8;
+
+    font-size: 16px;
 }
 
 .top-four h3 {
-    margin: 0 0 15px;
+    margin: 0;
 
     color: #ffffff;
 
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 14px;
+}
+
+.top-four-heading p {
+    margin: 4px 0 0;
+
+    color: #697583;
+
+    font-size: 12px;
 }
 
 .top-four-form {
     display: flex;
+
     gap: 10px;
 }
 
 .top-four select {
-    min-width: 145px;
+    min-width: 85px;
 
-    padding: 12px 14px;
+    padding: 11px 13px;
 
     background: #080d14;
-    color: #f5f5f5;
+
+    color: #f5f7fa;
 
     border: 1px solid #30475d;
-    border-radius: 8px;
 
-    font-family: inherit;
-    font-size: 13px;
-
-    cursor: pointer;
+    border-radius: 7px;
 
     outline: none;
 
-    transition:
-            border-color 0.2s ease,
-            background 0.2s ease;
+    cursor: pointer;
 }
 
-.top-four select:hover,
 .top-four select:focus {
     border-color: #4d9bd6;
-    background: #0b121b;
 }
 
 .top-four-button {
     flex: 1;
 
-    padding: 12px 18px;
+    padding: 11px 18px;
 
     border: 1px solid #4d9bd6;
-    border-radius: 8px;
+
+    border-radius: 7px;
 
     background: #4d9bd6;
+
     color: #080d14;
 
-    font-family: inherit;
     font-size: 13px;
+
     font-weight: 800;
 
     cursor: pointer;
 
     transition:
             background 0.2s ease,
-            border-color 0.2s ease,
             transform 0.2s ease;
 }
 
 .top-four-button:hover {
     background: #78b7e8;
-    border-color: #78b7e8;
 
-    transform: translateY(-2px);
-}
-
-.top-four-button:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
 
-/* =========================
-   SONG SECTION
-   ========================= */
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
 
-.songs {
-    max-width: 1200px;
+.album-content {
+    max-width: 1250px;
+
     margin: 0 auto;
-    padding: 55px 40px 70px;
-}
 
-.songs > h2 {
-    margin: 0 0 25px;
-
-    color: #ffffff;
-
-    font-size: 28px;
-    letter-spacing: -0.5px;
-}
-
-
-/* =========================
-   SONG ROW
-   ========================= */
-
-.song {
-    min-height: 78px;
+    padding: 55px 40px 100px;
 
     display: grid;
 
-    /*
-     * Track number
-     * Song name
-     * Duration
-     * Audio player
-     */
-    grid-template-columns: 55px minmax(180px, 1fr) 60px 280px;
+    grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
 
-    align-items: center;
+    gap: 50px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.section-heading {
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
 
     gap: 20px;
 
-    padding: 15px 0;
-
-    border-top: 1px solid #1c2936;
-
-    transition:
-            background 0.2s ease,
-            padding 0.2s ease;
+    margin-bottom: 25px;
 }
 
-.song:last-of-type {
-    border-bottom: 1px solid #1c2936;
+.section-eyebrow {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #4d9bd6;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
 }
 
-.song:hover {
-    background: #101821;
+.section-heading h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+    letter-spacing: -1px;
 }
 
+.write-review-link {
+    color: #78b7e8;
 
-/* =========================
-   TRACK NUMBER
-   ========================= */
+    font-size: 12px;
 
-.track-number {
-    color: #697583;
-
-    font-size: 13px;
     font-weight: 700;
 
-    text-align: center;
+    white-space: nowrap;
+
+    transition:
+            color 0.2s ease;
 }
 
-.song:hover .track-number {
-    color: #4d9bd6;
+.write-review-link:hover {
+    color: #ffffff;
 }
 
 
-/* =========================
-   SONG INFORMATION
-   ========================= */
+/* =========================================================
+   REVIEWS
+   ========================================================= */
 
-.song-information {
+.reviews {
     min-width: 0;
 }
 
-.song-information h3 {
-    margin: 0;
 
-    color: #eeeeee;
-
-    font-size: 16px;
-    font-weight: 600;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.song:hover .song-information h3 {
-    color: #ffffff;
-}
-
-
-/* =========================
-   SONG DURATION
-   ========================= */
-
-.song-duration {
-    color: #697583;
-
-    font-size: 13px;
-
-    text-align: right;
-
-    white-space: nowrap;
-}
-
-
-/* =========================
-   AUDIO PREVIEW
-   ========================= */
-
-.song-preview {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.song-preview audio {
-    width: 280px;
-    height: 38px;
-}
-
-.song-preview audio:focus {
-    outline: 1px solid #4d9bd6;
-    outline-offset: 2px;
-}
-
-
-/* =========================
-   EMPTY MESSAGE
-   ========================= */
-
-.empty-message {
-    padding: 30px 0;
-
-    color: #697583;
-
-    font-size: 14px;
-
-    border-top: 1px solid #1c2936;
-}
-
-
-/* =========================
-   REVIEWS SECTION
-   ========================= */
-
-.reviews {
-    max-width: 1200px;
-    margin: 0 auto;
-
-    padding: 0 40px 90px;
-}
-
-.reviews > h2 {
-    margin: 0 0 25px;
-
-    color: #ffffff;
-
-    font-size: 28px;
-    letter-spacing: -0.5px;
-}
-
-
-/* =========================
+/* =========================================================
    REVIEW CARD
-   ========================= */
+   ========================================================= */
 
 .review-card {
-    padding: 25px 0;
+    padding: 22px 0;
 
     border-top: 1px solid #1c2936;
 
@@ -463,215 +517,404 @@ a {
 }
 
 .review-card:hover {
-    background: #0b121b;
+    background: rgba(16, 24, 33, 0.55);
 }
 
 
-/* =========================
+/* =========================================================
    REVIEW HEADER
-   ========================= */
+   ========================================================= */
 
 .review-header {
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 15px;
 
-    margin-bottom: 15px;
+    margin-bottom: 13px;
 }
-
-
-/* =========================
-   REVIEW USER
-   ========================= */
 
 .review-user {
-    display: flex;
-    align-items: center;
+    min-width: 0;
 }
 
-.review-user strong {
-    color: #4d9bd6;
-
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.review-user strong:hover {
+.review-user-link {
     color: #78b7e8;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition:
+            color 0.2s ease;
 }
 
+a.review-user-link:hover {
+    color: #ffffff;
 
-/* =========================
-   REVIEW RATING
-   ========================= */
+    text-decoration: underline;
+
+    text-underline-offset: 3px;
+}
 
 .review-rating {
     color: #78b7e8;
 
-    font-size: 14px;
+    font-size: 13px;
+
     font-weight: 700;
 
     white-space: nowrap;
 }
 
 
-/* =========================
+/* =========================================================
+   REVIEW TITLE
+   ========================================================= */
+
+.review-title {
+    margin: 0 0 9px;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
    REVIEW CONTENT
-   ========================= */
+   ========================================================= */
 
 .review-content {
-    max-width: 850px;
+    max-width: 650px;
 }
 
 .review-content p {
     margin: 0;
 
-    color: #d7dce2;
-
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-
-/* =========================
-   REVIEW DATE
-   ========================= */
-
-.review-date {
-    margin-top: 15px;
-
-    color: #697583;
-
-    font-size: 12px;
-}
-
-
-/* =========================
-   REVIEW EMPTY STATE
-   ========================= */
-
-.reviews .empty-message {
-    padding: 30px 0;
-
-    color: #697583;
+    color: #cbd2d9;
 
     font-size: 14px;
 
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   REVIEW FOOTER
+   ========================================================= */
+
+.review-footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 17px;
+}
+
+.review-date {
+    color: #697583;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   REVIEW LIKE
+   ========================================================= */
+
+.review-actions {
+    display: flex;
+
+    align-items: center;
+}
+
+.review-like-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px 9px;
+
+    background: transparent;
+
+    color: #697583;
+
+    border: 1px solid transparent;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+            color 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.review-like-button:hover {
+    color: #78b7e8;
+
+    background: #101821;
+
+    border-color: #1c2936;
+}
+
+.review-like-button.liked {
+    color: #78b7e8;
+
+    background: rgba(77, 155, 214, 0.08);
+}
+
+.like-icon {
+    font-size: 17px;
+
+    line-height: 1;
+}
+
+.like-count {
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SONGS
+   ========================================================= */
+
+.songs {
+    min-width: 0;
+
+    position: sticky;
+
+    top: 25px;
+}
+
+
+/* =========================================================
+   SONG ROW
+   ========================================================= */
+
+.song {
+    min-height: 70px;
+
+    display: grid;
+
+    grid-template-columns:
+            35px
+            minmax(0, 1fr)
+            auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 0;
+
     border-top: 1px solid #1c2936;
+
+    transition:
+            background 0.2s ease;
+}
+
+.song:last-of-type {
+    border-bottom: 1px solid #1c2936;
+}
+
+.song:hover {
+    background: #101821;
 }
 
 
-/* =========================
-   RESPONSIVE - TABLET
-   ========================= */
+/* =========================================================
+   TRACK NUMBER
+   ========================================================= */
 
-@media (max-width: 1000px) {
+.track-number {
+    color: #697583;
 
-    .album-header {
-        grid-template-columns: 280px 1fr;
-        gap: 40px;
+    font-size: 12px;
 
-        padding: 50px 25px 40px;
-    }
+    font-weight: 700;
 
-    .songs {
-        padding: 45px 25px 60px;
-    }
+    text-align: center;
+}
 
-    .reviews {
-        padding: 0 25px 70px;
-    }
-
-    .album-information h1 {
-        font-size: 48px;
-    }
-
-    .song {
-        grid-template-columns: 45px minmax(150px, 1fr) 50px 220px;
-
-        gap: 15px;
-    }
-
-    .song-preview audio {
-        width: 220px;
-    }
+.song:hover .track-number {
+    color: #4d9bd6;
 }
 
 
-/* =========================
-   RESPONSIVE - MOBILE
-   ========================= */
+/* =========================================================
+   SONG INFORMATION
+   ========================================================= */
 
-@media (max-width: 700px) {
+.song-information {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.song-information h3 {
+    min-width: 0;
+
+    margin: 0;
+
+    color: #eeeeee;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.song:hover .song-information h3 {
+    color: #ffffff;
+}
+
+.song-duration {
+    flex-shrink: 0;
+
+    color: #697583;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   SONG PREVIEW
+   ========================================================= */
+
+.song-preview {
+    display: flex;
+
+    align-items: center;
+}
+
+.song-preview audio {
+    width: 190px;
+
+    height: 34px;
+}
+
+.song-preview audio:focus {
+    outline: 1px solid #4d9bd6;
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-message {
+    padding: 45px 20px;
+
+    text-align: center;
+
+    border: 1px solid #1c2936;
+
+    background: #101821;
+
+    border-radius: 10px;
+}
+
+.empty-icon {
+    margin-bottom: 12px;
+
+    color: #4d9bd6;
+
+    font-size: 28px;
+}
+
+.empty-message h3 {
+    margin: 0 0 7px;
+
+    color: #ffffff;
+
+    font-size: 16px;
+}
+
+.empty-message p {
+    margin: 0 0 20px;
+
+    color: #697583;
+
+    font-size: 13px;
+}
+
+.empty-review-button {
+    display: inline-flex;
+
+    padding: 10px 15px;
+
+    background: #4d9bd6;
+
+    color: #080d14;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1050px) {
 
     .album-header {
-        display: flex;
-        flex-direction: column;
+        grid-template-columns:
+                300px
+                1fr;
 
-        padding: 35px 20px 40px;
+        gap: 45px;
+
+        padding: 55px 25px 50px;
     }
 
-    .album-art {
-        width: min(100%, 320px);
+    .album-content {
+        padding:
+                45px 25px 80px;
 
-        margin: 0 auto;
-    }
-
-    .album-information {
-        align-items: flex-start;
+        gap: 35px;
     }
 
     .album-information h1 {
-        font-size: 42px;
+        font-size: 55px;
     }
-
-    .album-information h2 {
-        font-size: 21px;
-    }
-
-    .songs {
-        padding: 35px 20px 50px;
-    }
-
-    .reviews {
-        padding: 0 20px 60px;
-    }
-
-
-    /*
-     * On mobile the audio player moves
-     * underneath the song information.
-     */
 
     .song {
-        grid-template-columns: 35px 1fr;
-
-        gap: 5px 10px;
-
-        padding: 18px 0;
-    }
-
-    .track-number {
-        grid-row: 1 / span 2;
-
-        align-self: start;
-
-        padding-top: 2px;
-    }
-
-    .song-information {
-        grid-column: 2;
-    }
-
-    .song-duration {
-        grid-column: 2;
-
-        text-align: left;
-
-        margin-top: -5px;
+        grid-template-columns:
+                30px
+                minmax(0, 1fr);
     }
 
     .song-preview {
@@ -684,41 +927,108 @@ a {
 
     .song-preview audio {
         width: 100%;
-        max-width: 350px;
-    }
 
-
-    /* REVIEW MOBILE */
-
-    .review-header {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 8px;
-    }
-
-    .review-content {
-        max-width: 100%;
+        max-width: 300px;
     }
 }
 
 
-/* =========================
-   RESPONSIVE - SMALL MOBILE
-   ========================= */
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
-@media (max-width: 400px) {
+@media (max-width: 750px) {
+
+    .album-header {
+        display: flex;
+
+        flex-direction: column;
+
+        padding:
+                35px 20px 45px;
+
+        gap: 35px;
+    }
+
+    .album-cover-wrapper {
+        width: 100%;
+    }
+
+    .album-art {
+        width: min(100%, 330px);
+    }
+
+    .album-information h1 {
+        font-size: 43px;
+
+        letter-spacing: -2px;
+    }
+
+    .album-artist {
+        font-size: 21px;
+    }
+
+    .album-actions {
+        width: 100%;
+    }
+
+    .album-action-button {
+        flex: 1;
+
+        min-width: 140px;
+    }
+
+    .top-four {
+        max-width: none;
+    }
+
+    .album-content {
+        display: flex;
+
+        flex-direction: column;
+
+        padding:
+                40px 20px 70px;
+
+        gap: 60px;
+    }
+
+    .songs {
+        position: static;
+
+        width: 100%;
+    }
+
+    .reviews,
+    .songs {
+        width: 100%;
+    }
+
+    .section-heading h2 {
+        font-size: 26px;
+    }
+
+    .review-content {
+        max-width: none;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 450px) {
 
     .album-information h1 {
         font-size: 36px;
     }
 
-    .song-information h3 {
-        font-size: 15px;
+    .album-actions {
+        flex-direction: column;
     }
 
-    .song-preview audio {
+    .album-action-button {
         width: 100%;
     }
 
@@ -726,19 +1036,28 @@ a {
         flex-direction: column;
     }
 
-    .top-four select {
-        width: 100%;
-    }
-
+    .top-four select,
     .top-four-button {
         width: 100%;
     }
 
-    .reviews > h2 {
-        font-size: 24px;
+    .section-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 10px;
     }
 
-    .review-content p {
-        font-size: 14px;
+    .song-information {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+    .song-duration {
+        font-size: 10px;
     }
 }
