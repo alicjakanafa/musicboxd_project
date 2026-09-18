@@ -25,30 +25,60 @@
 
 <header th:replace="~{fragments/navbar :: navbar}"></header>
 
-<div class="album-page">
+
+<main class="album-page">
 
 
-  <!-- =========================
+  <!-- =====================================================
        ALBUM HEADER
-       ========================= -->
+       ===================================================== -->
 
   <section class="album-header">
 
-    <div class="album-art">
+    <div class="album-cover-wrapper">
 
-      <!-- LAST.FM ARTWORK -->
+      <div class="album-art">
 
-      <img
-              th:if="${lastFmAlbum != null and lastFmAlbum.image != null and !lastFmAlbum.image.isEmpty()}"
-              th:src="${lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text}"
-              th:alt="${album.title}"
-      >
+        <!-- LAST.FM ARTWORK -->
 
-      <div
-              class="album-art-placeholder"
-              th:if="${lastFmAlbum == null or lastFmAlbum.image == null or lastFmAlbum.image.isEmpty()}"
-      >
-        No artwork
+        <img
+                th:if="${lastFmAlbum != null
+                                and lastFmAlbum.image != null
+                                and !lastFmAlbum.image.isEmpty()}"
+
+                th:src="${lastFmAlbum.image.get(
+                                lastFmAlbum.image.size() - 1
+                        ).text}"
+
+                th:alt="${album.title}"
+        >
+
+        <!-- FALLBACK ARTWORK -->
+
+        <img
+                th:if="${(lastFmAlbum == null
+                                or lastFmAlbum.image == null
+                                or lastFmAlbum.image.isEmpty())
+                                and album.artworkUrl != null}"
+
+                th:src="${album.artworkUrl}"
+
+                th:alt="${album.title}"
+        >
+
+        <!-- NO ARTWORK -->
+
+        <div
+                class="album-art-placeholder"
+
+                th:if="${(lastFmAlbum == null
+                                or lastFmAlbum.image == null
+                                or lastFmAlbum.image.isEmpty())
+                                and album.artworkUrl == null}"
+        >
+          No artwork
+        </div>
+
       </div>
 
     </div>
@@ -56,7 +86,10 @@
 
     <div class="album-information">
 
-      <p>ALBUM</p>
+            <span class="album-label">
+                ALBUM
+            </span>
+
 
       <h1 th:text="${album.title}">
         Album Name
@@ -65,74 +98,171 @@
 
       <!-- ARTIST -->
 
-      <h2 th:if="${artist != null}">
+      <a
+              th:if="${artist != null}"
 
-        <a
-                th:href="@{/artists/{id}(id=${artist.id})}"
-                th:text="${artist.name}"
-        >
-          Artist Name
-        </a>
+              class="album-artist"
 
-      </h2>
+              th:href="@{/artists/{id}(id=${artist.id})}"
+
+              th:text="${artist.name}"
+      >
+        Artist Name
+      </a>
 
 
-      <!-- RELEASE DATE FROM LAST.FM -->
+      <!-- RELEASE DATE -->
 
       <p
-              th:if="${lastFmAlbum != null and lastFmAlbum.releasedate != null}"
+              class="album-release-date"
+
+              th:if="${lastFmAlbum != null
+                            and lastFmAlbum.releasedate != null}"
+
               th:text="${lastFmAlbum.releasedate}"
       >
         Release date
       </p>
 
 
-      <!-- REVIEW -->
+      <!-- =================================================
+           ALBUM ACTIONS
+           ================================================= -->
 
-      <a
-              th:href="@{/reviews/{id}(id=${album.id})}"
-              class="review-button"
-      >
-        Review this album
-      </a>
+      <div class="album-actions">
 
 
-      <!-- TOP 4 -->
+        <!-- REVIEW -->
+
+        <a
+                th:href="@{/reviews/{id}(id=${album.id})}"
+
+                class="album-action-button primary"
+        >
+
+                    <span class="action-icon">
+                        ✎
+                    </span>
+
+          Review
+        </a>
+
+
+        <!-- ADD TO LIST -->
+
+        <!--
+            PLACEHOLDER FOR LIST BACKEND
+
+          -->
+
+        <button
+                type="button"
+
+                class="album-action-button secondary"
+
+                id="addToListButton"
+
+                th:attr="data-album-id=${album.id}"
+        >
+
+                    <span class="action-icon">
+                        +
+                    </span>
+
+          Add to List
+
+        </button>
+
+
+        <!-- WANT TO LISTEN -->
+
+        <!--
+            PLACEHOLDER FOR WANT-TO-LISTEN BACKEND
+
+
+        -->
+
+        <button
+                type="button"
+
+                class="album-action-button secondary"
+
+                id="wantToListenButton"
+
+                th:attr="data-album-id=${album.id}"
+        >
+
+                    <span class="action-icon">
+                        ♡
+                    </span>
+
+          Want to Listen
+
+        </button>
+
+
+      </div>
+
+
+      <!-- =================================================
+           TOP 4
+           ================================================= -->
 
       <div class="top-four">
 
-        <h3>
-          Add to your Top 4
-        </h3>
+        <div class="top-four-heading">
+
+                    <span class="top-four-icon">
+                        ★
+                    </span>
+
+          <div>
+
+            <h3>
+              Add to your Top 4
+            </h3>
+
+            <p>
+              Choose where this album belongs.
+            </p>
+
+          </div>
+
+        </div>
+
 
         <form
                 th:action="@{/albums/{id}/favourite(id=${album.id})}"
+
                 method="post"
+
                 class="top-four-form"
         >
 
           <select name="position">
 
             <option value="1">
-              Top 4 — #1
+              #1
             </option>
 
             <option value="2">
-              Top 4 — #2
+              #2
             </option>
 
             <option value="3">
-              Top 4 — #3
+              #3
             </option>
 
             <option value="4">
-              Top 4 — #4
+              #4
             </option>
 
           </select>
 
+
           <button
                   type="submit"
+
                   class="top-four-button"
           >
             Add to Top 4
@@ -147,207 +277,488 @@
   </section>
 
 
-  <!-- =========================
-       SONGS
-       ========================= -->
 
-  <section class="songs">
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
 
-    <h2>
-      Songs
-    </h2>
+  <section class="album-content">
 
 
-    <!-- LAST.FM TRACKLIST -->
+    <!-- =================================================
+         REVIEWS
+         ================================================= -->
 
-    <div
-            class="song"
-            th:each="song, status : ${lastFmAlbum.tracks.track}"
-    >
+    <section class="reviews">
 
-      <!-- TRACK NUMBER -->
+      <div class="section-heading">
 
-      <div class="track-number">
+        <div>
 
-                <span th:text="${status.count}">
-                    1
-                </span>
+                    <span class="section-eyebrow">
+                        COMMUNITY
+                    </span>
+
+          <h2>
+            Reviews
+          </h2>
+
+        </div>
+
+        <a
+                th:href="@{/reviews/{id}(id=${album.id})}"
+
+                class="write-review-link"
+        >
+          Write a review →
+        </a>
 
       </div>
 
 
-      <!-- SONG NAME -->
+      <!-- REVIEWS -->
 
-      <div class="song-information">
+      <div
+              class="review-card"
 
-        <h3 th:text="${song.name}">
-          Song Title
+              th:each="review : ${reviews}"
+      >
+
+        <!-- REVIEW HEADER -->
+
+        <div class="review-header">
+
+
+          <div class="review-user">
+
+            <!-- CLICKABLE USERNAME -->
+
+            <a
+                    th:if="${reviewUsers[review.userId] != null}"
+
+                    class="review-user-link"
+
+                    th:href="@{/profile/{id}(id=${review.userId})}"
+
+                    th:text="${reviewUsers[review.userId].username}"
+            >
+              Username
+            </a>
+
+
+            <span
+                    th:if="${reviewUsers[review.userId] == null}"
+
+                    class="review-user-link"
+            >
+                            User
+                        </span>
+
+          </div>
+
+
+          <!-- RATING -->
+
+          <div class="review-rating">
+
+                        <span
+                                th:text="${review.rating}"
+                        >
+                            0
+                        </span>
+
+            <span>
+                            / 5 ★
+                        </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- REVIEW HEADER / TITLE -->
+
+        <h3
+                class="review-title"
+
+                th:if="${review.header != null
+                                and !review.header.isBlank()}"
+
+                th:text="${review.header}"
+        >
+          Review title
         </h3>
 
-      </div>
 
+        <!-- REVIEW CONTENT -->
 
-      <!-- DURATION -->
+        <div class="review-content">
 
-      <div
-              class="song-duration"
-              th:if="${song.duration != null and !song.duration.isEmpty()}"
-      >
-
-                <span th:text="${song.formattedDuration}">
-                    0:00
-                </span>
-
-      </div>
-
-
-      <!-- ITUNES PREVIEW -->
-
-      <div
-              class="song-preview"
-              th:if="${trackPreviews[song.name] != null}"
-      >
-
-        <audio controls>
-
-          <source
-                  th:src="${trackPreviews[song.name]}"
-                  type="audio/mpeg"
-          >
-
-          Your browser does not support audio playback.
-
-        </audio>
-
-      </div>
-
-    </div>
-
-
-    <!-- NO TRACKS -->
-
-    <div
-            class="empty-message"
-            th:if="${lastFmAlbum == null or lastFmAlbum.tracks == null or lastFmAlbum.tracks.track == null or lastFmAlbum.tracks.track.isEmpty()}"
-    >
-
-      <p>
-        No tracklist available for this album.
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       REVIEWS
-       ========================= -->
-
-  <section class="reviews">
-
-    <h2>
-      Reviews
-    </h2>
-
-
-    <!-- REVIEWS -->
-
-    <div
-            class="review-card"
-            th:each="review : ${reviews}"
-    >
-
-      <!-- REVIEW HEADER -->
-
-      <div class="review-header">
-
-        <div class="review-user">
-
-          <strong
-                  th:if="${reviewUsers[review.userId] != null}"
-                  th:text="${reviewUsers[review.userId].username}"
-          >
-            Username
-          </strong>
-
-          <strong
-                  th:if="${reviewUsers[review.userId] == null}"
-          >
-            User
-          </strong>
+          <p th:text="${review.content}">
+            Review content
+          </p>
 
         </div>
 
 
-        <!-- RATING -->
+        <!-- REVIEW FOOTER -->
 
-        <div class="review-rating">
+        <div class="review-footer">
+
+
+          <!-- DATE -->
+
+          <span
+                  class="review-date"
+
+                  th:if="${review.createdAt != null}"
+
+                  th:text="${#temporals.format(
+                                    review.createdAt,
+                                    'dd MMM yyyy'
+                            )}"
+          >
+                        01 Jan 2026
+                    </span>
+
+
+          <div class="review-actions">
+
+
+            <!-- LIKE BUTTON -->
+
+
+            <button
+                    type="button"
+
+                    class="review-like-button"
+
+                    th:attr="data-review-id=${review.id}"
+
+                    aria-label="Like review"
+            >
+
+                            <span class="like-icon">
+                                ♡
+                            </span>
+
+              <span class="like-count">
+                                0
+                            </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- NO REVIEWS -->
+
+      <div
+              class="empty-message"
+
+              th:if="${reviews == null
+                            or reviews.isEmpty()}"
+      >
+
+        <div class="empty-icon">
+          ♫
+        </div>
+
+        <h3>
+          No reviews yet
+        </h3>
+
+        <p>
+          Be the first person to review this album.
+        </p>
+
+        <a
+                th:href="@{/reviews/{id}(id=${album.id})}"
+
+                class="empty-review-button"
+        >
+          Write the first review
+        </a>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         SONGS
+         ================================================= -->
+
+    <section class="songs">
+
+      <div class="section-heading">
+
+        <div>
+
+                    <span class="section-eyebrow">
+                        TRACKLIST
+                    </span>
+
+          <h2>
+            Songs
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <!-- TRACKLIST -->
+
+      <div
+              class="song"
+
+              th:if="${lastFmAlbum != null
+                            and lastFmAlbum.tracks != null
+                            and lastFmAlbum.tracks.track != null}"
+
+              th:each="song, status :
+                            ${lastFmAlbum.tracks.track}"
+      >
+
+
+        <!-- TRACK NUMBER -->
+
+        <div class="track-number">
 
                     <span
-                            th:text="${review.rating}"
+                            th:text="${status.count}"
                     >
-                        0
+                        1
                     </span>
 
-          <span>
-                        / 5 ★
+        </div>
+
+
+        <!-- SONG INFO -->
+
+        <div class="song-information">
+
+          <h3
+                  th:text="${song.name}"
+          >
+            Song Title
+          </h3>
+
+
+          <span
+                  class="song-duration"
+
+                  th:if="${song.duration != null
+                                    and !song.duration.isEmpty()}"
+
+                  th:text="${song.formattedDuration}"
+          >
+                        0:00
                     </span>
+
+        </div>
+
+
+        <!-- PREVIEW -->
+
+        <div
+                class="song-preview"
+
+                th:if="${trackPreviews[song.name] != null}"
+        >
+
+          <audio controls>
+
+            <source
+                    th:src="${trackPreviews[song.name]}"
+
+                    type="audio/mpeg"
+            >
+
+            Your browser does not support audio playback.
+
+          </audio>
 
         </div>
 
       </div>
 
 
-      <!-- REVIEW CONTENT -->
+      <!-- NO TRACKS -->
 
-      <div class="review-content">
+      <div
+              class="empty-message"
 
-        <p th:text="${review.content}">
-          Review content
+              th:if="${lastFmAlbum == null
+                            or lastFmAlbum.tracks == null
+                            or lastFmAlbum.tracks.track == null
+                            or lastFmAlbum.tracks.track.isEmpty()}"
+      >
+
+        <div class="empty-icon">
+          ♪
+        </div>
+
+        <h3>
+          No tracklist available
+        </h3>
+
+        <p>
+          We couldn't find the tracklist for this album.
         </p>
 
       </div>
 
-
-      <!-- REVIEW DATE -->
-
-      <div
-              class="review-date"
-              th:if="${review.createdAt != null}"
-      >
-
-                <span
-                        th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}"
-                >
-                    01 Jan 2026
-                </span>
-
-      </div>
-
-    </div>
-
-
-    <!-- NO REVIEWS -->
-
-    <div
-            class="empty-message"
-            th:if="${reviews == null or reviews.isEmpty()}"
-    >
-
-      <p>
-        No reviews yet. Be the first to review this album.
-      </p>
-
-    </div>
+    </section>
 
   </section>
 
-
-</div>
+</main>
 
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+
+<!-- =========================================================
+     TEMPORARY FRONT-END INTERACTIONS
+     ========================================================= -->
+
+<script>
+
+  /*
+   * Temporary review like interaction.
+   *
+   *  */
+
+  document
+          .querySelectorAll(".review-like-button")
+          .forEach(button => {
+
+            button.addEventListener("click", function () {
+
+              const icon =
+                      this.querySelector(".like-icon");
+
+              const count =
+                      this.querySelector(".like-count");
+
+              const currentlyLiked =
+                      this.classList.contains("liked");
+
+              let currentCount =
+                      parseInt(count.textContent) || 0;
+
+              if (currentlyLiked) {
+
+                this.classList.remove("liked");
+
+                icon.textContent = "♡";
+
+                currentCount--;
+
+                if (currentCount < 0) {
+                  currentCount = 0;
+                }
+
+              } else {
+
+                this.classList.add("liked");
+
+                icon.textContent = "♥";
+
+                currentCount++;
+
+              }
+
+              count.textContent =
+                      currentCount;
+
+            });
+
+          });
+
+
+  /*
+   * Temporary Want to Listen interaction.
+   *
+   */
+
+  const wantToListenButton =
+          document.getElementById(
+                  "wantToListenButton"
+          );
+
+  if (wantToListenButton) {
+
+    wantToListenButton
+            .addEventListener("click", function () {
+
+              const icon =
+                      this.querySelector(".action-icon");
+
+              const alreadyAdded =
+                      this.classList.contains("active");
+
+              if (alreadyAdded) {
+
+                this.classList.remove("active");
+
+                icon.textContent = "♡";
+
+                this.lastChild.textContent =
+                        " Want to Listen";
+
+              } else {
+
+                this.classList.add("active");
+
+                icon.textContent = "✓";
+
+                this.lastChild.textContent =
+                        " In Want to Listen";
+
+              }
+
+            });
+
+  }
+
+
+  /*
+   * Temporary Add to List interaction.
+   */
+
+  const addToListButton =
+          document.getElementById(
+                  "addToListButton"
+          );
+
+  if (addToListButton) {
+
+    addToListButton
+            .addEventListener("click", function () {
+
+              /*
+               * Placeholder only.
+               *
+               */
+
+              alert(
+                      "Your lists will appear here once connected."
+              );
+
+            });
+
+  }
+
+</script>
+
 
 </body>
 
