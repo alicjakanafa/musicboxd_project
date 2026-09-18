@@ -19,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import com.example.MusicBoxd.Model.Artist;
+import com.example.MusicBoxd.Repository.ArtistRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,19 +35,22 @@ public class ListController {
     private final AlbumRepository albumRepository;
     private final UserRepository userRepository;
     private final LastFmService lastFmService;
+    private final ArtistRepository artistRepository;
 
     public ListController(
             ListRepository listRepository,
             ListItemRepository listItemRepository,
             AlbumRepository albumRepository,
             UserRepository userRepository,
-            LastFmService lastFmService
+            LastFmService lastFmService,
+            ArtistRepository artistRepository
     ) {
         this.listRepository = listRepository;
         this.listItemRepository = listItemRepository;
         this.albumRepository = albumRepository;
         this.userRepository = userRepository;
         this.lastFmService = lastFmService;
+        this.artistRepository = artistRepository;
     }
 
 
@@ -211,16 +216,30 @@ public class ListController {
 
 
     @GetMapping("/album/{id}")
-    public String getAlbum(Model model, @PathVariable Long id) {
-        Album album =
-                albumRepository.findById(id).orElse(null);
-
+    public String getAlbum(@PathVariable Long id, Model model) {
+        Album album = albumRepository.findById(id).orElse(null);
         if (album == null) {
             return "redirect:/lists";
         }
-
         model.addAttribute("album", album);
-
+        LastFmAlbum lastFmAlbum = null;
+        if (album.getArtistId() != null) {
+            Artist artist = artistRepository
+                    .findById(album.getArtistId())
+                    .orElse(null);
+            if (artist != null) {
+                model.addAttribute("artist", artist);
+                LastFmAlbumResponse response =
+                        lastFmService.getAlbumInfo(
+                                artist.getName(),
+                                album.getTitle()
+                        );
+                if (response != null) {
+                    lastFmAlbum = response.getAlbum();
+                }
+            }
+        }
+        model.addAttribute("lastFmAlbum", lastFmAlbum);
         return "album-profile";
     }
 
