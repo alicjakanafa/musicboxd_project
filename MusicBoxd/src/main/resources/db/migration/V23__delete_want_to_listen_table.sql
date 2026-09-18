@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS want_to_listen;
