@@ -3,11 +3,7 @@ package com.example.MusicBoxd.api.lastfm;
 public class LastFmTrack {
 
     private String name;
-
     private String duration;
-
-    private String url;
-
 
     public String getName() {
         return name;
@@ -17,7 +13,6 @@ public class LastFmTrack {
         this.name = name;
     }
 
-
     public String getDuration() {
         return duration;
     }
@@ -26,12 +21,26 @@ public class LastFmTrack {
         this.duration = duration;
     }
 
+    public String getFormattedDuration() {
 
-    public String getUrl() {
-        return url;
-    }
+        if (duration == null || duration.isEmpty()) {
+            return "";
+        }
 
-    public void setUrl(String url) {
-        this.url = url;
+        try {
+            int totalSeconds = Integer.parseInt(duration);
+
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+
+            return String.format(
+                    "%d:%02d",
+                    minutes,
+                    seconds
+            );
+
+        } catch (NumberFormatException e) {
+            return "";
+        }
     }
 }

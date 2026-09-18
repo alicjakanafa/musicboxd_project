@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>About | MusicBoxd</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/about.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
+
+</head>
+
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="about-page">
+
+
+    <section class="about-card">
+
+        <div class="about-header">
+            <span class="about-label">ABOUT MUSICBOXD</span>
+            <h1>A place for people who love music.</h1>
+            <p class="about-intro">
+                It's LetterBoxd, but let's make it about music
+            </p>
+        </div>
+
+        <div class="about-content">
+
+            <div class="about-section">
+                <h2>What is MusicBoxd?</h2>
+                <p>
+                    MusicBoxd is a place for music fans to keep track of the
+                    albums and songs they listen to. You can rate albums,
+                    write reviews, create lists and discover new music.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h2>Discover music</h2>
+                <p>
+                    Explore popular music, discover recommended albums and
+                    search for artists, albums and songs. MusicBoxd brings
+                    different music services together to make discovering
+                    something new easier.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h2>Share your taste</h2>
+                <p>
+                    Rate and review the music you listen to, create your own
+                    lists and connect with friends to see what they are
+                    listening to and enjoying.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h2>Built for music fans</h2>
+                <p>
+                    MusicBoxd was created as a social space for people who
+                    want to explore music, share their opinions and keep a
+                    record of their listening journey.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -10,11 +10,15 @@ public class LastFmArtist {
 
     private String url;
 
+    private List<LastFmImage> image;
+
     private String listeners;
 
     private String playcount;
 
-    private List<LastFmImage> image;
+    private LastFmStats stats;
+
+    private LastFmBio bio;
 
 
     public String getName() {
@@ -44,6 +48,15 @@ public class LastFmArtist {
     }
 
 
+    public List<LastFmImage> getImage() {
+        return image;
+    }
+
+    public void setImage(List<LastFmImage> image) {
+        this.image = image;
+    }
+
+
     public String getListeners() {
         return listeners;
     }
@@ -62,11 +75,20 @@ public class LastFmArtist {
     }
 
 
-    public List<LastFmImage> getImage() {
-        return image;
+    public LastFmStats getStats() {
+        return stats;
     }
 
-    public void setImage(List<LastFmImage> image) {
-        this.image = image;
+    public void setStats(LastFmStats stats) {
+        this.stats = stats;
+    }
+
+
+    public LastFmBio getBio() {
+        return bio;
+    }
+
+    public void setBio(LastFmBio bio) {
+        this.bio = bio;
     }
 }
