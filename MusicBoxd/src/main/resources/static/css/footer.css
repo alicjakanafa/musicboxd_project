@@ -10,8 +10,15 @@
     align-items: center;
 }
 
+/* forcing the brand logo to sit to the very left, this is the only change i've made to the footer. */
 .footer-brand {
-    align-items: center;
+    justify-self: start;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    text-align: left;
 }
 
 .footer-logo {
