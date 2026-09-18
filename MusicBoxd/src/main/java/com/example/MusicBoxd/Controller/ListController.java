@@ -1,6 +1,7 @@
 package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Album;
+import com.example.MusicBoxd.Model.Artist;
 import com.example.MusicBoxd.Model.ListItem;
 import com.example.MusicBoxd.Model.User;
 import com.example.MusicBoxd.Repository.AlbumRepository;
@@ -9,6 +10,7 @@ import com.example.MusicBoxd.Repository.ListRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
 import com.example.MusicBoxd.api.itunes.ItunesAlbumResponse;
 import com.example.MusicBoxd.api.itunes.ItunesService;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
@@ -16,6 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/lists")
@@ -86,8 +93,28 @@ public class ListController {
             );
         }
 
+        var items =
+                listItemRepository.findByListIdOrderByPositionAsc(id);
+
+        Map<Long, Album> albums = new HashMap<>();
+
+        for (ListItem item : items) {
+
+            if (item.getAlbumId() != null) {
+
+                Album album = albumRepository
+                        .findById(item.getAlbumId())
+                        .orElse(null);
+
+                if (album != null) {
+                    albums.put(item.getAlbumId(), album);
+                }
+            }
+        }
+
         model.addAttribute("list", list);
-        model.addAttribute("items", listItemRepository.findByListIdOrderByPositionAsc(id));
+        model.addAttribute("items", items);
+        model.addAttribute("albums", albums);
 
         return "placeholder-list-items";
     }
@@ -124,28 +151,41 @@ public class ListController {
     public String addAlbum(
             Authentication authentication,
             @PathVariable Long id,
-            @RequestParam Long albumId
+            @RequestParam Long albumId,
+            @RequestParam String title,
+            @RequestParam(required = false) String artworkUrl,
+            @RequestParam(required = false) String releaseDate
     ) {
-
         User user = getCurrentUser(authentication);
-
         com.example.MusicBoxd.Model.List list =
                 listRepository.findById(id)
                         .orElseThrow();
-
         if (!list.getUserId().equals(user.getId())) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN
             );
         }
+        int nextPosition =
+                listItemRepository.findMaxPosition(id) + 1;
+        // Look for the album using the iTunes collection ID.
+        Album album = albumRepository
+                .findByExternalId(String.valueOf(albumId))
+                .orElse(null);
 
-        int nextPosition = listItemRepository.findMaxPosition(id) + 1;
-
-        ListItem item =
-                new ListItem(id, albumId, null, nextPosition);
-
+        // If it doesn't exist yet, create it.
+        if (album == null) {
+            Short releaseYear = null;
+            if (releaseDate != null && releaseDate.length() >= 4) {
+                releaseYear = Short.valueOf(
+                        releaseDate.substring(0, 4)
+                );
+            }
+            album = new Album(String.valueOf(albumId), null, title, releaseYear, artworkUrl);
+            albumRepository.save(album);
+        }
+        // Store the LOCAL Album.id in ListItem.
+        ListItem item = new ListItem(id, album.getId(), null, nextPosition);
         listItemRepository.save(item);
-
         return "redirect:/lists/" + id;
     }
 
@@ -167,9 +207,7 @@ public class ListController {
                     HttpStatus.FORBIDDEN
             );
         }
-
         int nextPosition = listItemRepository.findMaxPosition(id) + 1;
-
         ListItem item =
                 new ListItem(id, null, songId, nextPosition);
 
@@ -188,7 +226,6 @@ public class ListController {
                     HttpStatus.UNAUTHORIZED
             );
         }
-
         return userRepository
                 .findByOktaUserId(principal.getSubject())
                 .orElseThrow(() ->
@@ -202,4 +239,12 @@ public class ListController {
     public String placeholderListForm() {
         return "placeholder-list-form";
     }
+
+    @GetMapping("/placeholder-lists")
+    public String placeholderLists() {
+        return "redirect: placeholder-lists";
+    }
+
+
+
 }
