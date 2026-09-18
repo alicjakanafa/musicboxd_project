@@ -1,9 +1,6 @@
 package com.example.MusicBoxd.Controller;
 
-import com.example.MusicBoxd.Model.Album;
-import com.example.MusicBoxd.Model.Artist;
-import com.example.MusicBoxd.Model.ListItem;
-import com.example.MusicBoxd.Model.User;
+import com.example.MusicBoxd.Model.*;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ListItemRepository;
 import com.example.MusicBoxd.Repository.ListRepository;
@@ -67,7 +64,7 @@ public class ListController {
         User user = getCurrentUser(authentication);
 
         com.example.MusicBoxd.Model.List list =
-                new com.example.MusicBoxd.Model.List(user.getId(), title, description);
+                new com.example.MusicBoxd.Model.List(user.getId(), title, description, ListType.CUSTOM);
 
         listRepository.save(list);
 
