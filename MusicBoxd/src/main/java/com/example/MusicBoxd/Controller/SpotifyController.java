@@ -153,6 +153,12 @@ public class SpotifyController {
         return "redirect:/";
     }
 
+    /*
+     * =========================
+     * SPOTIFY DATA
+     * =========================
+     */
+
     public void getSpotifyData(
             String accessToken,
             Model model
@@ -179,6 +185,12 @@ public class SpotifyController {
             );
         }
     }
+
+    /*
+     * =========================
+     * RECENTLY PLAYED
+     * =========================
+     */
 
     private void getRecentlyPlayed(
             String accessToken,
@@ -281,6 +293,13 @@ public class SpotifyController {
                 totalMinutes
         );
     }
+
+    /*
+     * =========================
+     * CURRENTLY PLAYING
+     * =========================
+     */
+
     private SpotifyCurrentlyPlayingResponse getCurrentlyPlaying(
             String accessToken
     ) {
@@ -348,6 +367,12 @@ public class SpotifyController {
                 currentlyPlaying
         );
     }
+
+    /*
+     * =========================
+     * PLAYER CONTROLS
+     * =========================
+     */
 
     @PostMapping("/spotify/player/play")
     @ResponseBody
@@ -442,9 +467,40 @@ public class SpotifyController {
         );
     }
 
+    /*
+     * =========================
+     * TOP ARTISTS
+     * =========================
+     *
+     * timeRange can be:
+     *
+     * short_term  = Last 4 weeks
+     * medium_term = Last 6 months
+     * long_term   = All time
+     */
+
     public SpotifyTopArtistsResponse getTopArtists(
-            String accessToken
+            String accessToken,
+            String timeRange
     ) {
+
+        /*
+         * Only allow Spotify's three
+         * supported time ranges.
+         *
+         * This also prevents somebody from
+         * putting an arbitrary value into
+         * the Spotify request.
+         */
+
+        if (
+                !timeRange.equals("short_term")
+                        && !timeRange.equals("medium_term")
+                        && !timeRange.equals("long_term")
+        ) {
+
+            timeRange = "medium_term";
+        }
 
         RestTemplate restTemplate =
                 new RestTemplate();
@@ -463,8 +519,9 @@ public class SpotifyController {
 
         String url =
                 "https://api.spotify.com/v1/me/top/artists"
-                        + "?time_range=medium_term"
-                        + "&limit=5";
+                        + "?time_range="
+                        + timeRange
+                        + "&limit=6";
 
         ResponseEntity<SpotifyTopArtistsResponse> response =
                 restTemplate.exchange(

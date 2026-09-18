@@ -44,9 +44,6 @@ public class ReviewController {
     private LastFmService lastFmService;
 
 
-    // =========================
-    // GET USER REVIEWS
-    // =========================
 
     @GetMapping("/users/{userId}/reviews")
     public String getUserReviews(
@@ -123,9 +120,7 @@ public class ReviewController {
         );
 
 
-        // =========================
-        // GET ARTIST
-        // =========================
+
 
         Artist artist = null;
 
@@ -145,9 +140,6 @@ public class ReviewController {
         );
 
 
-        // =========================
-        // GET LAST.FM ALBUM
-        // =========================
 
         if (artist != null) {
 
@@ -200,9 +192,6 @@ public class ReviewController {
     }
 
 
-    // =========================
-    // SAVE REVIEW
-    // =========================
 
     @PostMapping("/reviews/{id}")
     public String saveReview(
@@ -213,9 +202,6 @@ public class ReviewController {
             Authentication authentication
     ) {
 
-        // =========================
-        // GET ALBUM
-        // =========================
 
         Album album =
                 albumRepository
@@ -227,9 +213,7 @@ public class ReviewController {
                         );
 
 
-        // =========================
-        // GET LOGGED-IN USER
-        // =========================
+
 
         OidcUser principal =
                 (OidcUser) authentication.getPrincipal();
@@ -243,9 +227,6 @@ public class ReviewController {
         );
 
 
-        // =========================
-        // FIND USER IN DATABASE
-        // =========================
 
         User user =
                 userRepository
@@ -273,10 +254,6 @@ public class ReviewController {
                         album.getId()
         );
 
-
-        // =========================
-        // CREATE REVIEW
-        // =========================
 
         Review review =
                 new Review();
@@ -306,9 +283,6 @@ public class ReviewController {
         );
 
 
-        // =========================
-        // SAVE REVIEW
-        // =========================
 
         Review savedReview =
                 reviewRepository.save(
@@ -349,10 +323,55 @@ public class ReviewController {
         );
 
 
-        // =========================
-        // RETURN TO ALBUM
-        // =========================
 
         return "redirect:/albums/" + id;
+    }
+
+    @PostMapping("/reviews/{id}/delete")
+    public String deleteReview(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        OidcUser principal =
+                (OidcUser) authentication.getPrincipal();
+
+        String oktaUserId =
+                principal.getSubject();
+
+        User user =
+                userRepository
+                        .findByOktaUserId(oktaUserId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found for Okta ID: " +
+                                                oktaUserId
+                                )
+                        );
+
+        Review review =
+                reviewRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Review not found: " + id
+                                )
+                        );
+
+        if (!review.getUserId().equals(user.getId())) {
+            throw new RuntimeException(
+                    "You cannot delete another user's review"
+            );
+        }
+
+        reviewRepository.delete(review);
+
+        System.out.println("==============================");
+        System.out.println("REVIEW DELETED");
+        System.out.println("Review ID: " + review.getId());
+        System.out.println("User ID: " + review.getUserId());
+        System.out.println("Album ID: " + review.getAlbumId());
+        System.out.println("==============================");
+
+        return "redirect:/profile/" + user.getId();
     }
 }
