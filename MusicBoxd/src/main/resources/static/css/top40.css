@@ -1,18 +1,12 @@
-*{
+* {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-
-
     font-family: Arial, Helvetica, sans-serif;
-
-    background: #0c0f0a;
-
+    background: #080d14;
     color: #ffffff;
-
-
 }
 
 /* =========================================
@@ -22,16 +16,13 @@ PAGE
 .page {
     min-height: 100vh;
 
-
     background:
             radial-gradient(
                     circle at 50% 0%,
-                    rgba(137, 217, 87, 0.14),
+                    rgba(45, 91, 140, 0.18),
                     transparent 38%
             ),
-            #0c0f0a;
-
-
+            #080d14;
 }
 
 /* =========================================
@@ -41,16 +32,15 @@ HEADER
 .top-header {
     height: 70px;
 
-
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     padding: 0 5%;
 
-    background: rgba(12, 15, 10, 0.92);
+    background: rgba(8, 13, 20, 0.92);
 
-    border-bottom: 1px solid rgba(137, 217, 87, 0.15);
+    border-bottom: 1px solid rgba(70, 120, 170, 0.18);
 
     position: sticky;
     top: 0;
@@ -58,8 +48,6 @@ HEADER
     z-index: 10;
 
     backdrop-filter: blur(12px);
-
-
 }
 
 .brand {
@@ -67,29 +55,21 @@ HEADER
     align-items: center;
     gap: 10px;
 
-
     font-size: 15px;
-
-
 }
 
 .brand-name {
-    color: #89D957;
-
-
+    color: #4d9bd6;
     font-weight: 800;
-
     letter-spacing: -0.5px;
-
-
 }
 
 .brand-divider {
-    color: #4a5045;
+    color: #3a4652;
 }
 
 .brand-page {
-    color: #92998c;
+    color: #8b96a3;
 }
 
 /* =========================================
@@ -101,31 +81,23 @@ LIVE INDICATOR
     align-items: center;
     gap: 8px;
 
-
-    color: #C9E265;
+    color: #78b7e8;
 
     font-size: 11px;
-
     font-weight: bold;
-
     letter-spacing: 1.2px;
-
-
 }
 
 .live-dot {
     width: 7px;
     height: 7px;
 
-
-    background: #89D957;
+    background: #4d9bd6;
 
     border-radius: 50%;
 
     box-shadow:
-            0 0 8px rgba(137, 217, 87, 0.8);
-
-
+            0 0 8px rgba(77, 155, 214, 0.8);
 }
 
 /* =========================================
@@ -136,12 +108,9 @@ MAIN CONTAINER
     width: 90%;
     max-width: 1050px;
 
-
     margin: 0 auto;
 
     padding: 70px 0 80px;
-
-
 }
 
 /* =========================================
@@ -153,23 +122,17 @@ HERO
 }
 
 .hero-label {
-    color: #89D957;
-
+    color: #4d9bd6;
 
     font-size: 12px;
-
     font-weight: bold;
-
     letter-spacing: 2px;
 
     margin-bottom: 15px;
-
-
 }
 
 .hero h1 {
     margin: 0;
-
 
     font-size: clamp(60px, 9vw, 110px);
 
@@ -178,27 +141,22 @@ HERO
     letter-spacing: -6px;
 
     font-weight: 900;
-
-
 }
 
 .hero h1 span {
-    color: #89D957;
+    color: #4d9bd6;
 }
 
 .hero p {
     margin: 25px 0 0;
 
-
-    color: #92998c;
+    color: #8b96a3;
 
     font-size: 18px;
 
     max-width: 500px;
 
     line-height: 1.6;
-
-
 }
 
 /* =========================================
@@ -208,50 +166,35 @@ CHART HEADER
 .chart-header {
     display: flex;
 
-
     justify-content: space-between;
-
     align-items: flex-end;
 
     margin-bottom: 20px;
-
     padding-bottom: 20px;
 
-    border-bottom: 1px solid #252b21;
-
-
+    border-bottom: 1px solid #1d2a38;
 }
 
 .chart-header h2 {
     margin: 0 0 6px;
-
-
     font-size: 22px;
-
-
 }
 
 .chart-header p {
     margin: 0;
 
-
-    color: #72786d;
+    color: #697583;
 
     font-size: 14px;
-
 }
 
 .chart-source {
-    color: #666d61;
-
-
+    color: #5e6975;
     font-size: 13px;
-
-
 }
 
 .chart-source strong {
-    color: #C9E265;
+    color: #78b7e8;
 }
 
 /* =========================================
@@ -260,13 +203,8 @@ ARTIST LIST
 
 .artist-list {
     display: flex;
-
-
     flex-direction: column;
-
     gap: 9px;
-
-
 }
 
 /* =========================================
@@ -276,17 +214,14 @@ ARTIST CARD
 .artist-card {
     min-height: 100px;
 
-
     display: flex;
-
     align-items: center;
 
     padding: 12px 18px;
 
-    background: #151914;
+    background: #101821;
 
-    border: 1px solid #242a20;
-
+    border: 1px solid #1c2936;
     border-radius: 10px;
 
     transition:
@@ -294,22 +229,17 @@ ARTIST CARD
             background 0.2s ease,
             border-color 0.2s ease,
             box-shadow 0.2s ease;
-
-
 }
 
 .artist-card:hover {
     transform: translateX(5px);
 
+    background: #151f2a;
 
-    background: #1a1f18;
-
-    border-color: #3d4a36;
+    border-color: #30475d;
 
     box-shadow:
             0 8px 25px rgba(0, 0, 0, 0.35);
-
-
 }
 
 .artist-name a {
@@ -329,18 +259,15 @@ TOP THREE
     background:
             linear-gradient(
                     90deg,
-                    rgba(137, 217, 87, 0.12),
-                    #151914 55%
+                    rgba(77, 155, 214, 0.14),
+                    #101821 55%
             );
 
-
-    border-color: rgba(137, 217, 87, 0.28);
-
-
+    border-color: rgba(77, 155, 214, 0.30);
 }
 
 .artist-card.top-three:hover {
-    border-color: #89D957;
+    border-color: #4d9bd6;
 }
 
 /* =========================================
@@ -350,26 +277,19 @@ RANK
 .rank {
     width: 55px;
 
-
     flex-shrink: 0;
 
     text-align: center;
 
     font-size: 21px;
-
     font-weight: 800;
 
-    color: #555d50;
-
+    color: #4d5865;
 }
 
 .top-three .rank {
-    color: #89D957;
-
-
+    color: #4d9bd6;
     font-size: 25px;
-
-
 }
 
 /* =========================================
@@ -380,38 +300,30 @@ ARTIST IMAGE
     width: 70px;
     height: 70px;
 
-
     flex-shrink: 0;
 
     margin-right: 20px;
-
-
 }
 
 .artist-image {
     width: 100%;
     height: 100%;
 
-
     object-fit: cover;
 
     border-radius: 50%;
 
-    border: 2px solid #30372b;
+    border: 2px solid #293744;
 
     transition:
             transform 0.2s ease,
             border-color 0.2s ease;
-
-
 }
 
 .artist-card:hover .artist-image {
     transform: scale(1.05);
 
-    border-color: #89D957;
-
-
+    border-color: #4d9bd6;
 }
 
 /* =========================================
@@ -420,57 +332,54 @@ ARTIST INFO
 
 .artist-info {
     flex: 1;
-
-
     min-width: 0;
-
-
 }
 
 .artist-name {
     margin: 0 0 8px;
 
-
     color: #ffffff;
 
     font-size: 19px;
-
     font-weight: 700;
 
     white-space: nowrap;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
-
-
 }
 
-.artist-stats {
-    color: #72786d;
+/* =========================================
+ARTIST STATS
+========================================= */
 
+.artist-stats {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: #697583;
 
     font-size: 13px;
 
+    white-space: nowrap;
+}
 
+.artist-stats p {
+    margin: 0;
 }
 
 .artist-stats span {
-    color: #aeb5a5;
-
+    color: #78b7e8;
 
     font-weight: 600;
-
-
 }
 
 .stat-divider {
-    color: #4c5347 !important;
+    color: #46515d !important;
 
-
-    margin: 0 5px;
-
-
+    margin: 0 2px;
 }
 
 /* =========================================
@@ -480,7 +389,6 @@ LAST.FM LINK
 .artist-link {
     display: flex;
 
-
     align-items: center;
 
     gap: 8px;
@@ -489,35 +397,29 @@ LAST.FM LINK
 
     padding: 9px 13px;
 
-    color: #92998c;
+    color: #8b96a3;
 
-    border: 1px solid #30372b;
+    border: 1px solid #293744;
 
     border-radius: 6px;
 
     text-decoration: none;
 
     font-size: 12px;
-
     font-weight: 600;
 
     transition:
             color 0.2s ease,
             border-color 0.2s ease,
             background 0.2s ease;
-
-
 }
 
 .artist-link:hover {
-    color: #0c0f0a;
+    color: #080d14;
 
+    background: #78b7e8;
 
-    background: #C9E265;
-
-    border-color: #C9E265;
-
-
+    border-color: #78b7e8;
 }
 
 .arrow {
@@ -531,32 +433,23 @@ EMPTY STATE
 .empty-state {
     text-align: center;
 
-
     padding: 100px 20px;
 
-    color: #72786d;
-
-
+    color: #697583;
 }
 
 .empty-icon {
     margin-bottom: 20px;
 
-
-    color: #89D957;
+    color: #4d9bd6;
 
     font-size: 50px;
-
-
 }
 
 .empty-state h2 {
     margin: 0 0 10px;
 
-
     color: #ffffff;
-
-
 }
 
 .empty-state p {
@@ -570,16 +463,13 @@ FOOTER
 footer {
     padding: 30px 5%;
 
-
-    border-top: 1px solid #252b21;
+    border-top: 1px solid #1d2a38;
 
     text-align: center;
 
-    color: #555d50;
+    color: #4d5865;
 
     font-size: 12px;
-
-
 }
 
 /* =========================================
@@ -587,7 +477,6 @@ MOBILE
 ========================================= */
 
 @media (max-width: 700px) {
-
 
     .top-header {
         padding: 0 20px;
@@ -655,6 +544,8 @@ MOBILE
 
     .artist-stats {
         font-size: 11px;
+
+        gap: 5px;
     }
 
     .artist-link {
@@ -668,6 +559,4 @@ MOBILE
     .artist-link span:first-child {
         display: none;
     }
-
-
 }

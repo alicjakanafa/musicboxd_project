@@ -9,3 +9,4 @@ public interface UserRepository extends CrudRepository<User,Long> {
 
     Optional<User> findByOktaUserId(String oktaUserId);
 }
+

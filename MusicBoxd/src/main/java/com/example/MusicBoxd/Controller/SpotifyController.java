@@ -3,7 +3,11 @@ package com.example.MusicBoxd.Controller;
 import com.example.MusicBoxd.api.spotify.SpotifyCurrentlyPlayingResponse;
 import com.example.MusicBoxd.api.spotify.SpotifyRecentlyPlayedResponse;
 import com.example.MusicBoxd.api.spotify.SpotifyTokenResponse;
+import com.example.MusicBoxd.api.spotify.SpotifyTopArtistsResponse;
+import com.example.MusicBoxd.api.spotify.SpotifyArtist;
+
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,13 +39,6 @@ public class SpotifyController {
     @Value("${spotify.redirect.uri}")
     private String redirectUri;
 
-
-    /*
-     * ---------------------------------------------------------
-     * SPOTIFY LOGIN
-     * ---------------------------------------------------------
-     */
-
     @GetMapping("/spotify/login")
     public String spotifyLogin() {
 
@@ -67,20 +64,14 @@ public class SpotifyController {
                                 "user-read-currently-playing " +
                                 "user-read-playback-state " +
                                 "user-modify-playback-state " +
-                                "streaming"
+                                "streaming " +
+                                "user-top-read"
                 )
                 .build()
                 .toUriString();
 
         return "redirect:" + spotifyUrl;
     }
-
-
-    /*
-     * ---------------------------------------------------------
-     * SPOTIFY CALLBACK
-     * ---------------------------------------------------------
-     */
 
     @GetMapping("/spotify/callback")
     public String spotifyCallback(
@@ -161,25 +152,33 @@ public class SpotifyController {
 
         return "redirect:/";
     }
+
     /*
-     * ---------------------------------------------------------
-     * GET SPOTIFY DATA
-     * ---------------------------------------------------------
+     * =========================
+     * SPOTIFY DATA
+     * =========================
      */
 
     public void getSpotifyData(
             String accessToken,
             Model model
     ) {
-        getRecentlyPlayed(accessToken, model);
+
+        getRecentlyPlayed(
+                accessToken,
+                model
+        );
 
         SpotifyCurrentlyPlayingResponse currentlyPlaying =
-                getCurrentlyPlaying(accessToken);
+                getCurrentlyPlaying(
+                        accessToken
+                );
 
         if (
                 currentlyPlaying != null
                         && currentlyPlaying.getItem() != null
         ) {
+
             model.addAttribute(
                     "currentlyPlaying",
                     currentlyPlaying
@@ -187,11 +186,10 @@ public class SpotifyController {
         }
     }
 
-
     /*
-     * ---------------------------------------------------------
+     * =========================
      * RECENTLY PLAYED
-     * ---------------------------------------------------------
+     * =========================
      */
 
     private void getRecentlyPlayed(
@@ -216,7 +214,7 @@ public class SpotifyController {
 
         ResponseEntity<SpotifyRecentlyPlayedResponse> response =
                 restTemplate.exchange(
-                        "https://api.spotify.com/v1/me/player/recently-played?limit=1",
+                        "https://api.spotify.com/v1/me/player/recently-played?limit=50",
                         HttpMethod.GET,
                         request,
                         SpotifyRecentlyPlayedResponse.class
@@ -226,28 +224,80 @@ public class SpotifyController {
                 response.getBody();
 
         if (
-                recentlyPlayed != null
-                        && recentlyPlayed.getItems() != null
-                        && !recentlyPlayed.getItems().isEmpty()
+                recentlyPlayed == null
+                        || recentlyPlayed.getItems() == null
         ) {
-
-            SpotifyRecentlyPlayedResponse.SpotifyRecentlyPlayedItem item =
-                    recentlyPlayed
-                            .getItems()
-                            .get(0);
-
-            model.addAttribute(
-                    "recentTrack",
-                    item
-            );
+            return;
         }
+
+        model.addAttribute(
+                "recentTrack",
+                recentlyPlayed.getItems().isEmpty()
+                        ? null
+                        : recentlyPlayed.getItems().get(0)
+        );
+
+        int recentTracks =
+                recentlyPlayed.getItems().size();
+
+        long uniqueTracks =
+                recentlyPlayed.getItems()
+                        .stream()
+                        .map(item ->
+                                item.getTrack().getId()
+                        )
+                        .distinct()
+                        .count();
+
+        long uniqueArtists =
+                recentlyPlayed.getItems()
+                        .stream()
+                        .flatMap(item ->
+                                item.getTrack()
+                                        .getArtists()
+                                        .stream()
+                        )
+                        .map(SpotifyArtist::getName)
+                        .distinct()
+                        .count();
+
+        long totalDurationMs =
+                recentlyPlayed.getItems()
+                        .stream()
+                        .mapToLong(item ->
+                                item.getTrack()
+                                        .getDuration_ms()
+                        )
+                        .sum();
+
+        long totalMinutes =
+                totalDurationMs / 1000 / 60;
+
+        model.addAttribute(
+                "recentTracksCount",
+                recentTracks
+        );
+
+        model.addAttribute(
+                "uniqueTracksCount",
+                uniqueTracks
+        );
+
+        model.addAttribute(
+                "uniqueArtistsCount",
+                uniqueArtists
+        );
+
+        model.addAttribute(
+                "listeningMinutes",
+                totalMinutes
+        );
     }
 
-
     /*
-     * ---------------------------------------------------------
+     * =========================
      * CURRENTLY PLAYING
-     * ---------------------------------------------------------
+     * =========================
      */
 
     private SpotifyCurrentlyPlayingResponse getCurrentlyPlaying(
@@ -280,16 +330,6 @@ public class SpotifyController {
         return response.getBody();
     }
 
-
-    /*
-     * ---------------------------------------------------------
-     * CURRENTLY PLAYING FOR JAVASCRIPT
-     *
-     * This endpoint allows the homepage to ask Spotify
-     * what is currently playing without refreshing the page.
-     * ---------------------------------------------------------
-     */
-
     @GetMapping("/spotify/player/current")
     @ResponseBody
     public ResponseEntity<SpotifyCurrentlyPlayingResponse> current(
@@ -300,10 +340,6 @@ public class SpotifyController {
                 (String) session.getAttribute(
                         "spotifyAccessToken"
                 );
-
-        /*
-         * User has not connected Spotify.
-         */
 
         if (accessToken == null) {
 
@@ -316,10 +352,6 @@ public class SpotifyController {
                 getCurrentlyPlaying(
                         accessToken
                 );
-
-        /*
-         * Spotify has nothing currently playing.
-         */
 
         if (
                 currentlyPlaying == null
@@ -336,11 +368,10 @@ public class SpotifyController {
         );
     }
 
-
     /*
-     * ---------------------------------------------------------
-     * PLAY
-     * ---------------------------------------------------------
+     * =========================
+     * PLAYER CONTROLS
+     * =========================
      */
 
     @PostMapping("/spotify/player/play")
@@ -356,13 +387,6 @@ public class SpotifyController {
         );
     }
 
-
-    /*
-     * ---------------------------------------------------------
-     * PAUSE
-     * ---------------------------------------------------------
-     */
-
     @PostMapping("/spotify/player/pause")
     @ResponseBody
     public ResponseEntity<Void> pause(
@@ -375,13 +399,6 @@ public class SpotifyController {
                 HttpMethod.PUT
         );
     }
-
-
-    /*
-     * ---------------------------------------------------------
-     * NEXT TRACK
-     * ---------------------------------------------------------
-     */
 
     @PostMapping("/spotify/player/next")
     @ResponseBody
@@ -396,13 +413,6 @@ public class SpotifyController {
         );
     }
 
-
-    /*
-     * ---------------------------------------------------------
-     * PREVIOUS TRACK
-     * ---------------------------------------------------------
-     */
-
     @PostMapping("/spotify/player/previous")
     @ResponseBody
     public ResponseEntity<Void> previous(
@@ -416,13 +426,6 @@ public class SpotifyController {
         );
     }
 
-
-    /*
-     * ---------------------------------------------------------
-     * SEND COMMAND TO SPOTIFY
-     * ---------------------------------------------------------
-     */
-
     private ResponseEntity<Void> sendPlayerCommand(
             HttpSession session,
             String url,
@@ -434,18 +437,12 @@ public class SpotifyController {
                         "spotifyAccessToken"
                 );
 
-
-        /*
-         * The user hasn't connected Spotify.
-         */
-
         if (accessToken == null) {
 
             return ResponseEntity
                     .status(401)
                     .build();
         }
-
 
         RestTemplate restTemplate =
                 new RestTemplate();
@@ -462,12 +459,78 @@ public class SpotifyController {
                         headers
                 );
 
-
         return restTemplate.exchange(
                 url,
                 method,
                 request,
                 Void.class
         );
+    }
+
+    /*
+     * =========================
+     * TOP ARTISTS
+     * =========================
+     *
+     * timeRange can be:
+     *
+     * short_term  = Last 4 weeks
+     * medium_term = Last 6 months
+     * long_term   = All time
+     */
+
+    public SpotifyTopArtistsResponse getTopArtists(
+            String accessToken,
+            String timeRange
+    ) {
+
+        /*
+         * Only allow Spotify's three
+         * supported time ranges.
+         *
+         * This also prevents somebody from
+         * putting an arbitrary value into
+         * the Spotify request.
+         */
+
+        if (
+                !timeRange.equals("short_term")
+                        && !timeRange.equals("medium_term")
+                        && !timeRange.equals("long_term")
+        ) {
+
+            timeRange = "medium_term";
+        }
+
+        RestTemplate restTemplate =
+                new RestTemplate();
+
+        HttpHeaders headers =
+                new HttpHeaders();
+
+        headers.setBearerAuth(
+                accessToken
+        );
+
+        HttpEntity<Void> request =
+                new HttpEntity<>(
+                        headers
+                );
+
+        String url =
+                "https://api.spotify.com/v1/me/top/artists"
+                        + "?time_range="
+                        + timeRange
+                        + "&limit=6";
+
+        ResponseEntity<SpotifyTopArtistsResponse> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        request,
+                        SpotifyTopArtistsResponse.class
+                );
+
+        return response.getBody();
     }
 }

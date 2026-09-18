@@ -3,89 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>MusicBoxd</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+            rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 
 <body>
+
 <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <main class="dashboard">
 
     <!-- DAILY CATCH UP -->
+
     <section class="daily-catchup">
+
         <h2>Hey Y/N, here's your daily catch up</h2>
 
         <div class="catchup-list">
-            <div class="catchup-item">Someone added an album to a list</div>
-            <div class="catchup-item">New release from Phoebe Bridgers</div>
-            <div class="catchup-item">Your review received a like</div>
+
+            <div class="catchup-item">
+                Someone added an album to a list
+            </div>
+
+            <div class="catchup-item">
+                New release from Phoebe Bridgers
+            </div>
+
+            <div class="catchup-item">
+                Your review received a like
+            </div>
+
             <div class="catchup-item"></div>
             <div class="catchup-item"></div>
+            <div class="catchup-item"></div>
+
         </div>
+
     </section>
 
+
     <!-- GLOBAL TOP 40 -->
+
     <section class="top-40">
+
         <a th:href="@{/top-40}" class="top-40-link">
 
             <div class="top-40-header">
+
                 <h2>Global Top 40</h2>
-                <span class="chart-arrow">→</span>
+
+                <span class="chart-arrow">
+                    →
+                </span>
+
             </div>
 
             <div class="top-five-list">
-                <div class="top-five-artist" th:each="artist, stat : ${topArtists}">
-                    <span class="top-five-rank" th:text="${stat.count}">1</span>
+
+                <div
+                        class="top-five-artist"
+                        th:each="artist, stat : ${topArtists}">
+
+                    <span
+                            class="top-five-rank"
+                            th:text="${stat.count}">
+                        1
+                    </span>
 
                     <div class="top-five-info">
-                        <span class="top-five-name" th:text="${artist.name}">
+
+                        <span
+                                class="top-five-name"
+                                th:text="${artist.name}">
                             Artist Name
                         </span>
-                        <span class="top-five-bar"><span></span></span>
+
+                        <span class="top-five-bar">
+                            <span></span>
+                        </span>
+
                     </div>
+
                 </div>
+
             </div>
 
             <div class="top-40-footer">
-                <span>View full Top 40</span>
-                <span>→</span>
+
+                <span>
+                    View full Top 40
+                </span>
+
+                <span>
+                    →
+                </span>
+
             </div>
 
         </a>
+
     </section>
 
-    <!-- ========================================================= -->
-    <!-- SPOTIFY PLAYER -->
-    <!-- ========================================================= -->
+
+    <!-- SPOTIFY -->
 
     <section class="spotify-section">
 
-        <div class="section-heading">
-            <h2>Currently Playing</h2>
-        </div>
+        <h2>Currently Playing</h2>
 
         <div class="media-player">
+
 
             <!-- PREMIUM WARNING -->
 
             <div
                     id="premium-warning"
                     class="premium-warning"
-                    style="display:none;"
-            >
-                <strong>Spotify Premium required</strong>
+                    style="display:none;">
 
-                Unfortunately, the MusicBoxd player requires a Spotify
-                Premium account.
+                <strong>
+                    Spotify Premium required
+                </strong>
 
-                You can still use MusicBoxd's album search, reviews,
-                ratings and iTunes previews.
+                Unfortunately, the MusicBoxd player requires a Spotify Premium account.
+
+                You can still use MusicBoxd's album search,
+                reviews, ratings and iTunes previews.
+
             </div>
 
 
@@ -93,20 +148,19 @@
 
             <div
                     class="spotify-card"
-                    th:if="${currentlyPlaying == null and recentTrack == null}"
-            >
+                    th:if="${currentlyPlaying == null and recentTrack == null}">
 
-                <h3>Connect Spotify</h3>
+                <h3>
+                    Connect Spotify
+                </h3>
 
                 <p>
-                    Connect your Spotify account to see what you're
-                    currently listening to.
+                    Connect your Spotify account to see what you're currently listening to.
                 </p>
 
                 <a
                         href="/spotify/login"
-                        class="spotify-button"
-                >
+                        class="spotify-button">
                     Connect Spotify
                 </a>
 
@@ -117,9 +171,8 @@
 
             <div
                     id="currently-playing-card"
-                    class="spotify-card currently-playing"
-                    th:if="${currentlyPlaying != null}"
-            >
+                    class="spotify-card"
+                    th:if="${currentlyPlaying != null}">
 
                 <div class="spotify-header">
 
@@ -130,9 +183,10 @@
                     <span
                             id="playing-status"
                             class="playing-status"
-                            th:text="${currentlyPlaying.playing ? '● PLAYING' : '● PAUSED'}"
-                    >
+                            th:text="${currentlyPlaying.playing ? '● PLAYING' : '● PAUSED'}">
+
                         ● PLAYING
+
                     </span>
 
                 </div>
@@ -140,88 +194,121 @@
 
                 <div class="spotify-content">
 
+
+                    <!-- ALBUM COVER -->
+
                     <img
                             id="album-cover"
                             class="album-cover"
-                            th:if="${currentlyPlaying.item.album.images != null and !currentlyPlaying.item.album.images.isEmpty()}"
+
+                            th:if="${currentlyPlaying.item != null
+                                and currentlyPlaying.item.album != null
+                                and currentlyPlaying.item.album.images != null
+                                and !currentlyPlaying.item.album.images.isEmpty()}"
+
                             th:src="${currentlyPlaying.item.album.images[0].url}"
-                            alt="Album cover"
-                    >
+
+                            alt="Album cover">
 
 
                     <div class="track-info">
 
+
+                        <!-- SONG TITLE -->
+
                         <h4
                                 id="song-title"
-                                th:text="${currentlyPlaying.item.name}"
-                        >
+                                th:if="${currentlyPlaying.item != null}"
+                                th:text="${currentlyPlaying.item.name}">
+
                             Song Name
+
                         </h4>
 
+
+                        <!-- ARTIST -->
 
                         <p
                                 id="artist-name"
                                 class="artist"
-                                th:text="${currentlyPlaying.item.artists[0].name}"
-                        >
+
+                                th:if="${currentlyPlaying.item != null
+                                    and currentlyPlaying.item.artists != null
+                                    and !currentlyPlaying.item.artists.isEmpty()}"
+
+                                th:text="${currentlyPlaying.item.artists[0].name}">
+
                             Artist Name
+
                         </p>
 
+
+                        <!-- ALBUM -->
 
                         <p
                                 id="album-name"
                                 class="album"
-                                th:text="${currentlyPlaying.item.album.name}"
-                        >
+
+                                th:if="${currentlyPlaying.item != null
+                                    and currentlyPlaying.item.album != null}"
+
+                                th:text="${currentlyPlaying.item.album.name}">
+
                             Album Name
+
                         </p>
 
+
+                        <!-- PLAYER CONTROLS -->
 
                         <div class="player-controls">
 
                             <button
-                                    type="button"
                                     class="player-button"
-                                    title="Previous track"
-                                    onclick="spotifyCommand('/spotify/player/previous')"
-                            >
+                                    onclick="spotifyCommand('/spotify/player/previous')">
+
                                 ⏮
+
                             </button>
 
 
                             <button
                                     id="play-pause-button"
-                                    type="button"
                                     class="player-button play-button"
-                                    title="Play/Pause"
-                                    onclick="togglePlayPause()"
-                            >
-                                <span id="play-pause-icon">
-                                    ▶
-                                </span>
+                                    onclick="togglePlayPause()">
+
+                                ▶
+
                             </button>
 
 
                             <button
-                                    type="button"
                                     class="player-button"
-                                    title="Next track"
-                                    onclick="spotifyCommand('/spotify/player/next')"
-                            >
+                                    onclick="spotifyCommand('/spotify/player/next')">
+
                                 ⏭
+
                             </button>
 
                         </div>
 
 
+                        <!-- SPOTIFY LINK -->
+
                         <a
                                 id="spotify-link"
                                 class="spotify-button"
+
+                                th:if="${currentlyPlaying.item != null
+                                    and currentlyPlaying.item.externalUrls != null
+                                    and currentlyPlaying.item.externalUrls.spotify != null}"
+
                                 th:href="${currentlyPlaying.item.externalUrls.spotify}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                        >
+
+                                target="_blank">
+
                             Open in Spotify
+
                         </a>
 
                     </div>
@@ -231,26 +318,26 @@
             </div>
 
 
-            <!-- NOTHING PLAYING -->
+            <!-- NOTHING CURRENTLY PLAYING -->
 
             <div
-                    id="empty-spotify-card"
-                    class="spotify-card empty"
-                    th:if="${currentlyPlaying == null and recentTrack != null}"
-            >
+                    class="spotify-card"
+                    th:if="${currentlyPlaying == null and recentTrack != null}">
 
-                <h4>🎧 Nothing Currently Playing</h4>
+                <h4>
+                    🎧 Nothing Currently Playing
+                </h4>
 
                 <p>
-                    Start playing something on Spotify and it will
-                    appear here.
+                    Start playing something on Spotify and it will appear here.
                 </p>
 
                 <a
                         href="/spotify/login"
-                        class="spotify-button"
-                >
+                        class="spotify-button">
+
                     Open Spotify
+
                 </a>
 
             </div>
@@ -260,8 +347,7 @@
 
             <div
                     class="spotify-card"
-                    th:if="${currentlyPlaying == null and recentTrack != null}"
-            >
+                    th:if="${currentlyPlaying == null and recentTrack != null}">
 
                 <div class="spotify-header">
 
@@ -274,43 +360,78 @@
 
                 <div class="recent-track">
 
+
+                    <!-- RECENT TRACK ALBUM COVER -->
+
                     <img
-                            th:if="${recentTrack.track.album.images != null and !recentTrack.track.album.images.isEmpty()}"
+
+                            th:if="${recentTrack.track != null
+                                and recentTrack.track.album != null
+                                and recentTrack.track.album.images != null
+                                and !recentTrack.track.album.images.isEmpty()}"
+
                             th:src="${recentTrack.track.album.images[0].url}"
-                            alt="Album cover"
-                    >
+
+                            alt="Album cover">
 
 
                     <div class="recent-info">
 
+
+                        <!-- SONG NAME -->
+
                         <h4
-                                th:text="${recentTrack.track.name}"
-                        >
+                                th:if="${recentTrack.track != null}"
+                                th:text="${recentTrack.track.name}">
+
                             Song Name
+
                         </h4>
 
 
+                        <!-- ARTIST -->
+
                         <p
-                                th:text="${recentTrack.track.artists[0].name}"
-                        >
+                                th:if="${recentTrack.track != null
+                                    and recentTrack.track.artists != null
+                                    and !recentTrack.track.artists.isEmpty()}"
+
+                                th:text="${recentTrack.track.artists[0].name}">
+
                             Artist Name
+
                         </p>
 
+
+                        <!-- ALBUM -->
 
                         <p
-                                th:text="${recentTrack.track.album.name}"
-                        >
+                                th:if="${recentTrack.track != null
+                                    and recentTrack.track.album != null}"
+
+                                th:text="${recentTrack.track.album.name}">
+
                             Album Name
+
                         </p>
 
+
+                        <!-- SPOTIFY LINK -->
 
                         <a
+
+                                th:if="${recentTrack.track != null
+                                    and recentTrack.track.externalUrls != null
+                                    and recentTrack.track.externalUrls.spotify != null}"
+
                                 th:href="${recentTrack.track.externalUrls.spotify}"
+
                                 target="_blank"
-                                rel="noopener noreferrer"
-                                class="spotify-button"
-                        >
+
+                                class="spotify-button">
+
                             Open in Spotify
+
                         </a>
 
                     </div>
@@ -324,57 +445,60 @@
     </section>
 
 
-    <!-- ========================================================= -->
-    <!-- SUGGESTED ALBUM -->
-    <!-- ========================================================= -->
+    <!-- ALBUM OF THE DAY -->
 
     <section class="album-of-the-day">
 
-        <h2>Suggested Album of the Day</h2>
+        <h2>
+            Suggested Album of the Day
+        </h2>
+
 
         <a
                 class="suggested-album"
+
                 th:href="@{/album/save(
                 collectionId=${suggestedAlbum.collectionId},
                 artistName=${suggestedAlbum.artistName},
                 albumName=${suggestedAlbum.collectionName},
                 artworkUrl=${suggestedAlbum.highResolutionArtworkUrl},
                 releaseDate=${suggestedAlbum.releaseDate}
-            )}"
-        >
+            )}">
+
 
             <img
+
                     th:if="${suggestedAlbum.highResolutionArtworkUrl != null}"
+
                     th:src="${suggestedAlbum.highResolutionArtworkUrl}"
+
                     th:alt="${suggestedAlbum.collectionName}"
-                    class="suggested-album-cover"
-            >
 
-            <div
-                    class="suggested-album-info"
-            >
+                    class="suggested-album-cover">
 
-                <h3 th:text="${suggestedAlbum.collectionName}">
+
+            <div class="suggested-album-info">
+
+                <h3
+                        th:text="${suggestedAlbum.collectionName}">
                     Album Name
                 </h3>
 
                 <p
                         class="suggested-album-artist"
-                        th:text="${suggestedAlbum.artistName}"
-                >
+                        th:text="${suggestedAlbum.artistName}">
                     Artist Name
                 </p>
 
                 <p
                         class="suggested-album-genre"
-                        th:text="${suggestedAlbum.primaryGenreName}"
-                >
+                        th:text="${suggestedAlbum.primaryGenreName}">
                     Genre
                 </p>
 
                 <span class="suggested-album-link">
-                View Album →
-            </span>
+                    View Album →
+                </span>
 
             </div>
 
@@ -382,15 +506,19 @@
 
     </section>
 
-    <!-- ========================================================= -->
-    <!-- SEARCH -->
-    <!-- ========================================================= -->
+
+    <!-- SEARCH FEATURES -->
 
     <section class="feature-card-row">
 
+
+        <!-- SEARCH TRACKS -->
+
         <div class="feature-card">
 
-            <h3>🎵 Search Tracks</h3>
+            <h3>
+                🎵 Search Tracks
+            </h3>
 
             <p>
                 Find songs and listen to their 30-second iTunes previews.
@@ -399,15 +527,13 @@
             <form
                     action="/search/tracks"
                     method="get"
-                    class="search-form"
-            >
+                    class="search-form">
 
                 <input
                         type="text"
                         name="query"
                         placeholder="Search for a song..."
-                        required
-                >
+                        required>
 
                 <button type="submit">
                     Search
@@ -418,27 +544,28 @@
         </div>
 
 
+        <!-- SEARCH ALBUMS -->
+
         <div class="feature-card">
 
-            <h3>💿 Search Albums</h3>
+            <h3>
+                💿 Search Albums
+            </h3>
 
             <p>
-                Search iTunes for an album and start creating your
-                MusicBoxd review.
+                Search iTunes for an album and start creating your MusicBoxd review.
             </p>
 
             <form
                     action="/search"
                     method="get"
-                    class="search-form"
-            >
+                    class="search-form">
 
                 <input
                         type="text"
                         name="query"
                         placeholder="Search for an album..."
-                        required
-                >
+                        required>
 
                 <button type="submit">
                     Search
@@ -451,9 +578,7 @@
     </section>
 
 
-    <!-- ========================================================= -->
-    <!-- FRIENDS ACTIVITY -->
-    <!-- ========================================================= -->
+    <!-- FRIENDS -->
 
     <aside class="friends">
 
@@ -467,120 +592,291 @@
 
 </main>
 
+
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
+
+<!-- SPOTIFY JAVASCRIPT -->
+
 <script>
+
     let currentlyPlaying = false;
 
+
     async function spotifyCommand(url) {
+
         try {
-            const response = await fetch(url, { method: "POST" });
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "POST"
+                    }
+                );
+
 
             if (response.status === 401) {
-                console.log("Spotify is not connected.");
                 return;
             }
+
 
             if (response.status === 403) {
-                console.log("Spotify Premium is required.");
-                const warning = document.getElementById("premium-warning");
-                if (warning) warning.style.display = "block";
+
+                const warning =
+                    document.getElementById(
+                        "premium-warning"
+                    );
+
+                if (warning) {
+                    warning.style.display = "block";
+                }
+
                 return;
             }
+
 
             if (!response.ok) {
-                console.error("Spotify command failed:", response.status);
                 return;
             }
 
-            setTimeout(loadSpotifyPlayer, 500);
+
+            setTimeout(
+                loadSpotifyPlayer,
+                500
+            );
 
         } catch (error) {
-            console.error("Spotify command error:", error);
+
+            console.error(
+                "Spotify command error:",
+                error
+            );
+
         }
+
     }
 
+
     async function togglePlayPause() {
+
         await spotifyCommand(
+
             currentlyPlaying
                 ? "/spotify/player/pause"
                 : "/spotify/player/play"
+
         );
+
     }
+
 
     async function loadSpotifyPlayer() {
+
         try {
-            const response = await fetch("/spotify/player/current");
 
-            if (response.status === 204) {
+            const response =
+                await fetch(
+                    "/spotify/player/current"
+                );
+
+
+            if (
+                response.status === 204
+                || response.status === 401
+            ) {
+
                 currentlyPlaying = false;
+
                 updatePlayButton(false);
+
                 return;
+
             }
 
-            if (response.status === 401) {
-                currentlyPlaying = false;
-                return;
-            }
 
             if (!response.ok) {
-                console.error("Spotify player request failed:", response.status);
                 return;
             }
 
-            const data = await response.json();
 
-            if (data.item != null) {
-                currentlyPlaying = data.is_playing === true;
-                updatePlayButton(currentlyPlaying);
-                updateTrackInformation(data);
+            const data =
+                await response.json();
+
+
+            if (data.item) {
+
+                currentlyPlaying =
+                    data.is_playing === true;
+
+                updatePlayButton(
+                    currentlyPlaying
+                );
+
+                updateTrackInformation(
+                    data
+                );
+
             } else {
+
                 currentlyPlaying = false;
+
                 updatePlayButton(false);
+
             }
 
+
         } catch (error) {
-            console.error("Spotify player error:", error);
+
+            console.error(
+                "Spotify player error:",
+                error
+            );
+
         }
+
     }
+
 
     function updateTrackInformation(data) {
-        if (!data.item) return;
 
-        const songTitle = document.getElementById("song-title");
-        if (songTitle) songTitle.textContent = data.item.name;
+        if (!data.item) {
+            return;
+        }
 
-        const artistName = document.getElementById("artist-name");
-        if (artistName && data.item.artists?.length)
-            artistName.textContent = data.item.artists[0].name;
 
-        const albumName = document.getElementById("album-name");
-        if (albumName && data.item.album)
-            albumName.textContent = data.item.album.name;
+        const song =
+            data.item;
 
-        const albumCover = document.getElementById("album-cover");
-        if (albumCover && data.item.album?.images?.length)
-            albumCover.src = data.item.album.images[0].url;
 
-        const spotifyLink = document.getElementById("spotify-link");
-        if (spotifyLink && data.item.externalUrls?.spotify)
-            spotifyLink.href = data.item.externalUrls.spotify;
+        const title =
+            document.getElementById(
+                "song-title"
+            );
 
-        const playingStatus = document.getElementById("playing-status");
-        if (playingStatus)
-            playingStatus.textContent =
-                data.is_playing ? "● PLAYING" : "● PAUSED";
+
+        const artist =
+            document.getElementById(
+                "artist-name"
+            );
+
+
+        const album =
+            document.getElementById(
+                "album-name"
+            );
+
+
+        const cover =
+            document.getElementById(
+                "album-cover"
+            );
+
+
+        const link =
+            document.getElementById(
+                "spotify-link"
+            );
+
+
+        const status =
+            document.getElementById(
+                "playing-status"
+            );
+
+
+        if (title) {
+            title.textContent =
+                song.name;
+        }
+
+
+        if (
+            artist
+            && song.artists?.length
+        ) {
+
+            artist.textContent =
+                song.artists[0].name;
+
+        }
+
+
+        if (
+            album
+            && song.album
+        ) {
+
+            album.textContent =
+                song.album.name;
+
+        }
+
+
+        if (
+            cover
+            && song.album?.images?.length
+        ) {
+
+            cover.src =
+                song.album.images[0].url;
+
+        }
+
+
+        if (
+            link
+            && song.externalUrls?.spotify
+        ) {
+
+            link.href =
+                song.externalUrls.spotify;
+
+        }
+
+
+        if (status) {
+
+            status.textContent =
+                data.is_playing
+                    ? "● PLAYING"
+                    : "● PAUSED";
+
+        }
+
     }
+
 
     function updatePlayButton(isPlaying) {
-        const icon = document.getElementById("play-pause-icon");
-        if (icon) icon.textContent = isPlaying ? "⏸" : "▶";
+
+        const icon =
+            document.getElementById(
+                "play-pause-button"
+            );
+
+
+        if (icon) {
+
+            icon.textContent =
+                isPlaying
+                    ? "⏸"
+                    : "▶";
+
+        }
+
     }
 
+
     loadSpotifyPlayer();
-    setInterval(loadSpotifyPlayer, 5000);
+
+
+    setInterval(
+        loadSpotifyPlayer,
+        5000
+    );
+
 </script>
+
 
 </body>
 </html>
-

@@ -4,11 +4,12 @@
 
 <head>
 
-
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
 
     <title th:text="${artist.name} + ' - MusicBoxd'">
         Artist - MusicBoxd
@@ -18,19 +19,19 @@
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
 
-
 </head>
 
 <body>
 
 <div class="artist-page">
 
+    <!-- NAVBAR -->
 
-    <!-- Shared MusicBoxd navbar -->
     <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 
-    <!-- Artist information -->
+    <!-- ARTIST HEADER -->
+
     <header class="artist-header">
 
         <div class="artist-information">
@@ -39,180 +40,562 @@
                 ARTIST
             </p>
 
-            <h1 th:text="${artist.name}">
-                Artist Name
-            </h1>
+            <div class="artist-title">
+
+                <h1 th:text="${artist.name}">
+                    Artist Name
+                </h1>
+
+                <button
+                        class="favourite-button"
+                        type="button"
+                >
+                    ☆ Add to favourites
+                </button>
+
+            </div>
+
+
+            <!-- LISTENERS -->
 
             <p
                     class="artist-listeners"
-                    th:if="${artistInfo != null}"
+                    th:if="${listeners != null}"
             >
 
-            <span th:text="${artistInfo.listeners}">
-                0
-            </span>
+                <span
+                        th:text="${#numbers.formatInteger(listeners, 3, 'COMMA')}"
+                >
+                    0
+                </span>
+
+                listeners
 
             </p>
+
+
+            <!-- EVENTS BUTTON -->
+
+            <button
+                    class="events-button"
+                    onclick="scrollToEvents()"
+                    th:if="${!#lists.isEmpty(concerts)}"
+            >
+                Upcoming Events ↓
+            </button>
 
         </div>
 
     </header>
 
 
+    <!-- MAIN CONTENT -->
+
     <main>
 
-        <section class="albums-section">
-
-            <div class="section-header">
-
-                <h2>
-                    Albums
-                </h2>
-
-                <span
-                        th:text="${#lists.size(albums)} + ' albums'"
-                >
-                0 albums
-            </span>
-
-            </div>
+        <div class="artist-content">
 
 
-            <div class="album-grid">
+            <!-- LEFT SIDE -->
 
-                <a
-                        class="album-card"
-                        th:each="album : ${albums}"
-                        th:href="@{/album/from-artist(
-                        artistName=${artist.name},
-                        albumName=${album.name}
-                    )}"
-                >
+            <div class="artist-main">
 
-                    <div class="album-art">
 
-                        <img
-                                th:if="${album.image != null and !album.image.isEmpty()}"
-                                th:src="${album.image.get(album.image.size() - 1).text}"
-                                th:alt="${album.name}"
-                        >
+                <!-- ALBUMS -->
 
-                        <div
-                                class="album-art-placeholder"
-                                th:if="${album.image == null or album.image.isEmpty()}"
-                        >
-                            No artwork
+                <section class="albums-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <p class="section-label">
+                                DISCOGRAPHY
+                            </p>
+
+                            <h2>
+                                Albums
+                            </h2>
+
+                        </div>
+
+
+                        <div class="album-header-right">
+
+                            <span
+                                    class="album-count"
+                                    th:text="${#lists.size(albums)} + ' albums'"
+                            >
+                                0 albums
+                            </span>
+
+
+                            <a
+                                    class="view-all-button"
+                                    th:href="@{/artists/{id}/albums(id=${artist.id})}"
+                            >
+                                View all →
+                            </a>
+
                         </div>
 
                     </div>
 
 
-                    <div class="album-information">
+                    <!-- ALBUM CAROUSEL -->
 
-                        <h3 th:text="${album.name}">
-                            Album Name
-                        </h3>
+                    <div class="album-carousel-wrapper">
+
+
+                        <button
+                                class="carousel-button carousel-left"
+                                onclick="scrollAlbums(-1)"
+                                aria-label="Previous albums"
+                                type="button"
+                        >
+                            ‹
+                        </button>
+
+
+                        <div
+                                class="album-carousel"
+                                id="albumCarousel"
+                        >
+
+                            <a
+                                    class="album-card"
+                                    th:each="album : ${albums}"
+                                    th:href="@{/album/from-artist(
+                                        artistName=${artist.name},
+                                        albumName=${album.name}
+                                    )}"
+                            >
+
+                                <div class="album-art">
+
+                                    <img
+                                            th:if="${album.image != null and !album.image.isEmpty()}"
+                                            th:src="${album.image.get(album.image.size() - 1).text}"
+                                            th:alt="${album.name}"
+                                    >
+
+                                    <div
+                                            class="album-art-placeholder"
+                                            th:if="${album.image == null or album.image.isEmpty()}"
+                                    >
+                                        No artwork
+                                    </div>
+
+                                </div>
+
+
+                                <div class="album-information">
+
+                                    <h3 th:text="${album.name}">
+                                        Album Name
+                                    </h3>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+
+                        <button
+                                class="carousel-button carousel-right"
+                                onclick="scrollAlbums(1)"
+                                aria-label="Next albums"
+                                type="button"
+                        >
+                            ›
+                        </button>
 
                     </div>
 
-                </a>
 
-            </div>
+                    <!-- NO ALBUMS -->
 
+                    <div
+                            class="empty-message"
+                            th:if="${#lists.isEmpty(albums)}"
+                    >
 
-            <div
-                    class="empty-message"
-                    th:if="${#lists.isEmpty(albums)}"
-            >
-
-                <p>
-                    No albums found for this artist.
-                </p>
-
-            </div>
-
-        </section>
-
-        <section class="albums-section">
-
-            <div class="section-header">
-
-                <h2>Upcoming Events</h2>
-
-                <span th:text="${#lists.size(concerts)} + ' events'">
-            0 events
-        </span>
-
-            </div>
-
-            <div class="event-list">
-
-                <a
-                        class="event-card"
-                        th:each="concert : ${concerts}"
-                        th:href="${concert.ticketUrl()}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                >
-
-                    <div class="event-date">
-
-                <span
-                        th:if="${concert.date != null}"
-                        th:text="${concert.date}"
-                >
-                    01 Jan 2027
-                </span>
-
-                        <span th:if="${concert.date == null}">
-                    Date TBA
-                </span>
-
-                    </div>
-
-                    <div class="event-information">
-
-                        <h3 th:text="${concert.name}">
-                            Event name
-                        </h3>
-
-                        <p th:if="${concert.venue != null}">
-                    <span th:text="${concert.venue}">
-                        Venue
-                    </span>
-
-                            <span th:if="${concert.city != null}">
-                        ,
-                        <span th:text="${concert.city}">
-                            City
-                        </span>
-                    </span>
+                        <p>
+                            No albums found for this artist.
                         </p>
 
                     </div>
 
-                    <span class="ticket-link">
-                View tickets
-            </span>
+                </section>
 
-                </a>
+
+                <!-- POPULAR SINGLES -->
+
+                <section class="albums-section singles-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <p class="section-label">
+                                LISTEN NOW
+                            </p>
+
+                            <h2>
+                                Popular Singles
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="singles-list">
+
+                        <div
+                                class="single-card"
+                                th:each="song : ${popularSingles}"
+                        >
+
+                            <div class="single-information">
+
+                                <h3 th:text="${song.trackName}">
+                                    Song Name
+                                </h3>
+
+                                <p th:text="${song.artistName}">
+                                    Artist Name
+                                </p>
+
+                            </div>
+
+
+                            <audio
+                                    controls
+                                    preload="none"
+                                    th:src="${song.previewUrl}"
+                            ></audio>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NO SONGS -->
+
+                    <div
+                            class="empty-message"
+                            th:if="${#lists.isEmpty(popularSingles)}"
+                    >
+
+                        <p>
+                            No song previews available.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- UPCOMING EVENTS -->
+
+                <section
+                        class="albums-section events-section"
+                        id="upcoming-events"
+                >
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <p class="section-label">
+                                LIVE MUSIC
+                            </p>
+
+                            <h2>
+                                Upcoming Events
+                            </h2>
+
+                        </div>
+
+
+                        <span
+                                class="album-count"
+                                th:text="${#lists.size(concerts)} + ' events'"
+                        >
+                            0 events
+                        </span>
+
+                    </div>
+
+
+                    <div class="event-list">
+
+                        <a
+                                class="event-card"
+                                th:each="concert : ${concerts}"
+                                th:href="${concert.ticketUrl()}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                        >
+
+                            <div class="event-date">
+
+                                <span
+                                        th:if="${concert.date != null}"
+                                        th:text="${concert.date}"
+                                >
+                                    01 Jan 2027
+                                </span>
+
+                                <span
+                                        th:if="${concert.date == null}"
+                                >
+                                    Date TBA
+                                </span>
+
+                            </div>
+
+
+                            <div class="event-information">
+
+                                <h3 th:text="${concert.name}">
+                                    Event name
+                                </h3>
+
+
+                                <p
+                                        th:if="${concert.venue != null}"
+                                >
+
+                                    <span th:text="${concert.venue}">
+                                        Venue
+                                    </span>
+
+
+                                    <span
+                                            th:if="${concert.city != null}"
+                                    >
+                                        ,
+                                        <span th:text="${concert.city}">
+                                            City
+                                        </span>
+                                    </span>
+
+                                </p>
+
+                            </div>
+
+
+                            <span class="ticket-link">
+                                View tickets
+                            </span>
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- NO EVENTS -->
+
+                    <div
+                            class="empty-message"
+                            th:if="${#lists.isEmpty(concerts)}"
+                    >
+
+                        <p>
+                            No upcoming events found for this artist.
+                        </p>
+
+                    </div>
+
+                </section>
 
             </div>
 
-            <div
-                    class="empty-message"
-                    th:if="${#lists.isEmpty(concerts)}"
+
+            <!-- RIGHT SIDEBAR -->
+
+            <aside
+                    class="artist-sidebar"
+                    th:if="${artistInfo != null and artistInfo.bio != null}"
             >
-                <p>No upcoming events found for this artist.</p>
-            </div>
 
-        </section>
+                <div class="bio-box">
+
+                    <p class="section-label">
+                        ABOUT
+                    </p>
+
+                    <h2 th:text="${artist.name}">
+                        Artist Name
+                    </h2>
+
+                    <p
+                            th:utext="${artistInfo.bio.summary}"
+                    >
+                    </p>
+
+                </div>
+
+            </aside>
+
+
+        </div>
 
     </main>
+
+
+    <!-- FOOTER -->
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </div>
+
+
+<script>
+
+    function scrollToEvents() {
+
+        const events =
+            document.getElementById("upcoming-events");
+
+        if (events) {
+
+            events.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+
+
+    function scrollAlbums(direction) {
+
+        const carousel =
+            document.getElementById("albumCarousel");
+
+        if (!carousel) {
+            return;
+        }
+
+        const scrollAmount = 300;
+
+        carousel.scrollBy({
+            left: direction * scrollAmount,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    const carousel =
+        document.getElementById("albumCarousel");
+
+
+    let autoScroll;
+
+
+    function startAutoScroll() {
+
+        if (!carousel) {
+            return;
+        }
+
+        stopAutoScroll();
+
+
+        autoScroll = setInterval(() => {
+
+            if (
+                carousel.scrollLeft +
+                carousel.clientWidth >=
+                carousel.scrollWidth - 10
+            ) {
+
+                carousel.scrollTo({
+                    left: 0,
+                    behavior: "smooth"
+                });
+
+            } else {
+
+                carousel.scrollBy({
+                    left: 260,
+                    behavior: "smooth"
+                });
+
+            }
+
+        }, 3500);
+
+    }
+
+
+    function stopAutoScroll() {
+
+        if (autoScroll) {
+
+            clearInterval(autoScroll);
+
+        }
+
+    }
+
+
+    if (carousel) {
+
+        carousel.addEventListener(
+            "mouseenter",
+            stopAutoScroll
+        );
+
+
+        carousel.addEventListener(
+            "mouseleave",
+            startAutoScroll
+        );
+
+
+        carousel.addEventListener(
+            "touchstart",
+            stopAutoScroll
+        );
+
+
+        startAutoScroll();
+
+    }
+
+
+    const favouriteButton =
+        document.querySelector(".favourite-button");
+
+
+    if (favouriteButton) {
+
+        favouriteButton.addEventListener(
+            "click",
+            function () {
+
+                this.classList.toggle("active");
+
+
+                this.textContent =
+                    this.classList.contains("active")
+                        ? "★ Added to favourites"
+                        : "☆ Add to favourites";
+
+            }
+        );
+
+    }
+
+</script>
+
 
 </body>
 
