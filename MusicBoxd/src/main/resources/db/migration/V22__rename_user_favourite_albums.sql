@@ -1,0 +1,1 @@
+ALTER TABLE user_favourite_albums RENAME TO top_four;
