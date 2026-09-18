@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_favourite_albums")
+@Table(name = "top_four")
 @Getter
 @Setter
 @NoArgsConstructor
