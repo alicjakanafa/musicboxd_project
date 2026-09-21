@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title
+          th:text="${user.username} + ' - Favourite Artists | MusicBoxd'"
+  >
+    Favourite Artists | MusicBoxd
+  </title>
+
+
+  <!-- GOOGLE FONTS -->
+
+  <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+  >
+
+  <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin
+  >
+
+  <link
+          href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+  >
+
+
+  <!-- CSS -->
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/style.css}"
+  >
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/navbar.css}"
+  >
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/footer.css}"
+  >
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/favourite-artists.css}"
+  >
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<header
+        th:replace="~{fragments/navbar :: navbar}"
+>
+</header>
+
+
+<main class="favourite-artists-page">
+
+
+  <!-- PAGE HEADER -->
+
+  <section class="favourite-artists-header">
+
+    <div class="favourite-artists-heading">
+
+      <p class="section-label">
+        MY MUSIC
+      </p>
+
+      <h1>
+        Favourite Artists
+      </h1>
+
+      <p class="favourite-artists-description">
+
+        <strong
+                th:text="${user.username}"
+        >
+          Username
+        </strong>
+
+        <span>has</span>
+
+        <strong
+                class="favourite-count"
+                th:text="${favouriteArtistCount}"
+        >
+          0
+        </strong>
+
+        <span>favourite artists.</span>
+
+      </p>
+
+    </div>
+
+
+    <!-- COUNT BADGE -->
+
+    <div class="favourite-artists-count">
+
+      <strong
+              th:text="${favouriteArtistCount}"
+      >
+        0
+      </strong>
+
+      <span>
+                Favourite Artists
+            </span>
+
+    </div>
+
+  </section>
+
+
+  <!-- DIVIDER -->
+
+  <div class="favourite-artists-divider"></div>
+
+
+  <!-- FAVOURITE ARTISTS -->
+
+  <section class="favourite-artists-section">
+
+
+    <!-- EMPTY STATE -->
+
+    <div
+            class="empty-state"
+            th:if="${favouriteArtists == null
+                        or favouriteArtists.isEmpty()}"
+    >
+
+      <div class="empty-state-icon">
+        ♪
+      </div>
+
+      <h2>
+        No favourite artists yet
+      </h2>
+
+      <p>
+        This user hasn't added any favourite artists yet.
+      </p>
+
+    </div>
+
+
+    <!-- ARTIST GRID -->
+
+    <div
+            class="favourite-artists-grid"
+            th:unless="${favouriteArtists == null
+                            or favouriteArtists.isEmpty()}"
+    >
+
+      <a
+              class="favourite-artist-card"
+              th:each="artist : ${favouriteArtists}"
+              th:href="@{/artists/{id}(id=${artist.id})}"
+      >
+
+        <!-- ARTIST IMAGE -->
+
+        <div class="favourite-artist-image">
+
+                    <span>
+                        ♪
+                    </span>
+
+          <div class="favourite-artist-image-overlay">
+            View artist
+          </div>
+
+        </div>
+
+
+        <!-- ARTIST INFORMATION -->
+
+        <div class="favourite-artist-information">
+
+          <h2
+                  th:text="${artist.name}"
+          >
+            Artist Name
+          </h2>
+
+          <div class="favourite-artist-link">
+
+                        <span>
+                            Artist profile
+                        </span>
+
+            <span class="favourite-artist-arrow">
+                            →
+                        </span>
+
+          </div>
+
+        </div>
+
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer
+        th:replace="~{fragments/footer :: footer}"
+>
+</footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Reviews | MusicBoxd</title>
+
+  <!-- Google Fonts -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin
+  >
+
+  <link
+          href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+  >
+
+  <!-- ONLY the CSS needed for this page -->
+  <link rel="stylesheet"
+        th:href="@{/css/community-reviews.css}">
+
+  <link rel="stylesheet"
+        th:href="@{/css/navbar.css}">
+
+  <link rel="stylesheet"
+        th:href="@{/css/footer.css}">
+
+</head>
+
+
+<body class="community-reviews-body">
+
+<header th:replace="~{fragments/navbar :: navbar}">
+</header>
+
+
+<main class="community-reviews-page">
+
+  <div class="community-reviews-container">
+
+
+    <!-- PAGE HEADER -->
+
+    <section class="community-reviews-header">
+
+      <h1>
+        Community Reviews
+      </h1>
+
+      <p>
+        See what other MusicBoxd users have been saying.
+      </p>
+
+    </section>
+
+
+    <!-- REVIEWS -->
+
+    <section class="community-reviews-feed">
+
+
+      <!-- EMPTY STATE -->
+
+      <div
+              th:if="${reviews == null or reviews.isEmpty()}"
+              class="community-reviews-empty"
+      >
+
+        <h2>
+          No reviews yet
+        </h2>
+
+        <p>
+          Be the first person to review an album.
+        </p>
+
+      </div>
+
+
+      <!-- REVIEW CARD -->
+
+      <article
+              class="community-reviews-card"
+              th:each="review : ${reviews}"
+      >
+
+
+        <!-- USER -->
+
+        <div class="community-reviews-user">
+
+          <a
+                  th:if="${users.get(review.userId) != null}"
+                  th:href="@{/profile/{id}(id=${review.userId})}"
+                  class="community-reviews-user-link"
+          >
+
+            <!-- Profile picture -->
+
+            <img
+                    th:if="${users.get(review.userId).profilePictureUrl != null
+                                and !users.get(review.userId).profilePictureUrl.isEmpty()}"
+                    th:src="${users.get(review.userId).profilePictureUrl}"
+                    class="community-reviews-avatar"
+                    alt="Profile picture"
+            >
+
+
+            <!-- Profile picture fallback -->
+
+            <div
+                    th:unless="${users.get(review.userId).profilePictureUrl != null
+                                and !users.get(review.userId).profilePictureUrl.isEmpty()}"
+                    class="community-reviews-avatar-placeholder"
+            >
+
+                            <span
+                                    th:if="${users.get(review.userId).username != null
+                                    and !users.get(review.userId).username.isEmpty()}"
+                                    th:text="${#strings.substring(
+                                        users.get(review.userId).username,
+                                        0,
+                                        1
+                                    ).toUpperCase()}"
+                            >
+                                U
+                            </span>
+
+              <span
+                      th:unless="${users.get(review.userId).username != null
+                                    and !users.get(review.userId).username.isEmpty()}"
+              >
+                                U
+                            </span>
+
+            </div>
+
+
+            <!-- Username/date -->
+
+            <div class="community-reviews-user-details">
+
+              <strong
+                      th:text="${users.get(review.userId).username}"
+              >
+                Username
+              </strong>
+
+              <span
+                      th:if="${review.createdAt != null}"
+                      th:text="${#temporals.format(
+                                        review.createdAt,
+                                        'dd MMM yyyy'
+                                    )}"
+              >
+                                Date
+                            </span>
+
+            </div>
+
+          </a>
+
+        </div>
+
+
+        <!-- REVIEW CONTENT -->
+
+        <div class="community-reviews-content">
+
+
+          <!-- ALBUM -->
+
+          <a
+                  th:if="${albums.get(review.albumId) != null}"
+                  th:href="@{/albums/{id}(id=${review.albumId})}"
+                  class="community-reviews-album"
+          >
+
+            <!-- Album artwork -->
+
+            <div class="community-reviews-artwork">
+
+              <img
+                      th:if="${albums.get(review.albumId).artworkUrl != null
+                                    and !albums.get(review.albumId).artworkUrl.isEmpty()}"
+                      th:src="${albums.get(review.albumId).artworkUrl}"
+                      th:alt="${albums.get(review.albumId).title}"
+              >
+
+              <div
+                      th:unless="${albums.get(review.albumId).artworkUrl != null
+                                    and !albums.get(review.albumId).artworkUrl.isEmpty()}"
+                      class="community-reviews-artwork-placeholder"
+              >
+              </div>
+
+            </div>
+
+
+            <!-- Album information -->
+
+            <div class="community-reviews-album-info">
+
+                            <span class="community-reviews-label">
+                                Review of
+                            </span>
+
+              <h2
+                      th:text="${albums.get(review.albumId).title}"
+              >
+                Album Title
+              </h2>
+
+            </div>
+
+          </a>
+
+
+          <!-- RATING -->
+
+          <div class="community-reviews-rating">
+
+                        <span class="community-reviews-stars">
+                            ★
+                        </span>
+
+            <strong
+                    th:text="${review.rating}"
+            >
+              5
+            </strong>
+
+            <span>
+                            / 5
+                        </span>
+
+          </div>
+
+
+          <!-- REVIEW TITLE -->
+
+          <h3
+                  th:if="${review.header != null
+                            and !review.header.isEmpty()}"
+                  th:text="${review.header}"
+                  class="community-reviews-title"
+          >
+            Review title
+          </h3>
+
+
+          <!-- REVIEW TEXT -->
+
+          <p
+                  class="community-reviews-text"
+                  th:text="${review.content}"
+          >
+            Review content
+          </p>
+
+
+          <!-- ALBUM LINK -->
+
+          <a
+                  th:if="${albums.get(review.albumId) != null}"
+                  th:href="@{/albums/{id}(id=${review.albumId})}"
+                  class="community-reviews-view-album"
+          >
+            View album →
+          </a>
+
+
+        </div>
+
+      </article>
+
+
+    </section>
+
+  </div>
+
+</main>
+
+
+<footer th:replace="~{fragments/footer :: footer}">
+</footer>
+
+</body>
+
+</html>

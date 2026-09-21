@@ -46,3 +46,20 @@ public interface FriendRepository
             Friend.Status status
     );
 }
+    List<Friend> findByRequesterIdAndStatusOrReceiverIdAndStatus(
+            Long requesterId,
+            String requesterStatus,
+            Long receiverId,
+            String receiverStatus
+    );
+
+    long countByReceiverIdAndStatus(
+            Long receiverId,
+            String status
+    );
+
+    long countByRequesterIdAndStatus(
+            Long requesterId,
+            String status
+    );
+}

@@ -15,19 +15,57 @@
         Artist - MusicBoxd
     </title>
 
-    <link rel="stylesheet" th:href="@{/css/artist-profile.css}">
-    <link rel="stylesheet" th:href="@{/css/navbar.css}">
-    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
+    <!-- Google Fonts -->
+
+    <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com"
+    >
+
+    <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin
+    >
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    >
+
+
+    <!-- CSS -->
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/artist-profile.css}"
+    >
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/navbar.css}"
+    >
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/footer.css}"
+    >
 
 </head>
+
 
 <body>
 
 <div class="artist-page">
 
+
     <!-- NAVBAR -->
 
-    <header th:replace="~{fragments/navbar :: navbar}"></header>
+    <header
+            th:replace="~{fragments/navbar :: navbar}"
+    >
+    </header>
 
 
     <!-- ARTIST HEADER -->
@@ -40,18 +78,46 @@
                 ARTIST
             </p>
 
+
             <div class="artist-title">
 
                 <h1 th:text="${artist.name}">
                     Artist Name
                 </h1>
 
-                <button
-                        class="favourite-button"
-                        type="button"
+
+                <!-- FAVOURITE ARTIST BUTTON -->
+
+                <form
+                        th:if="${!isFavourite}"
+                        th:action="@{/artists/{id}/favourite(id=${artist.id})}"
+                        method="post"
                 >
-                    ☆ Add to favourites
-                </button>
+
+                    <button
+                            class="favourite-button"
+                            type="submit"
+                    >
+                        ☆ Add to favourites
+                    </button>
+
+                </form>
+
+
+                <form
+                        th:if="${isFavourite}"
+                        th:action="@{/artists/{id}/unfavourite(id=${artist.id})}"
+                        method="post"
+                >
+
+                    <button
+                            class="favourite-button active"
+                            type="submit"
+                    >
+                        ★ Added to favourites
+                    </button>
+
+                </form>
 
             </div>
 
@@ -171,23 +237,34 @@
                                     )}"
                             >
 
+
+                                <!-- ALBUM ART -->
+
                                 <div class="album-art">
+
+
+                                    <!-- ARTWORK EXISTS -->
 
                                     <img
                                             th:if="${album.image != null and !album.image.isEmpty()}"
                                             th:src="${album.image.get(album.image.size() - 1).text}"
                                             th:alt="${album.name}"
+                                            onerror="this.onerror=null; this.src='/images/image-unavailable.svg';"
                                     >
 
-                                    <div
-                                            class="album-art-placeholder"
+
+                                    <!-- NO ARTWORK -->
+
+                                    <img
                                             th:if="${album.image == null or album.image.isEmpty()}"
+                                            src="/images/image-unavailable.svg"
+                                            th:alt="${album.name}"
                                     >
-                                        No artwork
-                                    </div>
 
                                 </div>
 
+
+                                <!-- ALBUM INFORMATION -->
 
                                 <div class="album-information">
 
@@ -275,7 +352,8 @@
                                     controls
                                     preload="none"
                                     th:src="${song.previewUrl}"
-                            ></audio>
+                            >
+                            </audio>
 
                         </div>
 
@@ -449,7 +527,10 @@
 
     <!-- FOOTER -->
 
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <footer
+            th:replace="~{fragments/footer :: footer}"
+    >
+    </footer>
 
 </div>
 
@@ -570,33 +651,10 @@
 
     }
 
-
-    const favouriteButton =
-        document.querySelector(".favourite-button");
-
-
-    if (favouriteButton) {
-
-        favouriteButton.addEventListener(
-            "click",
-            function () {
-
-                this.classList.toggle("active");
-
-
-                this.textContent =
-                    this.classList.contains("active")
-                        ? "★ Added to favourites"
-                        : "☆ Add to favourites";
-
-            }
-        );
-
-    }
-
 </script>
 
 
 </body>
 
 </html>
+

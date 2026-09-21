@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Edit Profile | MusicBoxd</title>
+
+  <!-- Google Fonts -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin
+  >
+
+  <link
+          href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+  >
+
+  <link
+          rel="stylesheet"
+          th:href="@{/css/style.css}"
+  >
+
+</head>
+
+<body>
+
+<div class="edit-profile-page">
+
+  <div class="edit-profile-container">
+
+    <div class="edit-profile-header">
+
+      <a
+              th:href="@{/profile/{id}(id=${user.id})}"
+              class="back-link"
+      >
+        ← Back to profile
+      </a>
+
+      <h1>Edit Profile</h1>
+
+      <p>
+        Update your MusicBoxd profile information.
+      </p>
+
+    </div>
+
+
+    <form
+            th:action="@{/profile/edit}"
+            method="post"
+            enctype="multipart/form-data"
+            class="edit-profile-form"
+    >
+
+
+      <section class="edit-profile-section">
+
+        <h2>Profile Picture</h2>
+
+        <div class="profile-picture-editor">
+
+          <div class="profile-picture-preview">
+
+            <img
+                    th:if="${user.profilePictureUrl != null
+                                        and !user.profilePictureUrl.isEmpty()}"
+                    th:src="${user.profilePictureUrl}"
+                    th:alt="${user.username}"
+                    id="profilePicturePreview"
+            >
+
+            <div
+                    th:unless="${user.profilePictureUrl != null
+                                            and !user.profilePictureUrl.isEmpty()}"
+                    class="profile-picture-placeholder"
+                    id="profilePicturePlaceholder"
+                    th:text="${user.username != null
+                                          and !user.username.isEmpty()
+                                          ? #strings.toUpperCase(
+                                              #strings.substring(
+                                                  user.username,
+                                                  0,
+                                                  1
+                                              )
+                                            )
+                                          : '?'}"
+            >
+              E
+            </div>
+
+          </div>
+
+
+          <div class="profile-picture-controls">
+
+            <label
+                    for="profilePicture"
+                    class="upload-picture-button"
+            >
+              Choose New Picture
+            </label>
+
+            <input
+                    type="file"
+                    id="profilePicture"
+                    name="profilePicture"
+                    accept="image/*"
+                    hidden
+            >
+
+            <p>
+              JPG, PNG or GIF recommended.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <section class="edit-profile-section">
+
+        <h2>Username</h2>
+
+        <label
+                for="username"
+                class="edit-profile-label"
+        >
+          Username
+        </label>
+
+        <input
+                type="text"
+                id="username"
+                name="username"
+                th:value="${user.username}"
+                maxlength="50"
+                required
+                class="edit-profile-input"
+        >
+
+      </section>
+
+      <section class="edit-profile-section">
+
+        <h2>Bio</h2>
+
+        <label
+                for="bio"
+                class="edit-profile-label"
+        >
+          Tell people about yourself
+        </label>
+
+        <textarea
+                id="bio"
+                name="bio"
+                maxlength="500"
+                rows="6"
+                class="edit-profile-textarea"
+                placeholder="Tell people about your music taste..."
+                th:text="${user.bio}"
+        ></textarea>
+
+        <div class="character-count">
+
+                    <span id="bioCharacterCount">
+                        0
+                    </span>
+
+          / 500
+
+        </div>
+
+      </section>
+
+
+
+      <div class="edit-profile-actions">
+
+        <a
+                th:href="@{/profile/{id}(id=${user.id})}"
+                class="cancel-profile-button"
+        >
+          Cancel
+        </a>
+
+        <button
+                type="submit"
+                class="save-profile-button"
+        >
+          Save Changes
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+  const profilePictureInput =
+          document.getElementById(
+                  "profilePicture"
+          );
+
+  const profilePicturePreview =
+          document.getElementById(
+                  "profilePicturePreview"
+          );
+
+  const profilePicturePlaceholder =
+          document.getElementById(
+                  "profilePicturePlaceholder"
+          );
+
+
+  profilePictureInput.addEventListener(
+          "change",
+          function () {
+
+            const file =
+                    this.files[0];
+
+            if (!file) {
+              return;
+            }
+
+            const reader =
+                    new FileReader();
+
+            reader.onload =
+                    function (event) {
+
+                      if (profilePicturePreview) {
+
+                        profilePicturePreview.src =
+                                event.target.result;
+
+                        profilePicturePreview.style.display =
+                                "block";
+
+                      } else {
+
+                        const image =
+                                document.createElement(
+                                        "img"
+                                );
+
+                        image.src =
+                                event.target.result;
+
+                        image.id =
+                                "profilePicturePreview";
+
+                        image.className =
+                                "profile-picture-preview-image";
+
+                        if (profilePicturePlaceholder) {
+
+                          profilePicturePlaceholder
+                                  .replaceWith(image);
+
+                        }
+
+                      }
+
+                    };
+
+            reader.readAsDataURL(file);
+
+          }
+  );
+
+
+  const bio =
+          document.getElementById(
+                  "bio"
+          );
+
+  const bioCharacterCount =
+          document.getElementById(
+                  "bioCharacterCount"
+          );
+
+
+  function updateCharacterCount() {
+
+    bioCharacterCount.textContent =
+            bio.value.length;
+
+  }
+
+
+  bio.addEventListener(
+          "input",
+          updateCharacterCount
+  );
+
+  updateCharacterCount();
+
+</script>
+
+</body>
+
+</html>

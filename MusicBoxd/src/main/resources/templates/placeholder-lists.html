@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>My Lists</title>
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/lists.css}">
 </head>
 <body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <main>
   <h1>My Lists</h1>
@@ -30,6 +35,7 @@
     <hr>
   </div>
 </main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 </html>

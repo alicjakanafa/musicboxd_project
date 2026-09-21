@@ -167,6 +167,7 @@ public class AlbumController {
             Model model
     ) {
 
+
         var album =
                 albumRepository.findById(id);
 
@@ -177,9 +178,8 @@ public class AlbumController {
         Album currentAlbum =
                 album.get();
 
-        /*
-         * Find artist.
-         */
+
+
         if (currentAlbum.getArtistId() == null) {
             return "redirect:/";
         }
@@ -196,18 +196,13 @@ public class AlbumController {
         Artist currentArtist =
                 artist.get();
 
-        /*
-         * Last.fm album information.
-         *
-         * This is allowed to fail. The album page
-         * should still work if Last.fm doesn't
-         * recognise the album.
-         */
+
         var lastFmAlbumResponse =
                 lastFmService.getAlbumInfo(
                         currentArtist.getName(),
                         currentAlbum.getTitle()
                 );
+
 
         model.addAttribute(
                 "album",
@@ -218,6 +213,7 @@ public class AlbumController {
                 "artist",
                 currentArtist
         );
+
 
         if (
                 lastFmAlbumResponse != null &&
@@ -237,33 +233,29 @@ public class AlbumController {
             );
         }
 
-        /*
-         * Song previews.
-         */
+
         Map<String, String> trackPreviews =
                 new HashMap<>();
 
+
         if (
-                lastFmAlbumResponse != null &&
-                        lastFmAlbumResponse.getAlbum() != null &&
-                        lastFmAlbumResponse.getAlbum().getTracks() != null &&
-                        lastFmAlbumResponse.getAlbum().getTracks().getTrack() != null
+                currentAlbum.getExternalId() != null &&
+                        !currentAlbum.getExternalId().isBlank()
         ) {
 
-            for (
-                    var track :
-                    lastFmAlbumResponse
-                            .getAlbum()
-                            .getTracks()
-                            .getTrack()
-            ) {
+            try {
+
+                Long collectionId =
+                        Long.valueOf(
+                                currentAlbum.getExternalId()
+                        );
+
 
                 ItunesTrackResponse response =
-                        itunesService.searchTracks(
-                                currentArtist.getName()
-                                        + " "
-                                        + track.getName()
+                        itunesService.getAlbumTracks(
+                                collectionId
                         );
+
 
                 if (
                         response != null &&
@@ -271,29 +263,47 @@ public class AlbumController {
                 ) {
 
                     response.getResults()
-                            .stream()
-                            .filter(result ->
-                                    result.getPreviewUrl() != null
-                            )
-                            .findFirst()
-                            .ifPresent(result ->
+                            .forEach(track -> {
+
+                                if (
+                                        track.getTrackName() != null &&
+                                                track.getPreviewUrl() != null
+                                ) {
+
                                     trackPreviews.put(
-                                            track.getName(),
-                                            result.getPreviewUrl()
-                                    )
-                            );
+                                            track.getTrackName(),
+                                            track.getPreviewUrl()
+                                    );
+                                }
+
+                            });
                 }
+
+            } catch (NumberFormatException e) {
+
+                System.out.println(
+                        "INVALID ITUNES COLLECTION ID FOR ALBUM: " +
+                                currentAlbum.getTitle()
+                );
+
+            } catch (Exception e) {
+
+                System.out.println(
+                        "ITUNES TRACK ERROR FOR ALBUM: " +
+                                currentAlbum.getTitle() +
+                                " - " +
+                                e.getMessage()
+                );
             }
         }
+
 
         model.addAttribute(
                 "trackPreviews",
                 trackPreviews
         );
 
-        /*
-         * Reviews.
-         */
+
         List<Review> reviews =
                 reviewRepository
                         .findByAlbumIdOrderByCreatedAtDesc(
@@ -305,30 +315,37 @@ public class AlbumController {
                 reviews
         );
 
-        /*
-         * Review users.
-         */
+
+        List<Long> reviewUserIds =
+                reviews.stream()
+                        .map(Review::getUserId)
+                        .filter(java.util.Objects::nonNull)
+                        .distinct()
+                        .toList();
+
+
         Map<Long, User> reviewUsers =
                 new HashMap<>();
 
-        for (Review review : reviews) {
+
+        if (!reviewUserIds.isEmpty()) {
 
             userRepository
-                    .findById(
-                            review.getUserId()
-                    )
-                    .ifPresent(user ->
+                    .findByIdIn(reviewUserIds)
+                    .forEach(user ->
                             reviewUsers.put(
-                                    review.getUserId(),
+                                    user.getId(),
                                     user
                             )
                     );
         }
 
+
         model.addAttribute(
                 "reviewUsers",
                 reviewUsers
         );
+
 
         return "album-profile";
     }
