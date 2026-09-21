@@ -26,14 +26,20 @@ public class List {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "list_type")
+    private ListType listType;
+
     public List(
             Long userId,
             String title,
-            String description
+            String description,
+            ListType type
     ) {
         this.userId = userId;
         this.title = title;
         this.description = description;
+        this.listType = type;
         this.createdAt = LocalDateTime.now();
     }
 
