@@ -16,7 +16,9 @@ public class SpotifyCurrentlyPlayingResponse {
         return item;
     }
 
-    public void setItem(SpotifyTrack item) {
+    public void setItem(
+            SpotifyTrack item
+    ) {
         this.item = item;
     }
 
@@ -24,7 +26,9 @@ public class SpotifyCurrentlyPlayingResponse {
         return isPlaying;
     }
 
-    public void setPlaying(boolean playing) {
+    public void setPlaying(
+            boolean playing
+    ) {
         isPlaying = playing;
     }
 
@@ -32,7 +36,9 @@ public class SpotifyCurrentlyPlayingResponse {
         return progressMs;
     }
 
-    public void setProgressMs(Integer progressMs) {
+    public void setProgressMs(
+            Integer progressMs
+    ) {
         this.progressMs = progressMs;
     }
 }
