@@ -3,17 +3,6 @@
    COMMUNITY REVIEWS PAGE
 
    This stylesheet is intentionally isolated.
-   It uses unique class names so it does not interfere with:
-
-   - review.css
-   - user-reviews.css
-   - profile.css
-   - style.css
-   ========================================================= */
-
-
-/* =========================================================
-   PAGE BODY
    ========================================================= */
 
 body.community-reviews-body {
@@ -25,11 +14,6 @@ body.community-reviews-body {
 
     font-family: Arial, Helvetica, sans-serif;
 }
-
-
-/* =========================================================
-   MAIN PAGE
-   ========================================================= */
 
 .community-reviews-page {
     width: 100%;
@@ -51,11 +35,6 @@ body.community-reviews-body {
 
     margin: 0 auto;
 }
-
-
-/* =========================================================
-   PAGE HEADER
-   ========================================================= */
 
 .community-reviews-header {
     width: 100%;
@@ -86,11 +65,6 @@ body.community-reviews-body {
     line-height: 1.5;
 }
 
-
-/* =========================================================
-   REVIEW FEED
-   ========================================================= */
-
 .community-reviews-feed {
     width: 100%;
 
@@ -99,11 +73,6 @@ body.community-reviews-body {
 
     gap: 20px;
 }
-
-
-/* =========================================================
-   REVIEW CARD
-   ========================================================= */
 
 .community-reviews-card {
     width: 100%;
@@ -136,12 +105,6 @@ body.community-reviews-body {
 
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
 }
-
-
-/* =========================================================
-   USER SECTION
-   ========================================================= */
-
 .community-reviews-user {
     width: 100%;
 
@@ -177,11 +140,6 @@ body.community-reviews-body {
 
     text-decoration: none;
 }
-
-
-/* =========================================================
-   USER AVATAR
-   ========================================================= */
 
 .community-reviews-avatar,
 .community-reviews-avatar-placeholder {
@@ -219,11 +177,6 @@ body.community-reviews-body {
     font-weight: 700;
 }
 
-
-/* =========================================================
-   USER DETAILS
-   ========================================================= */
-
 .community-reviews-user-details {
     display: flex;
     flex-direction: column;
@@ -260,11 +213,6 @@ body.community-reviews-body {
     line-height: 1.2;
 }
 
-
-/* =========================================================
-   REVIEW CONTENT
-   ========================================================= */
-
 .community-reviews-content {
     width: 100%;
 
@@ -275,10 +223,6 @@ body.community-reviews-body {
     border-top: 1px solid #1c2936;
 }
 
-
-/* =========================================================
-   ALBUM LINK
-   ========================================================= */
 
 .community-reviews-album {
     width: 100%;
@@ -313,11 +257,6 @@ body.community-reviews-body {
 
     text-decoration: none;
 }
-
-
-/* =========================================================
-   ALBUM ARTWORK
-   ========================================================= */
 
 .community-reviews-artwork {
     width: 82px;
@@ -367,11 +306,6 @@ body.community-reviews-body {
             );
 }
 
-
-/* =========================================================
-   ALBUM INFORMATION
-   ========================================================= */
-
 .community-reviews-album-info {
     min-width: 0;
 
@@ -416,11 +350,6 @@ body.community-reviews-body {
     color: #78b7e8;
 }
 
-
-/* =========================================================
-   RATING
-   ========================================================= */
-
 .community-reviews-rating {
     display: flex;
 
@@ -451,10 +380,6 @@ body.community-reviews-body {
 }
 
 
-/* =========================================================
-   REVIEW TITLE
-   ========================================================= */
-
 .community-reviews-title {
     margin: 5px 0 9px;
 
@@ -467,11 +392,6 @@ body.community-reviews-body {
 
     overflow-wrap: break-word;
 }
-
-
-/* =========================================================
-   REVIEW TEXT
-   ========================================================= */
 
 .community-reviews-text {
     max-width: 850px;
@@ -489,10 +409,6 @@ body.community-reviews-body {
     overflow-wrap: break-word;
 }
 
-
-/* =========================================================
-   VIEW ALBUM LINK
-   ========================================================= */
 
 .community-reviews-view-album {
     display: inline-block;
@@ -519,10 +435,6 @@ body.community-reviews-body {
     text-decoration: none;
 }
 
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
 
 .community-reviews-empty {
     width: 100%;
@@ -558,11 +470,6 @@ body.community-reviews-body {
 
     font-size: 14px;
 }
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
 
 @media (max-width: 700px) {
 
@@ -604,10 +511,6 @@ body.community-reviews-body {
 
 }
 
-
-/* =========================================================
-   SMALL MOBILE
-   ========================================================= */
 
 @media (max-width: 450px) {
 

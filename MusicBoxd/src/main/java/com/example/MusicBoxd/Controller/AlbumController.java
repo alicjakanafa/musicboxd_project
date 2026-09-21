@@ -2,18 +2,21 @@ package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Album;
 import com.example.MusicBoxd.Model.Artist;
+import com.example.MusicBoxd.Model.ListType;
 import com.example.MusicBoxd.Model.Review;
 import com.example.MusicBoxd.Model.User;
 import com.example.MusicBoxd.Model.UserFavouriteAlbum;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
+import com.example.MusicBoxd.Repository.ListItemRepository;
+import com.example.MusicBoxd.Repository.ListRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
 import com.example.MusicBoxd.Repository.UserFavouriteAlbumRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
-import com.example.MusicBoxd.api.itunes.ItunesAlbum;
 import com.example.MusicBoxd.api.itunes.ItunesService;
 import com.example.MusicBoxd.api.itunes.ItunesTrackResponse;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -24,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,9 @@ public class AlbumController {
     private final ItunesService itunesService;
     private final ReviewRepository reviewRepository;
 
+    private final ListRepository listRepository;
+    private final ListItemRepository listItemRepository;
+
     public AlbumController(
             AlbumRepository albumRepository,
             ArtistRepository artistRepository,
@@ -48,7 +53,9 @@ public class AlbumController {
             UserRepository userRepository,
             ReviewRepository reviewRepository,
             LastFmService lastFmService,
-            ItunesService itunesService
+            ItunesService itunesService,
+            ListRepository listRepository,
+            ListItemRepository listItemRepository
     ) {
         this.albumRepository = albumRepository;
         this.artistRepository = artistRepository;
@@ -57,11 +64,10 @@ public class AlbumController {
         this.reviewRepository = reviewRepository;
         this.lastFmService = lastFmService;
         this.itunesService = itunesService;
+        this.listRepository = listRepository;
+        this.listItemRepository = listItemRepository;
     }
 
-    // =========================
-    // SAVE ITUNES ALBUM
-    // =========================
 
     @GetMapping("/save")
     public String saveItunesAlbum(
@@ -72,12 +78,6 @@ public class AlbumController {
             @RequestParam String releaseDate
     ) {
 
-        /*
-         * Check whether this album already exists.
-         *
-         * collectionId is the iTunes ID and is stored
-         * as our external ID.
-         */
         String externalId =
                 collectionId.toString();
 
@@ -91,9 +91,6 @@ public class AlbumController {
                     existingAlbum.get().getId();
         }
 
-        /*
-         * Find the artist or create them.
-         */
         Artist artist =
                 artistRepository
                         .findByNameIgnoreCase(
@@ -107,10 +104,6 @@ public class AlbumController {
                                 )
                         );
 
-        /*
-         * Convert the iTunes release date into
-         * the year used by our Album model.
-         */
         Short releaseYear = null;
 
         if (
@@ -129,13 +122,9 @@ public class AlbumController {
                         );
 
             } catch (Exception ignored) {
-                // Leave releaseYear as null.
             }
         }
 
-        /*
-         * Create the MusicBoxd album.
-         */
         Album album =
                 new Album(
                         externalId,
@@ -148,25 +137,17 @@ public class AlbumController {
         Album savedAlbum =
                 albumRepository.save(album);
 
-        /*
-         * Send the user to the real MusicBoxd
-         * album profile.
-         */
         return "redirect:/albums/" +
                 savedAlbum.getId();
     }
 
 
-    // =========================
-    // ALBUM PROFILE
-    // =========================
-
     @GetMapping("/{id}")
     public String showAlbum(
             @PathVariable Long id,
-            Model model
+            Model model,
+            Authentication authentication
     ) {
-
 
         var album =
                 albumRepository.findById(id);
@@ -177,8 +158,6 @@ public class AlbumController {
 
         Album currentAlbum =
                 album.get();
-
-
 
         if (currentAlbum.getArtistId() == null) {
             return "redirect:/";
@@ -203,7 +182,6 @@ public class AlbumController {
                         currentAlbum.getTitle()
                 );
 
-
         model.addAttribute(
                 "album",
                 currentAlbum
@@ -213,7 +191,6 @@ public class AlbumController {
                 "artist",
                 currentArtist
         );
-
 
         if (
                 lastFmAlbumResponse != null &&
@@ -233,10 +210,56 @@ public class AlbumController {
             );
         }
 
+        model.addAttribute(
+                "alreadyInWantToListen",
+                false
+        );
+
+        if (
+                authentication != null &&
+                        authentication.getPrincipal() instanceof OidcUser principal
+        ) {
+
+            userRepository
+                    .findByOktaUserId(principal.getSubject())
+                    .ifPresent(user -> {
+
+                        List<com.example.MusicBoxd.Model.List> userLists =
+                                listRepository
+                                        .findByUserIdOrderByCreatedAtDesc(
+                                                user.getId()
+                                        );
+
+                        model.addAttribute(
+                                "userLists",
+                                userLists
+                        );
+
+                        listRepository
+                                .findByUserIdAndListType(
+                                        user.getId(),
+                                        ListType.WANT_TO_LISTEN
+                                )
+                                .ifPresent(wantToListen -> {
+
+                                    boolean alreadyInWantToListen =
+                                            listItemRepository
+                                                    .findByListIdAndAlbumId(
+                                                            wantToListen.getId(),
+                                                            currentAlbum.getId()
+                                                    )
+                                                    .isPresent();
+
+                                    model.addAttribute(
+                                            "alreadyInWantToListen",
+                                            alreadyInWantToListen
+                                    );
+                                });
+                    });
+        }
 
         Map<String, String> trackPreviews =
                 new HashMap<>();
-
 
         if (
                 currentAlbum.getExternalId() != null &&
@@ -250,12 +273,10 @@ public class AlbumController {
                                 currentAlbum.getExternalId()
                         );
 
-
                 ItunesTrackResponse response =
                         itunesService.getAlbumTracks(
                                 collectionId
                         );
-
 
                 if (
                         response != null &&
@@ -297,7 +318,6 @@ public class AlbumController {
             }
         }
 
-
         model.addAttribute(
                 "trackPreviews",
                 trackPreviews
@@ -323,10 +343,8 @@ public class AlbumController {
                         .distinct()
                         .toList();
 
-
         Map<Long, User> reviewUsers =
                 new HashMap<>();
-
 
         if (!reviewUserIds.isEmpty()) {
 
@@ -340,20 +358,13 @@ public class AlbumController {
                     );
         }
 
-
         model.addAttribute(
                 "reviewUsers",
                 reviewUsers
         );
 
-
         return "album-profile";
     }
-
-
-    // =========================
-    // ADD TO TOP 4
-    // =========================
 
     @PostMapping("/{id}/favourite")
     public String addFavouriteAlbum(
@@ -403,11 +414,6 @@ public class AlbumController {
                 user.getId();
     }
 
-
-    // =========================
-    // REMOVE FROM TOP 4
-    // =========================
-
     @PostMapping("/{id}/favourite/remove")
     public String removeFavouriteAlbum(
             @PathVariable Long id,
@@ -429,11 +435,6 @@ public class AlbumController {
         return "redirect:/profile/" +
                 user.getId();
     }
-
-
-    // =========================
-    // CURRENT USER
-    // =========================
 
     private User getCurrentUser(
             Authentication authentication

@@ -14,6 +14,11 @@ public interface ListItemRepository extends CrudRepository<ListItem, Long> {
 
     Optional<ListItem> findByListIdAndAlbumId(Long listId, Long albumId);
 
+    boolean existsByListIdAndAlbumId(
+            Long listId,
+            Long albumId
+    );
+
     @Query("select coalesce(max(i.position), 0) from ListItem i where i.listId = :listId")
     Integer findMaxPosition(@Param("listId") Long listId);
 

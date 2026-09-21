@@ -13,21 +13,12 @@
 
   <title>Profile | MusicBoxd</title>
 
-
   <!-- Google Fonts -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin
-  >
-
-  <link
-          href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-  >
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
 
   <!-- CSS -->
@@ -52,7 +43,6 @@
 
 <body>
 
-
 <!-- =========================
      NAVBAR
      ========================= -->
@@ -61,7 +51,6 @@
 
 
 <main class="profile-page">
-
 
   <!-- =========================
        PROFILE HEADER
@@ -309,13 +298,13 @@
 
       <div class="profile-stat">
 
-        <strong>
-          17
+        <strong th:text="${profileListCount}">
+          0
         </strong>
 
         <span>
-          Lists
-        </span>
+    Lists
+  </span>
 
       </div>
 
