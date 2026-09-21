@@ -6,6 +6,8 @@ import java.util.List;
 
 public class SpotifyTrack {
 
+    private String id;
+
     private String name;
 
     private List<SpotifyArtist> artists;
@@ -14,6 +16,17 @@ public class SpotifyTrack {
 
     @JsonProperty("external_urls")
     private SpotifyExternalUrls externalUrls;
+
+    @JsonProperty("duration_ms")
+    private Long durationMs;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -43,7 +56,17 @@ public class SpotifyTrack {
         return externalUrls;
     }
 
-    public void setExternalUrls(SpotifyExternalUrls externalUrls) {
+    public void setExternalUrls(
+            SpotifyExternalUrls externalUrls
+    ) {
         this.externalUrls = externalUrls;
+    }
+
+    public Long getDurationMs() {
+        return durationMs;
+    }
+
+    public void setDurationMs(Long durationMs) {
+        this.durationMs = durationMs;
     }
 }
