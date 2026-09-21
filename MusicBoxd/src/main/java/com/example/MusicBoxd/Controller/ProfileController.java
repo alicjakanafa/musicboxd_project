@@ -327,27 +327,57 @@ public class ProfileController {
 
 
 
-        long followingCount =
-                friendRepository
-                        .countByRequesterIdAndStatus(
-                                id,
-                                "ACCEPTED"
-                        );
+        long followingCount = 0;
+        long followerCount = 0;
+
+        Iterable<Friend> allFriendships =
+                friendRepository.findAll();
+
+        for (Friend friendship : allFriendships) {
+
+            if (friendship.getStatus() == null) {
+                continue;
+            }
+
+            if (friendship.getStatus().equals("REJECTED")) {
+                continue;
+            }
+
+            Long requesterId = friendship.getRequesterId();
+            Long receiverId = friendship.getReceiverId();
+
+            if (requesterId == null || receiverId == null) {
+                continue;
+            }
 
 
-        long followerCount =
-                friendRepository
-                        .countByReceiverIdAndStatus(
-                                id,
-                                "ACCEPTED"
-                        );
+            if (friendship.getStatus().equals("ACCEPTED")) {
 
+                if (requesterId.equals(id) || receiverId.equals(id)) {
+
+                    followerCount++;
+                    followingCount++;
+                }
+
+                continue;
+            }
+
+            if (friendship.getStatus().equals("PENDING")) {
+
+                if (receiverId.equals(id)) {
+                    followerCount++;
+                }
+
+                if (requesterId.equals(id)) {
+                    followingCount++;
+                }
+            }
+        }
 
         model.addAttribute(
                 "followingCount",
                 followingCount
         );
-
 
         model.addAttribute(
                 "followerCount",

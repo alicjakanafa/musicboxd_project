@@ -332,25 +332,209 @@
 
 /* REVIEWS */
 
-.review-scroll {
-  width: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  padding-bottom: 12px;
-  scrollbar-width: thin;
-  scrollbar-color: #30475d #0b121b;
+/* ========================================
+   RECENT REVIEWS
+   ======================================== */
+
+.user-reviews {
+  min-width: 0;
 }
 
-.review-scroll .review-grid {
+.review-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 12px;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-dark) var(--surface);
+}
+
+.review-scroll::-webkit-scrollbar {
+  height: 7px;
+}
+
+.review-scroll::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 10px;
+}
+
+.review-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary-dark);
+  border-radius: 10px;
+}
+
+.review-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.review-grid {
   display: flex;
-  flex-wrap: nowrap;
-  gap: 18px;
+  gap: 16px;
   width: max-content;
 }
 
-.review-scroll .review-card {
-  flex: 0 0 220px;
-  width: 220px;
+
+/* ========================================
+   REVIEW CARD
+   ======================================== */
+
+.review-card {
+  width: 260px;
+  min-width: 260px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   REVIEW ARTWORK
+   ======================================== */
+
+.review-artwork {
+  width: 100%;
+  height: 180px;
+
+  margin-bottom: 14px;
+
+  overflow: hidden;
+
+  background: var(--surface-light);
+  border-radius: 10px;
+}
+
+.review-artwork img,
+.review-artwork .album-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.album-placeholder {
+  background:
+          linear-gradient(
+                  135deg,
+                  var(--surface-light),
+                  var(--surface-hover)
+          );
+}
+
+
+/* ========================================
+   REVIEW INFORMATION
+   ======================================== */
+
+.review-card h3 {
+  margin: 0 0 6px;
+
+  color: var(--text);
+
+  font-size: 16px;
+  font-weight: 700;
+
+  line-height: 1.3;
+}
+
+.review-subtitle {
+  margin: 0 0 8px;
+
+  color: var(--primary-light);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.review-text {
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+
+/* ========================================
+   RATING
+   ======================================== */
+
+.review-rating {
+  margin-top: auto;
+  padding-top: 14px;
+
+  color: var(--primary-light);
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   DATE
+   ======================================== */
+
+.review-card > small {
+  margin-top: 6px;
+
+  color: var(--subtle);
+
+  font-size: 11px;
+}
+
+
+/* ========================================
+   REMOVE REVIEW
+   ======================================== */
+
+.review-delete-form {
+  margin-top: 12px;
+}
+
+.profile-remove-button {
+  padding: 7px 11px;
+
+  background: transparent;
+
+  border: 1px solid var(--border-light);
+  border-radius: 7px;
+
+  color: var(--muted);
+
+  font-family: inherit;
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          color 0.2s ease;
+}
+
+.profile-remove-button:hover {
+  background: rgba(255, 255, 255, 0.04);
+
+  border-color: #8b96a3;
+
+  color: var(--text);
 }
 
 .review-artwork {

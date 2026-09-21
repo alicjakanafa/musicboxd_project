@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +25,9 @@
 
 <main class="dashboard">
 
-    <!-- DAILY CATCH UP -->
+    <!-- =====================================================
+         DAILY CATCH UP
+         ===================================================== -->
 
     <section class="daily-catchup">
 
@@ -35,25 +38,26 @@
                 <span
                         th:if="${currentUser != null}"
                         th:text="${currentUser.username}">
-                User
-            </span>,
-                here's your daily catch up
+                    User
+                </span>,
+                here's your catch up!
             </h2>
 
             <span
                     class="notification-count"
-                    th:if="${unreadNotificationCount != null
-                        and unreadNotificationCount > 0}"
+                    th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}"
                     th:text="${unreadNotificationCount}">
-            0
-        </span>
+                0
+            </span>
 
         </div>
 
 
         <div class="catchup-list">
 
-            <!-- NOTIFICATIONS -->
+            <!-- =================================================
+                 NOTIFICATIONS
+                 ================================================= -->
 
             <div
                     class="catchup-item"
@@ -62,45 +66,18 @@
 
                 <div class="catchup-icon">
 
-                <span
-                        th:if="${notification.type == 'REVIEW_LIKED'}">
-                    ❤️
-                </span>
+                    <!--
+                        We are deliberately not checking notification type here.
 
-                    <span
-                            th:if="${notification.type == 'REVIEW_COMMENTED'}">
-                    💬
-                </span>
+                        Your Notification class currently does not expose
+                        notificationType to Thymeleaf, which was causing the
+                        TemplateProcessingException.
 
-                    <span
-                            th:if="${notification.type == 'LIST_LIKED'}">
-                    ❤️
-                </span>
+                        Once we see the actual Notification class, we can add
+                        the correct icons back.
+                    -->
 
-                    <span
-                            th:if="${notification.type == 'LIST_COMMENTED'}">
-                    💬
-                </span>
-
-                    <span
-                            th:if="${notification.type == 'ALBUM_FAVOURITED'}">
-                    ⭐
-                </span>
-
-                    <span
-                            th:if="${notification.type == 'ALBUM_REVIEWED'}">
-                    📝
-                </span>
-
-                    <span
-                            th:if="${notification.type == 'FRIEND_REQUEST'}">
-                    👥
-                </span>
-
-                    <span
-                            th:if="${notification.type == 'FRIEND_ACCEPTED'}">
-                    🤝
-                </span>
+                    🔔
 
                 </div>
 
@@ -112,12 +89,13 @@
                         Notification
                     </p>
 
+
                     <small
                             th:if="${notification.createdAt != null}"
                             th:text="${#temporals.format(
                                 notification.createdAt,
                                 'dd MMM yyyy HH:mm'
-                        )}">
+                            )}">
                         18 Sep 2026 10:30
                     </small>
 
@@ -126,22 +104,41 @@
             </div>
 
 
-            <!-- NOTHING TO SHOW -->
+            <!-- =================================================
+                 NO NOTIFICATIONS
+                 ================================================= -->
 
             <div
                     class="catchup-empty"
-                    th:if="${notifications == null
-                        or notifications.isEmpty()}"
+                    th:if="${notifications == null or notifications.isEmpty()}"
             >
                 You're all caught up! 🎵
             </div>
 
         </div>
 
+
+        <!-- =================================================
+             VIEW ALL NOTIFICATIONS
+             ================================================= -->
+
+        <div class="catchup-footer">
+
+            <a
+                    href="/notifications"
+                    class="view-all-notifications"
+            >
+                View all notifications
+            </a>
+
+        </div>
+
     </section>
 
 
-    <!-- GLOBAL TOP 40 -->
+    <!-- =====================================================
+         GLOBAL TOP 40
+         ================================================= -->
 
     <section class="top-40">
 
@@ -149,13 +146,16 @@
 
             <div class="top-40-header">
 
-                <h2>Global Top 40</h2>
+                <h2>
+                    Global Top 40
+                </h2>
 
                 <span class="chart-arrow">
                     →
                 </span>
 
             </div>
+
 
             <div class="top-five-list">
 
@@ -187,6 +187,7 @@
 
             </div>
 
+
             <div class="top-40-footer">
 
                 <span>
@@ -204,16 +205,22 @@
     </section>
 
 
-    <!-- SPOTIFY -->
+    <!-- =====================================================
+         SPOTIFY
+         ===================================================== -->
 
     <section class="spotify-section">
 
-        <h2>Currently Playing</h2>
+        <h2>
+            Currently Playing
+        </h2>
 
         <div class="media-player">
 
 
-            <!-- PREMIUM WARNING -->
+            <!-- =================================================
+                 PREMIUM WARNING
+                 ================================================= -->
 
             <div
                     id="premium-warning"
@@ -232,7 +239,9 @@
             </div>
 
 
-            <!-- CONNECT SPOTIFY -->
+            <!-- =================================================
+                 CONNECT SPOTIFY
+                 ================================================= -->
 
             <div
                     class="spotify-card"
@@ -255,7 +264,9 @@
             </div>
 
 
-            <!-- CURRENTLY PLAYING -->
+            <!-- =================================================
+                 CURRENTLY PLAYING
+                 ================================================= -->
 
             <div
                     id="currently-playing-card"
@@ -406,7 +417,9 @@
             </div>
 
 
-            <!-- NOTHING CURRENTLY PLAYING -->
+            <!-- =================================================
+                 NOTHING CURRENTLY PLAYING
+                 ================================================= -->
 
             <div
                     class="spotify-card"
@@ -431,7 +444,9 @@
             </div>
 
 
-            <!-- RECENTLY PLAYED -->
+            <!-- =================================================
+                 RECENTLY PLAYED
+                 ================================================= -->
 
             <div
                     class="spotify-card"
@@ -452,7 +467,6 @@
                     <!-- RECENT TRACK ALBUM COVER -->
 
                     <img
-
                             th:if="${recentTrack.track != null
                                 and recentTrack.track.album != null
                                 and recentTrack.track.album.images != null
@@ -507,7 +521,6 @@
                         <!-- SPOTIFY LINK -->
 
                         <a
-
                                 th:if="${recentTrack.track != null
                                     and recentTrack.track.externalUrls != null
                                     and recentTrack.track.externalUrls.spotify != null}"
@@ -518,7 +531,7 @@
 
                                 class="spotify-button">
 
-                            Open in Spotify
+                            Open Spotify
 
                         </a>
 
@@ -533,12 +546,13 @@
     </section>
 
 
-    <!-- ALBUM OF THE DAY -->
+    <!-- =====================================================
+         ALBUM OF THE DAY
+         ===================================================== -->
 
     <section
             class="album-of-the-day"
-            th:if="${suggestedAlbum != null}"
-    >
+            th:if="${suggestedAlbum != null}">
 
         <h2>
             Suggested Album of the Day
@@ -548,13 +562,12 @@
                 class="suggested-album"
 
                 th:href="@{/albums/save(
-                collectionId=${suggestedAlbum.collectionId},
-                artistName=${suggestedAlbum.artistName},
-                albumName=${suggestedAlbum.collectionName},
-                artworkUrl=${suggestedAlbum.highResolutionArtworkUrl},
-                releaseDate=${suggestedAlbum.releaseDate}
-            )}"
-        >
+                    collectionId=${suggestedAlbum.collectionId},
+                    artistName=${suggestedAlbum.artistName},
+                    albumName=${suggestedAlbum.collectionName},
+                    artworkUrl=${suggestedAlbum.highResolutionArtworkUrl},
+                    releaseDate=${suggestedAlbum.releaseDate}
+                )}">
 
             <img
                     th:if="${suggestedAlbum.highResolutionArtworkUrl != null}"
@@ -563,34 +576,31 @@
 
                     th:alt="${suggestedAlbum.collectionName}"
 
-                    class="suggested-album-cover"
-            >
+                    class="suggested-album-cover">
+
 
             <div class="suggested-album-info">
 
                 <h3
-                        th:text="${suggestedAlbum.collectionName}"
-                >
+                        th:text="${suggestedAlbum.collectionName}">
                     Album Name
                 </h3>
 
                 <p
                         class="suggested-album-artist"
-                        th:text="${suggestedAlbum.artistName}"
-                >
+                        th:text="${suggestedAlbum.artistName}">
                     Artist Name
                 </p>
 
                 <p
                         class="suggested-album-genre"
-                        th:text="${suggestedAlbum.primaryGenreName}"
-                >
+                        th:text="${suggestedAlbum.primaryGenreName}">
                     Genre
                 </p>
 
                 <span class="suggested-album-link">
-                View Album →
-            </span>
+                    View Album →
+                </span>
 
             </div>
 
@@ -599,7 +609,9 @@
     </section>
 
 
-    <!-- SEARCH FEATURES -->
+    <!-- =====================================================
+         SEARCH FEATURES
+         ===================================================== -->
 
     <section class="feature-card-row">
 
@@ -670,23 +682,29 @@
     </section>
 
 
-    <!-- FRIENDS -->
+    <!-- =====================================================
+         FRIENDS
+         ===================================================== -->
 
     <aside class="friends">
 
         <div class="friends-header">
 
             <div>
-                <h2>Friends Activity</h2>
+
+                <h2>
+                    Friends Activity
+                </h2>
 
                 <span>
-                What your friends are listening to
-            </span>
+                    What your friends are listening to
+                </span>
+
             </div>
 
             <span class="friends-header-badge">
-            Recent
-        </span>
+                Recent
+            </span>
 
         </div>
 
@@ -696,14 +714,15 @@
         <div
                 class="friends-empty"
                 th:if="${friendReviews == null
-                or friendReviews.isEmpty()}"
-        >
+                or friendReviews.isEmpty()}">
 
             <div class="friends-empty-icon">
                 ♪
             </div>
 
-            <h3>No recent activity</h3>
+            <h3>
+                No recent activity
+            </h3>
 
             <p>
                 Reviews from your friends will appear here.
@@ -717,35 +736,31 @@
         <div
                 class="friends-content"
                 th:unless="${friendReviews == null
-                    or friendReviews.isEmpty()}"
-        >
+                    or friendReviews.isEmpty()}">
 
             <article
                     class="friend-review"
-                    th:each="review : ${friendReviews}"
-            >
+                    th:each="review : ${friendReviews}">
+
 
                 <!-- ALBUM ART -->
 
                 <a
                         th:if="${friendReviewAlbums[review.albumId] != null}"
                         th:href="@{/albums/{id}(id=${review.albumId})}"
-                        class="friend-review-art-link"
-                >
+                        class="friend-review-art-link">
 
                     <img
                             th:if="${friendReviewArtwork != null
                             and friendReviewArtwork[review.albumId] != null}"
                             th:src="${friendReviewArtwork[review.albumId]}"
                             th:alt="${friendReviewAlbums[review.albumId].title}"
-                            class="friend-review-art"
-                    >
+                            class="friend-review-art">
 
                     <div
                             class="friend-review-art-placeholder"
                             th:unless="${friendReviewArtwork != null
-                                and friendReviewArtwork[review.albumId] != null}"
-                    >
+                                and friendReviewArtwork[review.albumId] != null}">
                         ♪
                     </div>
 
@@ -756,6 +771,7 @@
 
                 <div class="friend-review-content">
 
+
                     <!-- TOP ROW -->
 
                     <div class="friend-review-top">
@@ -765,14 +781,13 @@
                             <a
                                     th:if="${friendReviewUsers[review.userId] != null}"
                                     th:href="@{/profile/{id}(id=${review.userId})}"
-                                    th:text="${friendReviewUsers[review.userId].username}"
-                            >
+                                    th:text="${friendReviewUsers[review.userId].username}">
                                 Username
                             </a>
 
                             <span>
-                            reviewed
-                        </span>
+                                reviewed
+                            </span>
 
                         </div>
 
@@ -781,17 +796,18 @@
 
                         <div class="friend-review-rating">
 
-                            <span>★</span>
+                            <span>
+                                ★
+                            </span>
 
                             <strong
-                                    th:text="${review.rating}"
-                            >
+                                    th:text="${review.rating}">
                                 4.5
                             </strong>
 
                             <span class="rating-total">
-                            / 5
-                        </span>
+                                / 5
+                            </span>
 
                         </div>
 
@@ -804,8 +820,7 @@
                             th:if="${friendReviewAlbums[review.albumId] != null}"
                             th:href="@{/albums/{id}(id=${review.albumId})}"
                             class="friend-review-album"
-                            th:text="${friendReviewAlbums[review.albumId].title}"
-                    >
+                            th:text="${friendReviewAlbums[review.albumId].title}">
                         Album title
                     </a>
 
@@ -815,8 +830,7 @@
                     <h3
                             th:if="${review.header != null
                             and !review.header.isEmpty()}"
-                            th:text="${review.header}"
-                    >
+                            th:text="${review.header}">
                         Review title
                     </h3>
 
@@ -827,8 +841,7 @@
                             class="friend-review-text"
                             th:if="${review.content != null
                             and !review.content.isEmpty()}"
-                            th:text="${review.content}"
-                    >
+                            th:text="${review.content}">
                         Review content
                     </p>
 
@@ -842,16 +855,15 @@
                                 th:text="${#temporals.format(
                                 review.createdAt,
                                 'dd MMM yyyy'
-                            )}"
-                        >
+                            )}">
                             18 Sep 2026
                         </small>
+
 
                         <a
                                 th:if="${friendReviewAlbums[review.albumId] != null}"
                                 th:href="@{/albums/{id}(id=${review.albumId})}"
-                                class="friend-review-view"
-                        >
+                                class="friend-review-view">
                             View review →
                         </a>
 
@@ -865,12 +877,11 @@
 
     </aside>
 
-
-
 </main>
 
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 
 <script>
 
@@ -1060,8 +1071,10 @@
 
 
         if (title) {
+
             title.textContent =
                 song.name;
+
         }
 
 
@@ -1153,4 +1166,5 @@
 
 
 </body>
+
 </html>

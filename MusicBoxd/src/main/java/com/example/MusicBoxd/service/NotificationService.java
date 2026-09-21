@@ -24,7 +24,6 @@ public class NotificationService {
             String notificationText
     ) {
 
-        // Don't notify someone about their own action
         if (userId.equals(actorId)) {
             return;
         }
@@ -84,6 +83,20 @@ public class NotificationService {
                 reviewId,
                 "ALBUM_REVIEWED",
                 reviewerUsername + " posted a new review."
+        );
+    }
+    public void notifyReviewLiked(
+            Long reviewOwnerId,
+            Long likerId,
+            Long reviewId,
+            String likerUsername
+    ) {
+        createNotification(
+                reviewOwnerId,
+                likerId,
+                reviewId,
+                "REVIEW_LIKED",
+                likerUsername + " liked your review."
         );
     }
 }

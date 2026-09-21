@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Notifications | MusicBoxd</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin
+    >
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    >
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/navbar.css}"
+    >
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/notifications.css}"
+    >
+
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
+</head>
+
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="notifications-page">
+
+    <!-- PAGE HEADER -->
+    <div class="notifications-header">
+
+        <div>
+            <p class="notifications-label">
+                ACTIVITY
+            </p>
+
+            <h1>
+                Notifications
+            </h1>
+
+            <p class="notifications-subtitle">
+                Keep up with what's happening on MusicBoxd.
+            </p>
+        </div>
+
+        <div
+                class="notification-count"
+                th:if="${unreadNotificationCount > 0}"
+        >
+            <span th:text="${unreadNotificationCount}">
+                0
+            </span>
+
+            <small>
+                unread
+            </small>
+        </div>
+
+    </div>
+
+
+    <!-- EMPTY STATE -->
+    <div
+            class="notifications-empty"
+            th:if="${notifications == null or notifications.isEmpty()}"
+    >
+
+        <div class="empty-icon">
+            ♪
+        </div>
+
+        <h2>
+            You're all caught up
+        </h2>
+
+        <p>
+            There aren't any new notifications right now.
+        </p>
+
+        <span>
+            🎵 Keep discovering music!
+        </span>
+
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+    <div
+            class="notifications-list"
+            th:if="${notifications != null and !notifications.isEmpty()}"
+    >
+
+        <div
+                class="notification-card"
+                th:each="notification : ${notifications}"
+                th:classappend="${!notification.read ? ' unread' : ''}"
+        >
+
+            <a
+                    class="notification-link"
+                    th:href="@{/notifications/{id}/open(id=${notification.id})}"
+            >
+
+                <!-- ICON -->
+                <div class="notification-icon">
+
+                    <span
+                            th:if="${notification.type == 'REVIEW_LIKED'}"
+                    >
+                        ♥
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'REVIEW_COMMENTED'}"
+                    >
+                        💬
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'LIST_LIKED'}"
+                    >
+                        ♥
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'LIST_COMMENTED'}"
+                    >
+                        💬
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'ALBUM_FAVOURITED'}"
+                    >
+                        ★
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'ALBUM_REVIEWED'}"
+                    >
+                        ♪
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'FRIEND_REQUEST'}"
+                    >
+                        +
+                    </span>
+
+                    <span
+                            th:if="${notification.type == 'FRIEND_ACCEPTED'}"
+                    >
+                        ✓
+                    </span>
+
+                </div>
+
+
+                <!-- CONTENT -->
+                <div class="notification-content">
+
+                    <p
+                            class="notification-text"
+                            th:text="${notification.notificationText}"
+                    >
+                        Notification
+                    </p>
+
+                    <small
+                            class="notification-date"
+                            th:if="${notification.createdAt != null}"
+                            th:text="${#temporals.format(notification.createdAt, 'dd MMM yyyy · HH:mm')}"
+                    >
+                        18 Sep 2026 · 10:30
+                    </small>
+
+                </div>
+
+
+                <!-- RIGHT SIDE -->
+                <div class="notification-right">
+
+                    <span
+                            class="new-label"
+                            th:if="${!notification.read}"
+                    >
+                        NEW
+                    </span>
+
+                    <span class="notification-arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+
+</html>

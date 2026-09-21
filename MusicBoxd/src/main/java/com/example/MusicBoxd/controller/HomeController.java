@@ -52,30 +52,14 @@ public class HomeController {
             ReviewRepository reviewRepository,
             AlbumRepository albumRepository
     ) {
-
-        this.lastFmService =
-                lastFmService;
-
-        this.spotifyController =
-                spotifyController;
-
-        this.itunesService =
-                itunesService;
-
-        this.userRepository =
-                userRepository;
-
-        this.notificationRepository =
-                notificationRepository;
-
-        this.friendRepository =
-                friendRepository;
-
-        this.reviewRepository =
-                reviewRepository;
-
-        this.albumRepository =
-                albumRepository;
+        this.lastFmService = lastFmService;
+        this.spotifyController = spotifyController;
+        this.itunesService = itunesService;
+        this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
+        this.friendRepository = friendRepository;
+        this.reviewRepository = reviewRepository;
+        this.albumRepository = albumRepository;
     }
 
     @GetMapping("/")
@@ -84,7 +68,6 @@ public class HomeController {
             HttpSession session,
             Authentication authentication
     ) {
-
         LastFmResponse response =
                 lastFmService.getTopArtists();
 
@@ -95,16 +78,13 @@ public class HomeController {
                         .subList(0, 10)
         );
 
-
         User currentUser =
                 getCurrentUser(authentication);
 
         Long userId = null;
 
         if (currentUser != null) {
-
-            userId =
-                    currentUser.getId();
+            userId = currentUser.getId();
         }
 
         ItunesAlbum suggestedAlbum =
@@ -115,12 +95,11 @@ public class HomeController {
                 suggestedAlbum
         );
 
-
         if (currentUser != null) {
 
             List<Notification> notifications =
                     notificationRepository
-                            .findByUserIdOrderByCreatedAtDesc(
+                            .findTop6ByUserIdOrderByCreatedAtDesc(
                                     currentUser.getId()
                             );
 
@@ -189,36 +168,28 @@ public class HomeController {
             );
         }
 
-
         return "index";
     }
 
     private User getCurrentUser(
             Authentication authentication
     ) {
-
         if (
                 authentication == null
                         || !authentication.isAuthenticated()
         ) {
-
             return null;
         }
-
 
         Object principal =
                 authentication.getPrincipal();
 
-
         if (!(principal instanceof OidcUser oidcUser)) {
-
             return null;
         }
 
-
         String oktaUserId =
                 oidcUser.getSubject();
-
 
         return userRepository
                 .findByOktaUserId(oktaUserId)
@@ -229,17 +200,13 @@ public class HomeController {
             User currentUser,
             Model model
     ) {
-
-
         List<Friend> friendships =
                 friendRepository.findByStatus(
                         "ACCEPTED"
                 );
 
-
         List<Long> friendIds =
                 new ArrayList<>();
-
 
         for (Friend friendship : friendships) {
 
@@ -265,10 +232,8 @@ public class HomeController {
             }
         }
 
-
         List<Review> friendReviews =
                 new ArrayList<>();
-
 
         for (Long friendId : friendIds) {
 
@@ -283,7 +248,6 @@ public class HomeController {
             );
         }
 
-
         friendReviews.sort(
                 Comparator.comparing(
                         Review::getCreatedAt,
@@ -292,8 +256,6 @@ public class HomeController {
                         )
                 )
         );
-
-
 
         if (friendReviews.size() > 10) {
 
@@ -306,17 +268,14 @@ public class HomeController {
                     );
         }
 
-
         Map<Long, User> friendReviewUsers =
                 new HashMap<>();
 
         Map<Long, Album> friendReviewAlbums =
                 new HashMap<>();
 
-
         Map<Long, String> friendReviewArtwork =
                 new HashMap<>();
-
 
         for (Review review : friendReviews) {
 
@@ -327,7 +286,6 @@ public class HomeController {
                             )
                             .orElse(null);
 
-
             if (reviewer != null) {
 
                 friendReviewUsers.put(
@@ -336,11 +294,9 @@ public class HomeController {
                 );
             }
 
-
             if (review.getAlbumId() == null) {
                 continue;
             }
-
 
             Album album =
                     albumRepository
@@ -349,11 +305,9 @@ public class HomeController {
                             )
                             .orElse(null);
 
-
             if (album == null) {
                 continue;
             }
-
 
             friendReviewAlbums.put(
                     review.getAlbumId(),
@@ -392,22 +346,19 @@ public class HomeController {
                 friendReviewArtwork
         );
     }
+
     @GetMapping("/profile")
     public String profile(
             Authentication authentication
     ) {
-
         User user =
                 getCurrentUser(authentication);
 
-
         if (user == null) {
-
             throw new RuntimeException(
                     "User not found"
             );
         }
-
 
         return "redirect:/profile/"
                 + user.getId();
