@@ -34,23 +34,24 @@
     <li th:each="item : ${items}"
         th:if="${item.albumId != null and albums[item.albumId] != null}">
 
-      <h3>
-        <a th:href="@{/lists/album/{id}(id=${albums[item.albumId].id})}"
-           th:text="${albums[item.albumId].title}">
+      <a th:href="@{/lists/album/{id}(id=${item.albumId})}">
+
+        <h3 th:text="${albums[item.albumId].title}">
           Album title
-        </a>
-      </h3>
+        </h3>
 
-      <img
-              th:if="${albums[item.albumId].artworkUrl != null}"
-              th:src="${albums[item.albumId].artworkUrl}"
-              th:alt="${albums[item.albumId].title}"
-              width="150"
-      >
+        <img
+                th:if="${albums[item.albumId].artworkUrl != null}"
+                th:src="${albums[item.albumId].artworkUrl}"
+                th:alt="${albums[item.albumId].title}"
+                width="150"
+        >
 
-      <p th:text="${albums[item.albumId].releaseYear}">
-        Release year
-      </p>
+        <p th:text="${albums[item.albumId].releaseYear}">
+          Release year
+        </p>
+
+      </a>
 
     </li>
 
