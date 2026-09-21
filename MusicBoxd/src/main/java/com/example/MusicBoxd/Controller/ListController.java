@@ -133,45 +133,95 @@ public class ListController {
 
 
     @PostMapping("/{id}/albums")
-    public String addAlbum(Authentication authentication, @PathVariable Long id, @RequestParam String title, @RequestParam String artist) {
+    public String addAlbum(
+            Authentication authentication,
+            @PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam String artist
+    ) {
+
         User user = getCurrentUser(authentication);
-        com.example.MusicBoxd.Model.List list = listRepository.findById(id).orElseThrow();
+
+        com.example.MusicBoxd.Model.List list =
+                listRepository.findById(id).orElseThrow();
+
         if (!list.getUserId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        int nextPosition = listItemRepository.findMaxPosition(id) + 1;
-        LastFmAlbumResponse response = lastFmService.getAlbumInfo(artist, title);
+
+        int nextPosition =
+                listItemRepository.findMaxPosition(id) + 1;
+
+        LastFmAlbumResponse response =
+                lastFmService.getAlbumInfo(artist, title);
+
         LastFmAlbum lastFmAlbum = null;
+
         if (response != null) {
             lastFmAlbum = response.getAlbum();
         }
+
         String finalTitle = title;
         Short releaseYear = null;
         String artworkUrl = null;
 
         if (lastFmAlbum != null) {
+
             if (lastFmAlbum.getName() != null &&
                     !lastFmAlbum.getName().isBlank()) {
+
                 finalTitle = lastFmAlbum.getName();
             }
+
             if (lastFmAlbum.getReleasedate() != null &&
                     lastFmAlbum.getReleasedate().length() >= 4) {
+
                 try {
-                    releaseYear = Short.valueOf(lastFmAlbum.getReleasedate().substring(0, 4));
+                    releaseYear = Short.valueOf(
+                            lastFmAlbum.getReleasedate().substring(0, 4)
+                    );
                 } catch (NumberFormatException ignored) {
                 }
             }
+
             if (lastFmAlbum.getImage() != null &&
                     !lastFmAlbum.getImage().isEmpty()) {
-                artworkUrl = lastFmAlbum.getImage().get(lastFmAlbum.getImage().size() - 1).getText();
+
+                artworkUrl =
+                        lastFmAlbum
+                                .getImage()
+                                .get(lastFmAlbum.getImage().size() - 1)
+                                .getText();
             }
         }
 
-        Album album = new Album(artist.hashCode() + "_" + title.hashCode(), null, finalTitle, releaseYear, artworkUrl);
+        // Find the artist
+        // Find the artist, or create it if it doesn't exist
+        Artist artistEntity = artistRepository
+                .findByNameIgnoreCase(artist)
+                .orElseGet(() -> artistRepository.save(new Artist(artist)));
+
+// Store the artist ID with the album
+        Album album = new Album(
+                artist.hashCode() + "_" + title.hashCode(),
+                artistEntity.getId(),
+                finalTitle,
+                releaseYear,
+                artworkUrl
+        );
+
         album = albumRepository.save(album);
 
-        ListItem item = new ListItem(id, album.getId(), null, nextPosition);
+        ListItem item =
+                new ListItem(
+                        id,
+                        album.getId(),
+                        null,
+                        nextPosition
+                );
+
         listItemRepository.save(item);
+
         return "redirect:/lists/" + id;
     }
 
@@ -224,9 +274,10 @@ public class ListController {
         model.addAttribute("album", album);
         LastFmAlbum lastFmAlbum = null;
         if (album.getArtistId() != null) {
-            Artist artist = artistRepository
-                    .findById(album.getArtistId())
-                    .orElse(null);
+            Artist artist =
+                    artistRepository
+                            .findById(album.getArtistId())
+                            .orElse(null);
             if (artist != null) {
                 model.addAttribute("artist", artist);
                 LastFmAlbumResponse response =

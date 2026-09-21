@@ -515,16 +515,16 @@
 
       <!-- TRACKLIST -->
 
-      <div
-              class="song"
-
-              th:if="${lastFmAlbum != null
-                            and lastFmAlbum.tracks != null
-                            and lastFmAlbum.tracks.track != null}"
-
-              th:each="song, status :
-                            ${lastFmAlbum.tracks.track}"
-      >
+        <div
+                th:if="${lastFmAlbum != null
+                    and lastFmAlbum.tracks != null
+                    and lastFmAlbum.tracks.track != null}"
+        >
+            <div
+                    class="song"
+                    th:each="song, status :
+                        ${lastFmAlbum.tracks.track}"
+            >
 
 
         <!-- TRACK NUMBER -->
@@ -567,27 +567,32 @@
 
         <!-- PREVIEW -->
 
-        <div
-                class="song-preview"
+                <div
+                        class="song-preview"
 
-                th:if="${trackPreviews[song.name] != null}"
-        >
+                        th:if="${trackPreviews != null and trackPreviews[song.name] != null}"
+                >
 
-          <audio controls>
+                    <audio controls>
 
-            <source
-                    th:src="${trackPreviews[song.name]}"
+                        <source
+                                th:src="${trackPreviews[song.name]}"
 
-                    type="audio/mpeg"
-            >
+                                type="audio/mpeg"
+                        >
 
-            Your browser does not support audio playback.
+                        Your browser does not support audio playback.
 
-          </audio>
+                    </audio>
+
+                </div>
+
+            </div>
 
         </div>
 
-      </div>
+
+
 
 
       <!-- NO TRACKS -->
