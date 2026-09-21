@@ -5,6 +5,8 @@ import com.example.MusicBoxd.Model.Artist;
 import com.example.MusicBoxd.Model.Friend;
 import com.example.MusicBoxd.Model.Review;
 import com.example.MusicBoxd.Model.User;
+import com.example.MusicBoxd.Model.Like;
+import com.example.MusicBoxd.Repository.LikeRepository;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.Repository.FriendRepository;
@@ -27,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class ReviewController {
@@ -51,6 +54,9 @@ public class ReviewController {
 
     @Autowired
     private LastFmService lastFmService;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
 
     @GetMapping("/users/{userId}/reviews")
@@ -457,6 +463,64 @@ public class ReviewController {
         );
 
         return "all-reviews";
+    }
+
+    @PostMapping("/reviews/{reviewId}/like")
+    public String likeReview(
+            @PathVariable Long reviewId,
+            Authentication authentication
+    ) {
+        OidcUser principal =
+                (OidcUser) authentication.getPrincipal();
+
+        String oktaUserId =
+                principal.getSubject();
+
+        User user =
+                userRepository
+                        .findByOktaUserId(oktaUserId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
+        Review review =
+                reviewRepository
+                        .findById(reviewId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Review not found"
+                                )
+                        );
+
+        Long userId = user.getId();
+
+        Optional<Like> existingLike =
+                likeRepository.findByUserIdAndReviewId(
+                        userId,
+                        reviewId
+                );
+
+        if (existingLike.isPresent()) {
+
+            likeRepository.delete(
+                    existingLike.get()
+            );
+
+        } else {
+
+            Like like =
+                    new Like(
+                            userId,
+                            reviewId,
+                            null
+                    );
+
+            likeRepository.save(like);
+        }
+
+        return "redirect:/albums/" + review.getAlbumId();
     }
 }
 

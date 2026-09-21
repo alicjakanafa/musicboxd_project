@@ -163,6 +163,50 @@ body>main { flex:1; }
     font-weight:700;
 }
 
+.view-all-notifications {
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+
+    margin-top:18px;
+    padding:9px 14px;
+
+    background:rgba(77,155,214,.08);
+    border:1px solid rgba(77,155,214,.25);
+    border-radius:8px;
+
+    color:var(--primary-light);
+    font-size:12px;
+    font-weight:700;
+
+    text-decoration:none;
+
+    transition:
+            background .2s ease,
+            border-color .2s ease,
+            color .2s ease,
+            transform .2s ease;
+}
+
+.view-all-notifications::after {
+    content:"→";
+
+    font-size:15px;
+    transition:transform .2s ease;
+}
+
+.view-all-notifications:hover {
+    background:rgba(77,155,214,.15);
+    border-color:var(--primary);
+    color:var(--text);
+
+    transform:translateY(-1px);
+}
+
+.view-all-notifications:hover::after {
+    transform:translateX(3px);
+}
+
 /* ---------- TOP 40 ---------- */
 
 .top-40 {
