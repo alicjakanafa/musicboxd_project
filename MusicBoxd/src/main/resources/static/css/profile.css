@@ -5,6 +5,7 @@
   font-family: "DM Sans", sans-serif;
 }
 
+
 /* =========================================================
    PROFILE HEADER
    ========================================================= */
@@ -97,6 +98,7 @@
 
   color: var(--muted);
 }
+
 
 /* =========================================================
    PROFILE ACTIONS
@@ -223,6 +225,14 @@
   padding: 0 24px;
 
   border-right: 1px solid var(--border);
+
+  /* Makes the Favourite Artists <a> behave like the other stats */
+  text-decoration: none;
+
+  /* Prevents browser default link colours */
+  color: var(--text);
+
+  cursor: default;
 }
 
 .profile-stat:first-child {
@@ -233,12 +243,48 @@
   border-right: none;
 }
 
+
+/* Favourite Artists is an <a>, so explicitly reset link styling */
+
+.profile-stats a.profile-stat {
+  color: var(--text);
+
+  text-decoration: none;
+}
+
+.profile-stats a.profile-stat:visited {
+  color: var(--text);
+
+  text-decoration: none;
+}
+
+.profile-stats a.profile-stat:hover {
+  color: var(--text);
+
+  text-decoration: none;
+}
+
+
+/* Keep the number white */
+
 .profile-stat strong {
   font-size: 1.5rem;
   font-weight: 800;
 
   line-height: 1.1;
+
+  color: var(--text);
 }
+
+
+/* Give the Favourite Artists number a subtle hover */
+
+.profile-stats a.profile-stat:hover strong {
+  color: var(--primary-light);
+}
+
+
+/* Keep the label muted like the other stats */
 
 .profile-stat span {
   margin-top: 4px;
@@ -389,6 +435,7 @@
   transition: width 0.5s linear;
 }
 
+
 /* =========================================================
    HEADER RESPONSIVE
    ========================================================= */
@@ -400,6 +447,7 @@
 
     grid-template-areas:
       "avatar info"
+      "avatar listening"
       "avatar actions"
       "stats stats";
 
@@ -429,6 +477,7 @@
     grid-template-areas:
       "avatar"
       "info"
+      "listening"
       "actions"
       "stats";
 
@@ -1392,6 +1441,7 @@
     grid-template-areas:
       "avatar"
       "info"
+      "listening"
       "actions"
       "stats";
 
