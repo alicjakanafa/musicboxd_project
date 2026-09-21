@@ -144,79 +144,150 @@
            ALBUM ACTIONS
            ================================================= -->
 
-      <div class="album-actions">
+        <div class="album-actions">
+
+            <!-- REVIEW -->
+
+            <a
+                    th:href="@{/reviews/{id}(id=${album.id})}"
+                    class="album-action-button primary"
+            >
+                <span class="action-icon">✎</span>
+                Review
+            </a>
 
 
-        <!-- REVIEW -->
+            <!-- ADD TO LIST -->
 
-        <a
-                th:href="@{/reviews/{id}(id=${album.id})}"
+            <div class="add-list-wrapper">
 
-                class="album-action-button primary"
-        >
+                <button
+                        type="button"
+                        class="album-action-button secondary"
+                        id="addToListButton"
+                >
+                    <span class="action-icon">+</span>
+                    Add to List
+                </button>
 
-                    <span class="action-icon">
-                        ✎
-                    </span>
+                <div
+                        id="listDropdown"
+                        class="list-dropdown"
+                >
 
-          Review
-        </a>
+                    <div class="list-dropdown-heading">
+                        <strong>Add to a list</strong>
+                    </div>
+
+                    <div
+                            th:if="${userLists == null or userLists.isEmpty()}"
+                            class="list-dropdown-empty"
+                    >
+                        You don't have any lists yet.
+                    </div>
+
+                    <div
+                            th:each="list : ${userLists}"
+                            class="list-dropdown-item"
+                    >
+
+                        <form
+                                th:action="@{/lists/{listId}/albums/{albumId}(
+                            listId=${list.id},
+                            albumId=${album.id}
+                        )}"
+                                method="post"
+                        >
+
+                            <button type="submit">
+
+                        <span class="list-dropdown-icon">
+                            ♫
+                        </span>
+
+                                <span>
+                            <strong th:text="${list.title}">
+                                List name
+                            </strong>
+
+                            <small
+                                    th:text="${list.listType == T(com.example.MusicBoxd.Model.ListType).WANT_TO_LISTEN
+                                        ? 'Want to Listen'
+                                        : list.listType == T(com.example.MusicBoxd.Model.ListType).FAVOURITES
+                                            ? 'Favourites'
+                                            : 'Custom list'}"
+                            >
+                                Custom list
+                            </small>
+                        </span>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="list-dropdown-divider"></div>
+
+                    <a
+                            th:href="@{/lists/placeholder-list-form(
+                        albumId=${album.id}
+                    )}"
+                            class="create-list-option"
+                    >
+                        <span>＋</span>
+                        Create a new list
+                    </a>
+
+                </div>
+
+            </div>
 
 
-        <!-- ADD TO LIST -->
+            <!-- WANT TO LISTEN -->
 
-        <!--
-            PLACEHOLDER FOR LIST BACKEND
+            <form
+                    th:action="@{/lists/want-to-listen/{albumId}(
+                albumId=${album.id}
+            )}"
+                    method="post"
+            >
 
-          -->
+                <button
+                        type="submit"
+                        class="album-action-button secondary"
+                        th:classappend="${alreadyInWantToListen}
+                    ? ' active'
+                    : ''"
+                >
 
-        <button
-                type="button"
+            <span class="action-icon">
+                <span
+                        th:if="${alreadyInWantToListen}"
+                >
+                    ✓
+                </span>
 
-                class="album-action-button secondary"
+                <span
+                        th:unless="${alreadyInWantToListen}"
+                >
+                    ♡
+                </span>
+            </span>
 
-                id="addToListButton"
+                    <span
+                            th:text="${alreadyInWantToListen
+                        ? 'In Want to Listen'
+                        : 'Want to Listen'}"
+                    >
+                Want to Listen
+            </span>
 
-                th:attr="data-album-id=${album.id}"
-        >
+                </button>
 
-                    <span class="action-icon">
-                        +
-                    </span>
+            </form>
 
-          Add to List
-
-        </button>
-
-
-        <!-- WANT TO LISTEN -->
-
-        <!--
-            PLACEHOLDER FOR WANT-TO-LISTEN BACKEND
-
-
-        -->
-
-        <button
-                type="button"
-
-                class="album-action-button secondary"
-
-                id="wantToListenButton"
-
-                th:attr="data-album-id=${album.id}"
-        >
-
-                    <span class="action-icon">
-                        ♡
-                    </span>
-
-          Want to Listen
-
-        </button>
-
-
-      </div>
+        </div>
 
 
       <!-- =================================================
@@ -703,79 +774,30 @@
 
           });
 
+      const addToListButton =
+      document.getElementById("addToListButton");
 
-  /*
-   * Temporary Want to Listen interaction.
-   *
-   */
+      const listDropdown =
+      document.getElementById("listDropdown");
 
-  const wantToListenButton =
-          document.getElementById(
-                  "wantToListenButton"
-          );
+      if (addToListButton && listDropdown) {
 
-  if (wantToListenButton) {
+      addToListButton.addEventListener("click", function (event) {
+          event.stopPropagation();
 
-    wantToListenButton
-            .addEventListener("click", function () {
+          listDropdown.classList.toggle("open");
+      });
 
-              const icon =
-                      this.querySelector(".action-icon");
+      document.addEventListener("click", function (event) {
 
-              const alreadyAdded =
-                      this.classList.contains("active");
+      if (!listDropdown.contains(event.target) &&
+      !addToListButton.contains(event.target)) {
 
-              if (alreadyAdded) {
-
-                this.classList.remove("active");
-
-                icon.textContent = "♡";
-
-                this.lastChild.textContent =
-                        " Want to Listen";
-
-              } else {
-
-                this.classList.add("active");
-
-                icon.textContent = "✓";
-
-                this.lastChild.textContent =
-                        " In Want to Listen";
-
-              }
-
-            });
-
+      listDropdown.classList.remove("open");
+  }
+  });
   }
 
-
-  /*
-   * Temporary Add to List interaction.
-   */
-
-  const addToListButton =
-          document.getElementById(
-                  "addToListButton"
-          );
-
-  if (addToListButton) {
-
-    addToListButton
-            .addEventListener("click", function () {
-
-              /*
-               * Placeholder only.
-               *
-               */
-
-              alert(
-                      "Your lists will appear here once connected."
-              );
-
-            });
-
-  }
 
 </script>
 

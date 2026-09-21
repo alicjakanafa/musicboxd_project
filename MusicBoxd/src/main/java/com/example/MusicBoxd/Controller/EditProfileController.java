@@ -75,9 +75,6 @@ public class EditProfileController {
             return "redirect:/";
         }
 
-        /*
-         * Update username
-         */
         if (username != null) {
 
             username =
@@ -91,9 +88,6 @@ public class EditProfileController {
             }
         }
 
-        /*
-         * Update bio
-         */
         if (bio != null) {
 
             user.setBio(
@@ -101,9 +95,6 @@ public class EditProfileController {
             );
         }
 
-        /*
-         * Update profile picture
-         */
         if (
                 profilePicture != null
                         && !profilePicture.isEmpty()

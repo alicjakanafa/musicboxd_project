@@ -40,13 +40,6 @@ public class SpotifyController {
     @Value("${spotify.redirect.uri}")
     private String redirectUri;
 
-
-    /*
-     * =========================
-     * SPOTIFY LOGIN
-     * =========================
-     */
-
     @GetMapping("/spotify/login")
     public String spotifyLogin() {
 
@@ -81,13 +74,6 @@ public class SpotifyController {
 
         return "redirect:" + spotifyUrl;
     }
-
-
-    /*
-     * =========================
-     * SPOTIFY CALLBACK
-     * =========================
-     */
 
     @GetMapping("/spotify/callback")
     public String spotifyCallback(
@@ -171,35 +157,11 @@ public class SpotifyController {
     }
 
 
-    /*
-     * =========================
-     * SPOTIFY DATA
-     * =========================
-     *
-     * This version is used when
-     * loading Spotify data for
-     * the profile page.
-     *
-     * The timeRange controls both:
-     *
-     * - Top Artists
-     * - Top Tracks
-     *
-     * short_term  = Last 4 weeks
-     * medium_term = Last 6 months
-     * long_term   = Long-term Spotify data
-     */
-
     public void getSpotifyData(
             String accessToken,
             Model model,
             String timeRange
     ) {
-
-        /*
-         * Make sure the time range
-         * is valid.
-         */
 
         timeRange =
                 validateTimeRange(
@@ -207,19 +169,10 @@ public class SpotifyController {
                 );
 
 
-        /*
-         * Recently played
-         */
-
         getRecentlyPlayed(
                 accessToken,
                 model
         );
-
-
-        /*
-         * Top tracks
-         */
 
         SpotifyTopTracksResponse topTracks =
                 getTopTracks(
@@ -247,10 +200,6 @@ public class SpotifyController {
         }
 
 
-        /*
-         * Currently playing
-         */
-
         SpotifyCurrentlyPlayingResponse currentlyPlaying =
                 getCurrentlyPlaying(
                         accessToken
@@ -277,17 +226,6 @@ public class SpotifyController {
     }
 
 
-    /*
-     * =========================
-     * BACKWARDS COMPATIBILITY
-     * =========================
-     *
-     * This keeps the existing
-     * HomeController working.
-     *
-     * It defaults to medium term.
-     */
-
     public void getSpotifyData(
             String accessToken,
             Model model
@@ -300,15 +238,6 @@ public class SpotifyController {
         );
     }
 
-
-    /*
-     * =========================
-     * RECENTLY PLAYED
-     * =========================
-     *
-     * Spotify returns up to 50
-     * recently played tracks.
-     */
 
     private void getRecentlyPlayed(
             String accessToken,
@@ -341,12 +270,6 @@ public class SpotifyController {
         SpotifyRecentlyPlayedResponse recentlyPlayed =
                 response.getBody();
 
-
-        /*
-         * If Spotify did not return
-         * anything, provide empty
-         * values to Thymeleaf.
-         */
 
         if (
                 recentlyPlayed == null
@@ -391,21 +314,11 @@ public class SpotifyController {
             return;
         }
 
-
-        /*
-         * Give Thymeleaf the entire
-         * recently played list.
-         */
-
         model.addAttribute(
                 "recentlyPlayed",
                 recentlyPlayed.getItems()
         );
 
-
-        /*
-         * Most recent track.
-         */
 
         model.addAttribute(
                 "recentTrack",
@@ -419,19 +332,11 @@ public class SpotifyController {
         );
 
 
-        /*
-         * Number of recent plays.
-         */
-
         int recentTracks =
                 recentlyPlayed
                         .getItems()
                         .size();
 
-
-        /*
-         * Number of unique tracks.
-         */
 
         long uniqueTracks =
                 recentlyPlayed
@@ -446,11 +351,6 @@ public class SpotifyController {
                         )
                         .distinct()
                         .count();
-
-
-        /*
-         * Number of unique artists.
-         */
 
         long uniqueArtists =
                 recentlyPlayed
@@ -475,11 +375,6 @@ public class SpotifyController {
                         .distinct()
                         .count();
 
-
-        /*
-         * Number of unique albums.
-         */
-
         long uniqueAlbums =
                 recentlyPlayed
                         .getItems()
@@ -497,15 +392,6 @@ public class SpotifyController {
                         .distinct()
                         .count();
 
-
-        /*
-         * Total duration of the
-         * recently played tracks.
-         *
-         * This is an estimate based
-         * on the track durations
-         * returned by Spotify.
-         */
 
         long totalDurationMs =
                 recentlyPlayed
@@ -527,11 +413,6 @@ public class SpotifyController {
                         / 1000
                         / 60;
 
-
-        /*
-         * Send everything to
-         * Thymeleaf.
-         */
 
         model.addAttribute(
                 "recentTracksCount",
@@ -558,13 +439,6 @@ public class SpotifyController {
                 totalMinutes
         );
     }
-
-
-    /*
-     * =========================
-     * CURRENTLY PLAYING
-     * =========================
-     */
 
     private SpotifyCurrentlyPlayingResponse getCurrentlyPlaying(
             String accessToken
@@ -596,12 +470,6 @@ public class SpotifyController {
         return response.getBody();
     }
 
-
-    /*
-     * =========================
-     * CURRENT PLAYER ENDPOINT
-     * =========================
-     */
 
     @GetMapping("/spotify/player/current")
     @ResponseBody
@@ -645,12 +513,6 @@ public class SpotifyController {
         );
     }
 
-
-    /*
-     * =========================
-     * PLAYER CONTROLS
-     * =========================
-     */
 
     @PostMapping("/spotify/player/play")
     @ResponseBody
@@ -752,22 +614,6 @@ public class SpotifyController {
         );
     }
 
-
-    /*
-     * =========================
-     * TOP ARTISTS
-     * =========================
-     *
-     * short_term
-     * = Last 4 weeks
-     *
-     * medium_term
-     * = Last 6 months
-     *
-     * long_term
-     * = Long-term Spotify data
-     */
-
     public SpotifyTopArtistsResponse getTopArtists(
             String accessToken,
             String timeRange
@@ -813,16 +659,6 @@ public class SpotifyController {
 
         return response.getBody();
     }
-
-
-    /*
-     * =========================
-     * TOP TRACKS
-     * =========================
-     *
-     * Uses the exact same time
-     * range as Top Artists.
-     */
 
     public SpotifyTopTracksResponse getTopTracks(
             String accessToken,

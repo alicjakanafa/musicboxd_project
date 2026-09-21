@@ -38,11 +38,6 @@
             0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
-
-/* =========================
-   GRADIENT ACCENT LINE
-   ========================= */
-
 .site-header::after {
     content: "";
 
@@ -66,11 +61,6 @@
                     #2f6f9f 100%
             );
 }
-
-
-/* =========================
-   BRAND
-   ========================= */
 
 .brand {
     align-self: center;
@@ -125,11 +115,6 @@
     letter-spacing: 0.3px;
 }
 
-
-/* =========================
-   NAVIGATION
-   ========================= */
-
 .nav-left,
 .nav-right {
     display: flex;
@@ -146,11 +131,6 @@
 .nav-right {
     justify-self: end;
 }
-
-
-/* =========================
-   NAV LINKS
-   ========================= */
 
 .site-header nav a {
     position: relative;
@@ -188,10 +168,6 @@
 }
 
 
-/* =========================
-   LINK HOVER LINE
-   ========================= */
-
 .site-header nav a::after {
     content: "";
 
@@ -221,9 +197,6 @@
     transform: scaleX(1);
 }
 
-/* =========================
-   LOGGED IN AREA
-   ========================= */
 
 .logged-in,
 .logged-out {
@@ -246,11 +219,6 @@
 
     white-space: nowrap;
 }
-
-
-/* =========================
-   LOG OUT BUTTON
-   ========================= */
 
 .logout-button {
     position: relative;
@@ -290,11 +258,6 @@
 
     transform: translateY(-1px);
 }
-
-
-/* =========================
-   LOG OUT HOVER LINE
-   ========================= */
 
 .logout-button::after {
     content: "";
@@ -377,10 +340,6 @@
     background: #4d9bd6;
 }
 
-/* =========================
-   MOBILE
-   ========================= */
-
 @media (max-width: 700px) {
 
     .site-header {
@@ -444,11 +403,6 @@
         display: none;
     }
 }
-
-
-/* =========================
-   SMALL MOBILE
-   ========================= */
 
 @media (max-width: 480px) {
 

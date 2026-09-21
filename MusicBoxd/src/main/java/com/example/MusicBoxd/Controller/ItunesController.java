@@ -104,10 +104,6 @@ public class ItunesController {
     }
 
 
-    // =========================================================
-    // SAVE ALBUM FROM ITUNES
-    // =========================================================
-
     @GetMapping("/album/save")
     public String saveAlbum(
             @RequestParam Long collectionId,
@@ -207,10 +203,6 @@ public class ItunesController {
     }
 
 
-    // =========================================================
-    // CREATE ALBUM FROM LAST.FM
-    // =========================================================
-
     @GetMapping("/album/from-artist")
     public String getAlbumFromArtist(
             @RequestParam String artistName,
@@ -232,10 +224,6 @@ public class ItunesController {
         );
 
 
-        // -----------------------------------------------------
-        // FIND OR CREATE ARTIST
-        // -----------------------------------------------------
-
         Artist artist =
                 artistRepository
                         .findByNameIgnoreCase(
@@ -249,10 +237,6 @@ public class ItunesController {
                                 )
                         );
 
-
-        // -----------------------------------------------------
-        // CHECK IF ALBUM ALREADY EXISTS
-        // -----------------------------------------------------
 
         Optional<Album> existingAlbum =
                 albumRepository
@@ -274,11 +258,6 @@ public class ItunesController {
             Album album =
                     existingAlbum.get();
 
-
-            /*
-             * If the album already exists but does
-             * not have artwork, try to get it from Last.fm.
-             */
 
             if (album.getArtworkUrl() == null ||
                     album.getArtworkUrl().isBlank()) {
@@ -309,10 +288,6 @@ public class ItunesController {
         }
 
 
-        // -----------------------------------------------------
-        // GET ARTWORK FROM LAST.FM
-        // -----------------------------------------------------
-
         String artworkUrl =
                 getLastFmArtwork(
                         artistName,
@@ -324,11 +299,6 @@ public class ItunesController {
                 "LAST.FM ARTWORK: " +
                         artworkUrl
         );
-
-
-        // -----------------------------------------------------
-        // CREATE ALBUM
-        // -----------------------------------------------------
 
         Album album =
                 new Album(
@@ -357,10 +327,6 @@ public class ItunesController {
                 savedAlbum.getId();
     }
 
-
-    // =========================================================
-    // GET LAST.FM ARTWORK
-    // =========================================================
 
     private String getLastFmArtwork(
             String artistName,
@@ -405,14 +371,6 @@ public class ItunesController {
                 return null;
             }
 
-
-            /*
-             * Last.fm normally returns several image sizes.
-             *
-             * Start from the end because this is normally
-             * the largest image available.
-             */
-
             for (
                     int i =
                     album.getImage().size() - 1;
@@ -447,11 +405,6 @@ public class ItunesController {
 
         return null;
     }
-
-
-    // =========================================================
-    // SAVE SONGS
-    // =========================================================
 
     private void saveSongs(
             Album album,
@@ -515,11 +468,6 @@ public class ItunesController {
             );
         }
     }
-
-
-    // =========================================================
-    // NORMALISE
-    // =========================================================
 
     private String normalise(
             String text

@@ -85,12 +85,6 @@ public class HomeController {
             Authentication authentication
     ) {
 
-        /*
-         * =========================
-         * GLOBAL TOP 40
-         * =========================
-         */
-
         LastFmResponse response =
                 lastFmService.getTopArtists();
 
@@ -102,21 +96,8 @@ public class HomeController {
         );
 
 
-        /*
-         * =========================
-         * CURRENT USER
-         * =========================
-         */
-
         User currentUser =
                 getCurrentUser(authentication);
-
-
-        /*
-         * =========================
-         * DAILY ALBUM
-         * =========================
-         */
 
         Long userId = null;
 
@@ -134,12 +115,6 @@ public class HomeController {
                 suggestedAlbum
         );
 
-
-        /*
-         * =========================
-         * NOTIFICATIONS
-         * =========================
-         */
 
         if (currentUser != null) {
 
@@ -171,13 +146,6 @@ public class HomeController {
             );
         }
 
-
-        /*
-         * =========================
-         * FRIENDS ACTIVITY
-         * =========================
-         */
-
         if (currentUser != null) {
 
             loadFriendsActivity(
@@ -208,13 +176,6 @@ public class HomeController {
             );
         }
 
-
-        /*
-         * =========================
-         * SPOTIFY
-         * =========================
-         */
-
         String spotifyAccessToken =
                 (String) session.getAttribute(
                         "spotifyAccessToken"
@@ -231,13 +192,6 @@ public class HomeController {
 
         return "index";
     }
-
-
-    /*
-     * =========================
-     * CURRENT USER HELPER
-     * =========================
-     */
 
     private User getCurrentUser(
             Authentication authentication
@@ -271,32 +225,17 @@ public class HomeController {
                 .orElse(null);
     }
 
-
-    /*
-     * =========================
-     * FRIENDS ACTIVITY
-     * =========================
-     */
-
     private void loadFriendsActivity(
             User currentUser,
             Model model
     ) {
 
-        /*
-         * Get all accepted friendships.
-         */
 
         List<Friend> friendships =
                 friendRepository.findByStatus(
                         "ACCEPTED"
                 );
 
-
-        /*
-         * Find the IDs of the current
-         * user's friends.
-         */
 
         List<Long> friendIds =
                 new ArrayList<>();
@@ -327,10 +266,6 @@ public class HomeController {
         }
 
 
-        /*
-         * Get reviews written by friends.
-         */
-
         List<Review> friendReviews =
                 new ArrayList<>();
 
@@ -349,11 +284,6 @@ public class HomeController {
         }
 
 
-        /*
-         * Sort all friend reviews together
-         * so the newest reviews appear first.
-         */
-
         friendReviews.sort(
                 Comparator.comparing(
                         Review::getCreatedAt,
@@ -364,9 +294,6 @@ public class HomeController {
         );
 
 
-        /*
-         * Only show the 10 most recent reviews.
-         */
 
         if (friendReviews.size() > 10) {
 
@@ -380,37 +307,18 @@ public class HomeController {
         }
 
 
-        /*
-         * Store the users who wrote
-         * each review.
-         */
-
         Map<Long, User> friendReviewUsers =
                 new HashMap<>();
-
-
-        /*
-         * Store the albums connected
-         * to each review.
-         */
 
         Map<Long, Album> friendReviewAlbums =
                 new HashMap<>();
 
-
-        /*
-         * Store album artwork.
-         */
 
         Map<Long, String> friendReviewArtwork =
                 new HashMap<>();
 
 
         for (Review review : friendReviews) {
-
-            /*
-             * Get reviewer.
-             */
 
             User reviewer =
                     userRepository
@@ -428,10 +336,6 @@ public class HomeController {
                 );
             }
 
-
-            /*
-             * Get album.
-             */
 
             if (review.getAlbumId() == null) {
                 continue;
@@ -456,12 +360,6 @@ public class HomeController {
                     album
             );
 
-
-            /*
-             * Use the artwork already stored
-             * against the album.
-             */
-
             if (
                     album.getArtworkUrl() != null
                             && !album.getArtworkUrl().isEmpty()
@@ -473,11 +371,6 @@ public class HomeController {
                 );
             }
         }
-
-
-        /*
-         * Send everything to index.html.
-         */
 
         model.addAttribute(
                 "friendReviews",
@@ -499,10 +392,6 @@ public class HomeController {
                 friendReviewArtwork
         );
     }
-
-
-
-
     @GetMapping("/profile")
     public String profile(
             Authentication authentication
