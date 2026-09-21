@@ -21,22 +21,12 @@ body {
             #080d14;
 }
 
-
-/* =========================
-   MAIN CONTAINER
-   ========================= */
-
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 65px 0 80px;
 }
-
-
-/* =========================
-   HERO
-   ========================= */
 
 .hero {
     margin-bottom: 45px;
@@ -76,11 +66,6 @@ body {
     font-size: 17px;
     line-height: 1.6;
 }
-
-
-/* =========================
-   SEARCH FORM
-   ========================= */
 
 .search-form {
     display: flex;
@@ -154,11 +139,6 @@ body {
     transform: translateY(-1px);
 }
 
-
-/* =========================
-   RESULTS HEADER
-   ========================= */
-
 .results-header {
     display: flex;
 
@@ -187,10 +167,6 @@ body {
 }
 
 
-/* =========================
-   RESULTS GRID
-   ========================= */
-
 .results {
     display: grid;
 
@@ -199,11 +175,6 @@ body {
 
     gap: 18px;
 }
-
-
-/* =========================
-   ALBUM CARD
-   ========================= */
 
 .album-card,
 .track-card {
@@ -236,11 +207,6 @@ body {
             0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-
-/* =========================
-   ALBUM ART CONTAINER
-   ========================= */
-
 .album-art {
     width: 100%;
 
@@ -262,11 +228,6 @@ body {
 
     border: 1px solid #1c2936;
 }
-
-
-/* =========================
-   ALBUM ART IMAGE
-   ========================= */
 
 .album-art img {
     width: 100%;
@@ -291,11 +252,6 @@ body {
     transform: scale(1.03);
 }
 
-
-/* =========================
-   TRACK IMAGES
-   ========================= */
-
 .track-card img {
     width: 100%;
 
@@ -311,11 +267,6 @@ body {
 
     margin-bottom: 15px;
 }
-
-
-/* =========================
-   TEXT
-   ========================= */
 
 .album-card h2,
 .track-card h2 {
@@ -344,11 +295,6 @@ body {
 
     font-weight: 600;
 }
-
-
-/* =========================
-   ALBUM BUTTON
-   ========================= */
 
 .album-card a {
     display: inline-flex;
@@ -389,10 +335,6 @@ body {
 }
 
 
-/* =========================
-   AUDIO PLAYER
-   ========================= */
-
 audio {
     width: 100%;
 
@@ -403,10 +345,6 @@ audio {
     border-radius: 5px;
 }
 
-
-/* =========================
-   NO PREVIEW
-   ========================= */
 
 .no-preview {
     margin-top: 15px !important;
@@ -425,11 +363,6 @@ audio {
 
     text-align: center;
 }
-
-
-/* =========================
-   EMPTY RESULTS
-   ========================= */
 
 .empty-state {
     text-align: center;
@@ -457,11 +390,6 @@ audio {
     margin: 0;
 }
 
-
-/* =========================
-   FOOTER
-   ========================= */
-
 footer {
     padding: 30px 5%;
 
@@ -474,11 +402,6 @@ footer {
     font-size: 12px;
 }
 
-
-/* =========================
-   TABLET
-   ========================= */
-
 @media (max-width: 900px) {
 
     .results {
@@ -489,11 +412,6 @@ footer {
     }
 
 }
-
-
-/* =========================
-   MOBILE
-   ========================= */
 
 @media (max-width: 700px) {
 
@@ -551,10 +469,6 @@ footer {
 
 }
 
-
-/* =========================
-   VERY SMALL SCREENS
-   ========================= */
 
 @media (max-width: 420px) {
 

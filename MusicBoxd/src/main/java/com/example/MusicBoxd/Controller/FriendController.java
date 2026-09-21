@@ -36,11 +36,6 @@ public class FriendController {
         this.notificationService = notificationService;
     }
 
-
-    // =========================================================
-    // GET CURRENT LOGGED-IN USER
-    // =========================================================
-
     private User getCurrentUser(
             Authentication authentication
     ) {
@@ -60,11 +55,6 @@ public class FriendController {
                 );
     }
 
-
-    // =========================================================
-    // FRIENDS PAGE
-    // =========================================================
-
     @GetMapping
     public String friendsPage(
             Model model,
@@ -82,11 +72,6 @@ public class FriendController {
         return "friends";
     }
 
-
-    // =========================================================
-    // SEARCH USERS
-    // =========================================================
-
     @GetMapping("/search")
     public String searchUsers(
             @RequestParam(required = false) String query,
@@ -97,16 +82,10 @@ public class FriendController {
         User currentUser =
                 getCurrentUser(authentication);
 
-        // Load all normal Friends page data
         loadFriendsPage(
                 model,
                 currentUser
         );
-
-
-        // =====================================================
-        // SEARCH FOR USERS
-        // =====================================================
 
         List<User> searchResults =
                 new ArrayList<>();
@@ -122,7 +101,6 @@ public class FriendController {
                                     query.trim()
                             );
 
-            // Don't show yourself in search results
             searchResults.removeIf(
                     user ->
                             user.getId().equals(
@@ -426,11 +404,6 @@ public class FriendController {
         );
     }
 
-
-    // =========================================================
-    // SEND FRIEND REQUEST
-    // =========================================================
-
     @PostMapping("/request")
     public String sendFriendRequest(
             @RequestParam Long receiverId,
@@ -503,11 +476,6 @@ public class FriendController {
 
         friendRepository.save(friend);
 
-
-        // =====================================================
-        // CREATE FRIEND REQUEST NOTIFICATION
-        // =====================================================
-
         notificationService.notifyFriendRequest(
                 receiver.getId(),
                 currentUser.getId(),
@@ -517,11 +485,6 @@ public class FriendController {
 
         return "redirect:/friends";
     }
-
-
-    // =========================================================
-    // ACCEPT FRIEND REQUEST
-    // =========================================================
 
     @PostMapping("/accept/{id}")
     public String acceptFriendRequest(
@@ -572,11 +535,6 @@ public class FriendController {
 
         friendRepository.save(friend);
 
-
-        // =====================================================
-        // CREATE FRIEND ACCEPTED NOTIFICATION
-        // =====================================================
-
         User requester =
                 userRepository
                         .findById(
@@ -596,11 +554,6 @@ public class FriendController {
 
         return "redirect:/friends";
     }
-
-
-    // =========================================================
-    // DECLINE FRIEND REQUEST
-    // =========================================================
 
     @PostMapping("/decline/{id}")
     public String declineFriendRequest(
@@ -654,11 +607,6 @@ public class FriendController {
 
         return "redirect:/friends";
     }
-
-
-    // =========================================================
-    // REMOVE FRIEND
-    // =========================================================
 
     @PostMapping("/remove/{id}")
     public String removeFriend(

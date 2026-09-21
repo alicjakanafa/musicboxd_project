@@ -302,8 +302,6 @@ public class ReviewController {
                             friendship.getReceiverId();
                 }
 
-
-                // Current user received the friend request
                 else if (
                         user.getId().equals(
                                 friendship.getReceiverId()
