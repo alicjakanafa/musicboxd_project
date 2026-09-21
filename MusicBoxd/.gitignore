@@ -12,6 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
+.env
 
 ### IntelliJ IDEA ###
 .idea
@@ -34,5 +35,4 @@ build/
 
 ### API keys ###
 src/main/resources/application.properties
-src/main/resources/application-prod.properties
 src/main/resources/application-test.properties
