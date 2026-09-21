@@ -959,7 +959,7 @@ body > main {
 
 
 /* ====================
-   FRIENDS
+   FRIENDS ACTIVITY
    ==================== */
 
 .friends {
@@ -967,7 +967,7 @@ body > main {
 
     width: 100%;
 
-    padding: 25px;
+    padding: 28px;
 
     background:
             linear-gradient(
@@ -976,21 +976,81 @@ body > main {
                     #101821
             );
 
+    border:
+            1px solid var(--border);
+
     border-radius: 22px;
+
+    box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.18);
 }
 
-.friends h2 {
-    margin: 0 0 20px;
+
+/* ====================
+   FRIENDS HEADER
+   ==================== */
+
+.friends-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+.friends-header h2 {
+    margin: 0 0 5px;
 
     color: var(--text);
 
-    text-align: center;
-
     font-size: 21px;
+
+    letter-spacing: -0.3px;
 }
 
+.friends-header span {
+    color: var(--text-muted);
+
+    font-size: 13px;
+}
+
+.friends-header-badge {
+    flex-shrink: 0;
+
+    padding: 6px 11px;
+
+    border:
+            1px solid rgba(77, 155, 214, 0.3);
+
+    border-radius: 20px;
+
+    background:
+            rgba(77, 155, 214, 0.08);
+
+    color: var(--primary-light) !important;
+
+    font-size: 11px !important;
+
+    font-weight: 700;
+}
+
+
+/* ====================
+   FRIENDS CONTENT
+   ==================== */
+
 .friends-content {
-    min-height: 280px;
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+
+    overflow: hidden;
 
     background:
             #0b121b;
@@ -998,7 +1058,538 @@ body > main {
     border:
             1px solid var(--border);
 
-    border-radius: 18px;
+    border-radius: 17px;
+}
+
+
+/* ====================
+   FRIEND REVIEW
+   ==================== */
+
+.friend-review {
+    position: relative;
+
+    display: flex;
+
+    gap: 18px;
+
+    padding: 20px;
+
+    background:
+            rgba(16, 24, 33, 0.6);
+
+    transition:
+            background 0.2s ease;
+}
+
+.friend-review:not(:last-child) {
+    border-bottom:
+            1px solid var(--border);
+}
+
+.friend-review:hover {
+    background:
+            var(--surface-hover);
+}
+
+
+/* BLUE ACCENT */
+
+.friend-review::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 20px;
+
+    bottom: 20px;
+
+    width: 3px;
+
+    background:
+            var(--primary);
+
+    border-radius:
+            0 4px 4px 0;
+
+    opacity: 0;
+
+    transition:
+            opacity 0.2s ease;
+}
+
+.friend-review:hover::before {
+    opacity: 1;
+}
+
+
+/* ====================
+   ALBUM ART
+   ==================== */
+
+.friend-review-art-link {
+    flex-shrink: 0;
+
+    display: block;
+
+    width: 100px;
+
+    height: 100px;
+
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.friend-review-art,
+.friend-review-art-placeholder {
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #192532,
+                    #101821
+            );
+
+    color:
+            var(--primary);
+
+    font-size: 28px;
+}
+
+.friend-review-art {
+    transition:
+            transform 0.3s ease;
+}
+
+.friend-review:hover .friend-review-art {
+    transform: scale(1.04);
+}
+
+
+/* ====================
+   REVIEW CONTENT
+   ==================== */
+
+.friend-review-content {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+/* ====================
+   TOP ROW
+   ==================== */
+
+.friend-review-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+/* ====================
+   USER
+   ==================== */
+
+.friend-review-user {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+
+    font-size: 13px;
+}
+
+.friend-review-user a {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color:
+            var(--primary-light);
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.friend-review-user a:hover {
+    color:
+            #a6d2f2;
+}
+
+.friend-review-user span {
+    color:
+            var(--text-muted);
+
+    white-space: nowrap;
+}
+
+
+/* ====================
+   ALBUM
+   ==================== */
+
+.friend-review-album {
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    margin-top: 1px;
+
+    color:
+            var(--text);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    text-decoration: none;
+}
+
+.friend-review-album:hover {
+    color:
+            var(--primary-light);
+}
+
+
+/* ====================
+   REVIEW HEADER
+   ==================== */
+
+.friend-review-content h3 {
+    margin: 2px 0 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color:
+            var(--text);
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+/* ====================
+   REVIEW TEXT
+   ==================== */
+
+.friend-review-text {
+    margin: 4px 0 2px;
+
+    padding: 9px 11px;
+
+    background:
+            rgba(255, 255, 255, 0.025);
+
+    border:
+            1px solid rgba(255, 255, 255, 0.04);
+
+    border-radius: 8px;
+
+    color:
+            var(--text-muted);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+/* ====================
+   RATING
+   ==================== */
+
+.friend-review-rating {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 3px;
+
+    flex-shrink: 0;
+
+    padding: 5px 9px;
+
+    background:
+            rgba(77, 155, 214, 0.1);
+
+    border:
+            1px solid rgba(77, 155, 214, 0.2);
+
+    border-radius: 20px;
+
+    color:
+            var(--primary-light);
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.friend-review-rating span:first-child {
+    color:
+            var(--primary-light);
+
+    font-size: 12px;
+}
+
+.friend-review-rating strong {
+    color:
+            var(--text);
+
+    font-size: 13px;
+}
+
+.friend-review-rating .rating-total {
+    color:
+            var(--text-subtle);
+
+    font-size: 11px;
+}
+
+
+/* ====================
+   FOOTER
+   ==================== */
+
+.friend-review-footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: auto;
+
+    padding-top: 3px;
+}
+
+.friend-review-footer small {
+    color:
+            var(--text-subtle);
+
+    font-size: 11px;
+}
+
+.friend-review-view {
+    color:
+            var(--text-subtle);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+            color 0.2s ease;
+}
+
+.friend-review-view:hover {
+    color:
+            var(--primary-light);
+}
+
+
+/* ====================
+   EMPTY STATE
+   ==================== */
+
+.friends-empty {
+    min-height: 180px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    background:
+            #0b121b;
+
+    border:
+            1px solid var(--border);
+
+    border-radius: 17px;
+
+    text-align: center;
+}
+
+.friends-empty-icon {
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 12px;
+
+    border-radius: 50%;
+
+    background:
+            rgba(77, 155, 214, 0.1);
+
+    color:
+            var(--primary);
+
+    font-size: 20px;
+}
+
+.friends-empty h3 {
+    margin: 0 0 5px;
+
+    color:
+            var(--text);
+
+    font-size: 15px;
+}
+
+.friends-empty p {
+    margin: 0;
+
+    color:
+            var(--text-muted);
+
+    font-size: 13px;
+}
+
+
+/* ====================
+   FRIENDS MOBILE
+   ==================== */
+
+@media (max-width: 600px) {
+
+    .friends {
+        padding: 20px;
+
+        border-radius: 18px;
+    }
+
+    .friends-header {
+        align-items: flex-start;
+
+        margin-bottom: 16px;
+    }
+
+    .friends-header h2 {
+        font-size: 19px;
+    }
+
+    .friends-header > div > span {
+        font-size: 12px;
+    }
+
+    .friend-review {
+        gap: 13px;
+
+        padding: 15px;
+    }
+
+    .friend-review-art-link {
+        width: 72px;
+
+        height: 72px;
+
+        border-radius: 10px;
+    }
+
+    .friend-review-art-placeholder {
+        font-size: 22px;
+    }
+
+    .friend-review-top {
+        align-items: flex-start;
+
+        gap: 8px;
+    }
+
+    .friend-review-user {
+        font-size: 12px;
+    }
+
+    .friend-review-album {
+        font-size: 15px;
+    }
+
+    .friend-review-rating {
+        padding: 4px 7px;
+
+        font-size: 11px;
+    }
+
+    .friend-review-text {
+        font-size: 12px;
+
+        padding: 8px 9px;
+    }
+
+    .friend-review-view {
+        display: none;
+    }
 }
 
 

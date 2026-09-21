@@ -1073,8 +1073,8 @@
 
 
     <!-- =========================
-         MY LISTS
-         ========================= -->
+     MY LISTS
+     ========================= -->
 
     <section class="profile-panel my-lists">
 
@@ -1084,80 +1084,90 @@
           My Lists
         </h2>
 
-        <a href="#">
+        <a
+                th:href="@{/lists}"
+        >
           See all →
         </a>
 
       </div>
 
 
-      <div class="lists-grid">
+      <!-- NO LISTS -->
 
-        <article class="list-card">
+      <div
+              class="empty-state"
+              th:if="${profileLists == null
+                    or profileLists.isEmpty()}"
+      >
 
-          <div class="list-placeholder"></div>
+        <p>
+          You haven't created any lists yet.
+        </p>
 
-          <h3>
-            Current Favourites
-          </h3>
-
-          <p>
-            42 songs
-          </p>
-
-        </article>
+      </div>
 
 
-        <article class="list-card">
+      <!-- LISTS -->
 
-          <div class="list-placeholder"></div>
+      <div
+              class="lists-grid"
+              th:unless="${profileLists == null
+                        or profileLists.isEmpty()}"
+      >
 
-          <h3>
-            Road Trip
-          </h3>
+        <article
+                class="list-card"
+                th:each="list : ${profileLists}"
+        >
 
-          <p>
-            87 songs
-          </p>
+          <a
+                  th:href="@{/lists/{id}(id=${list.id})}"
+                  class="list-card-link"
+          >
 
-        </article>
+            <div class="list-placeholder">
 
+              ♫
 
-        <article class="list-card">
-
-          <div class="list-placeholder"></div>
-
-          <h3>
-            Sad Girl Hours
-          </h3>
-
-          <p>
-            64 songs
-          </p>
-
-        </article>
+            </div>
 
 
-        <article class="list-card">
+            <div class="list-card-info">
 
-          <div class="list-placeholder"></div>
+              <h3
+                      th:text="${list.title}"
+              >
+                List title
+              </h3>
 
-          <h3>
-            Workout
-          </h3>
 
-          <p>
-            28 songs
-          </p>
+              <p
+                      th:if="${list.description != null
+                                    and !list.description.isEmpty()}"
+                      th:text="${list.description}"
+              >
+                Description
+              </p>
+
+
+              <span
+                      th:text="${profileListItemCounts[list.id] == 1
+                                      ? '1 item'
+                                      : profileListItemCounts[list.id] + ' items'}"
+              >
+                        0 items
+                    </span>
+
+            </div>
+
+          </a>
 
         </article>
 
       </div>
 
     </section>
-
-
-
     <!-- =========================
          FOLLOWING
          ========================= -->

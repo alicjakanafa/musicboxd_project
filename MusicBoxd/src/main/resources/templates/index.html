@@ -676,12 +676,16 @@
 
         <div class="friends-header">
 
-            <h2>
-                Friends Activity
-            </h2>
+            <div>
+                <h2>Friends Activity</h2>
 
-            <span>
-            Recent reviews
+                <span>
+                What your friends are listening to
+            </span>
+            </div>
+
+            <span class="friends-header-badge">
+            Recent
         </span>
 
         </div>
@@ -692,11 +696,17 @@
         <div
                 class="friends-empty"
                 th:if="${friendReviews == null
-                    or friendReviews.isEmpty()}"
+                or friendReviews.isEmpty()}"
         >
 
+            <div class="friends-empty-icon">
+                ♪
+            </div>
+
+            <h3>No recent activity</h3>
+
             <p>
-                No recent reviews from your friends.
+                Reviews from your friends will appear here.
             </p>
 
         </div>
@@ -707,7 +717,7 @@
         <div
                 class="friends-content"
                 th:unless="${friendReviews == null
-                        or friendReviews.isEmpty()}"
+                    or friendReviews.isEmpty()}"
         >
 
             <article
@@ -725,7 +735,7 @@
 
                     <img
                             th:if="${friendReviewArtwork != null
-                                and friendReviewArtwork[review.albumId] != null}"
+                            and friendReviewArtwork[review.albumId] != null}"
                             th:src="${friendReviewArtwork[review.albumId]}"
                             th:alt="${friendReviewAlbums[review.albumId].title}"
                             class="friend-review-art"
@@ -734,8 +744,9 @@
                     <div
                             class="friend-review-art-placeholder"
                             th:unless="${friendReviewArtwork != null
-                                    and friendReviewArtwork[review.albumId] != null}"
+                                and friendReviewArtwork[review.albumId] != null}"
                     >
+                        ♪
                     </div>
 
                 </a>
@@ -745,21 +756,44 @@
 
                 <div class="friend-review-content">
 
-                    <!-- REVIEWER -->
+                    <!-- TOP ROW -->
 
-                    <div class="friend-review-user">
+                    <div class="friend-review-top">
 
-                        <a
-                                th:if="${friendReviewUsers[review.userId] != null}"
-                                th:href="@{/profile/{id}(id=${review.userId})}"
-                                th:text="${friendReviewUsers[review.userId].username}"
-                        >
-                            Username
-                        </a>
+                        <div class="friend-review-user">
 
-                        <span>
-                        reviewed
-                    </span>
+                            <a
+                                    th:if="${friendReviewUsers[review.userId] != null}"
+                                    th:href="@{/profile/{id}(id=${review.userId})}"
+                                    th:text="${friendReviewUsers[review.userId].username}"
+                            >
+                                Username
+                            </a>
+
+                            <span>
+                            reviewed
+                        </span>
+
+                        </div>
+
+
+                        <!-- RATING -->
+
+                        <div class="friend-review-rating">
+
+                            <span>★</span>
+
+                            <strong
+                                    th:text="${review.rating}"
+                            >
+                                4.5
+                            </strong>
+
+                            <span class="rating-total">
+                            / 5
+                        </span>
+
+                        </div>
 
                     </div>
 
@@ -780,7 +814,7 @@
 
                     <h3
                             th:if="${review.header != null
-                                and !review.header.isEmpty()}"
+                            and !review.header.isEmpty()}"
                             th:text="${review.header}"
                     >
                         Review title
@@ -790,46 +824,38 @@
                     <!-- REVIEW -->
 
                     <p
+                            class="friend-review-text"
                             th:if="${review.content != null
-                                and !review.content.isEmpty()}"
+                            and !review.content.isEmpty()}"
                             th:text="${review.content}"
                     >
                         Review content
                     </p>
 
 
-                    <!-- RATING -->
-
-                    <div class="friend-review-rating">
-
-                    <span>
-                        ★
-                    </span>
-
-                        <strong
-                                th:text="${review.rating}"
-                        >
-                            4.5
-                        </strong>
-
-                        <span>
-                        / 5
-                    </span>
-
-                    </div>
-
-
                     <!-- DATE -->
 
-                    <small
-                            th:if="${review.createdAt != null}"
-                            th:text="${#temporals.format(
-                                    review.createdAt,
-                                    'dd MMM yyyy'
-                                )}"
-                    >
-                        18 Sep 2026
-                    </small>
+                    <div class="friend-review-footer">
+
+                        <small
+                                th:if="${review.createdAt != null}"
+                                th:text="${#temporals.format(
+                                review.createdAt,
+                                'dd MMM yyyy'
+                            )}"
+                        >
+                            18 Sep 2026
+                        </small>
+
+                        <a
+                                th:if="${friendReviewAlbums[review.albumId] != null}"
+                                th:href="@{/albums/{id}(id=${review.albumId})}"
+                                class="friend-review-view"
+                        >
+                            View review →
+                        </a>
+
+                    </div>
 
                 </div>
 
@@ -839,13 +865,12 @@
 
     </aside>
 
+
+
 </main>
 
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-
-
-<!-- SPOTIFY JAVASCRIPT -->
 
 <script>
 
