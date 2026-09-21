@@ -14,11 +14,6 @@ body {
     background: #080d14;
 }
 
-
-/* =========================================================
-   ARTIST HEADER
-   ========================================================= */
-
 .artist-header {
     padding: 70px 40px 60px;
     background: linear-gradient(
@@ -68,11 +63,6 @@ body {
     font-weight: 700;
 }
 
-
-/* =========================================================
-   FAVOURITE BUTTON
-   ========================================================= */
-
 .favourite-button {
     padding: 10px 15px;
     background: #192532;
@@ -90,11 +80,6 @@ body {
     color: white;
 }
 
-
-/* =========================================================
-   EVENTS BUTTON
-   ========================================================= */
-
 .events-button {
     margin-top: 25px;
     padding: 11px 18px;
@@ -111,11 +96,6 @@ body {
     background: #78b7e8;
 }
 
-
-/* =========================================================
-   MAIN ARTIST LAYOUT
-   ========================================================= */
-
 .artist-content {
     width: min(1400px, calc(100% - 40px));
     margin: 40px auto;
@@ -128,11 +108,6 @@ body {
 .artist-main {
     min-width: 0;
 }
-
-
-/* =========================================================
-   RIGHT-HAND BIO
-   ========================================================= */
 
 .artist-sidebar {
     position: sticky;
@@ -165,11 +140,6 @@ body {
     color: #8b96a3;
     line-height: 1.7;
 }
-
-
-/* =========================================================
-   CONTENT SECTIONS
-   ========================================================= */
 
 .artist-main .albums-section {
     width: 100%;
@@ -212,11 +182,6 @@ body {
     font-size: 13px;
 }
 
-
-/* =========================================================
-   VIEW ALL BUTTON
-   ========================================================= */
-
 .view-all-button {
     padding: 8px 13px;
     background: #192532;
@@ -232,11 +197,6 @@ body {
     background: #2f6f9f;
     color: white;
 }
-
-
-/* =========================================================
-   ALBUM CAROUSEL
-   ========================================================= */
 
 .album-carousel-wrapper {
     display: flex;
@@ -258,9 +218,6 @@ body {
     display: none;
 }
 
-
-/* Album cards */
-
 .album-card {
     flex: 0 0 210px;
     overflow: hidden;
@@ -276,9 +233,6 @@ body {
     transform: translateY(-5px);
     border-color: #4d9bd6;
 }
-
-
-/* Album artwork */
 
 .album-art {
     width: 100%;
@@ -307,9 +261,6 @@ body {
     color: #697583;
 }
 
-
-/* Album information */
-
 .album-information {
     padding: 15px;
 }
@@ -326,11 +277,6 @@ body {
 .album-card:hover h3 {
     color: #4d9bd6;
 }
-
-
-/* =========================================================
-   CAROUSEL BUTTONS
-   ========================================================= */
 
 .carousel-button {
     flex-shrink: 0;
@@ -349,11 +295,6 @@ body {
     background: #2f6f9f;
     border-color: #4d9bd6;
 }
-
-
-/* =========================================================
-   POPULAR SINGLES
-   ========================================================= */
 
 .singles-list {
     display: flex;
@@ -397,11 +338,6 @@ body {
     height: 36px;
     flex-shrink: 0;
 }
-
-
-/* =========================================================
-   EVENTS
-   ========================================================= */
 
 .events-section {
     scroll-margin-top: 100px;
@@ -456,21 +392,11 @@ body {
     font-weight: 700;
 }
 
-
-/* =========================================================
-   EMPTY STATES
-   ========================================================= */
-
 .empty-message {
     padding: 30px;
     text-align: center;
     color: #697583;
 }
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
 
 @media (max-width: 900px) {
 

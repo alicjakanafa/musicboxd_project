@@ -315,4 +315,98 @@ public class ListController {
                         )
                 );
     }
+
+    @PostMapping("/{id}/albums/{albumId}")
+    public String addExistingAlbum(
+            Authentication authentication,
+            @PathVariable Long id,
+            @PathVariable Long albumId
+    ) {
+        User user = getCurrentUser(authentication);
+
+        com.example.MusicBoxd.Model.List list =
+                listRepository.findById(id).orElseThrow();
+
+        if (!list.getUserId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        Album album =
+                albumRepository.findById(albumId).orElseThrow();
+
+        boolean alreadyExists =
+                listItemRepository.existsByListIdAndAlbumId(
+                        id,
+                        albumId
+                );
+
+        if (!alreadyExists) {
+            int nextPosition =
+                    listItemRepository.findMaxPosition(id) + 1;
+
+            listItemRepository.save(
+                    new ListItem(
+                            id,
+                            album.getId(),
+                            null,
+                            nextPosition
+                    )
+            );
+        }
+
+        return "redirect:/albums/" + albumId;
+    }
+
+    @PostMapping("/want-to-listen/{albumId}")
+    public String addToWantToListen(
+            Authentication authentication,
+            @PathVariable Long albumId
+    ) {
+        User user = getCurrentUser(authentication);
+
+        Album album =
+                albumRepository.findById(albumId).orElseThrow();
+
+        com.example.MusicBoxd.Model.List wantToListen =
+                listRepository
+                        .findByUserIdAndListType(
+                                user.getId(),
+                                ListType.WANT_TO_LISTEN
+                        )
+                        .orElseGet(() -> {
+                            com.example.MusicBoxd.Model.List newList =
+                                    new com.example.MusicBoxd.Model.List(
+                                            user.getId(),
+                                            "Want to Listen",
+                                            "Albums I want to listen to",
+                                            ListType.WANT_TO_LISTEN
+                                    );
+
+                            return listRepository.save(newList);
+                        });
+
+        boolean alreadyExists =
+                listItemRepository.existsByListIdAndAlbumId(
+                        wantToListen.getId(),
+                        albumId
+                );
+
+        if (!alreadyExists) {
+            int nextPosition =
+                    listItemRepository.findMaxPosition(
+                            wantToListen.getId()
+                    ) + 1;
+
+            listItemRepository.save(
+                    new ListItem(
+                            wantToListen.getId(),
+                            album.getId(),
+                            null,
+                            nextPosition
+                    )
+            );
+        }
+
+        return "redirect:/albums/" + albumId;
+    }
 }

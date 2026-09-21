@@ -94,11 +94,6 @@ public class ArtistController {
                 currentArtist.getName();
 
 
-        /*
-         * CHECK WHETHER THE CURRENT USER
-         * HAS FAVOURITED THIS ARTIST
-         */
-
         boolean isFavourite = false;
 
         if (
@@ -127,11 +122,6 @@ public class ArtistController {
                                 );
             }
         }
-
-
-        /*
-         * GET ARTIST INFORMATION FROM LAST.FM
-         */
 
         LastFmArtistResponse artistResponse =
                 lastFmService.getArtistInfo(
@@ -167,11 +157,6 @@ public class ArtistController {
             );
         }
 
-
-        /*
-         * GET ARTIST ALBUMS FROM LAST.FM
-         */
-
         LastFmTopAlbumsResponse albumResponse =
                 lastFmService.getArtistAlbums(
                         artistName
@@ -197,10 +182,6 @@ public class ArtistController {
         }
 
 
-        /*
-         * GET POPULAR SONGS FROM ITUNES
-         */
-
         ItunesTrackResponse trackResponse =
                 itunesService.searchTracks(
                         artistName
@@ -222,11 +203,6 @@ public class ArtistController {
                         : List.of()
         );
 
-
-        /*
-         * GET UPCOMING CONCERTS FROM TICKETMASTER
-         */
-
         List<Concert> concerts =
                 new ArrayList<>();
 
@@ -246,31 +222,17 @@ public class ArtistController {
                             );
         }
 
-
-        /*
-         * ADD ARTIST INFORMATION TO MODEL
-         */
-
         model.addAttribute(
                 "artist",
                 currentArtist
         );
 
 
-        /*
-         * ADD WHETHER THE ARTIST
-         * IS A FAVOURITE
-         */
-
         model.addAttribute(
                 "isFavourite",
                 isFavourite
         );
 
-
-        /*
-         * ADD LAST.FM ARTIST INFORMATION
-         */
 
         model.addAttribute(
                 "artistInfo",
@@ -279,10 +241,6 @@ public class ArtistController {
                         : null
         );
 
-
-        /*
-         * ADD LISTENER COUNT
-         */
 
         model.addAttribute(
                 "listeners",
@@ -298,20 +256,11 @@ public class ArtistController {
                         : null
         );
 
-
-        /*
-         * ADD ALBUMS
-         */
-
         model.addAttribute(
                 "albums",
                 albums
         );
 
-
-        /*
-         * ADD CONCERTS
-         */
 
         model.addAttribute(
                 "concerts",
@@ -321,11 +270,6 @@ public class ArtistController {
 
         return "artist-profile";
     }
-
-
-    /*
-     * ADD ARTIST TO FAVOURITES
-     */
 
     @PostMapping("/{id}/favourite")
     public String favouriteArtist(
@@ -391,10 +335,6 @@ public class ArtistController {
     }
 
 
-    /*
-     * REMOVE ARTIST FROM FAVOURITES
-     */
-
     @PostMapping("/{id}/unfavourite")
     public String unfavouriteArtist(
             @PathVariable Long id,
@@ -432,11 +372,6 @@ public class ArtistController {
         return "redirect:/artists/" + id;
     }
 
-
-    /*
-     * FIND AN ARTIST BY NAME
-     */
-
     @GetMapping("/from-name")
     public String showArtistByName(
             @RequestParam String name
@@ -455,11 +390,6 @@ public class ArtistController {
         return "redirect:/artists/" +
                 artist.getId();
     }
-
-
-    /*
-     * SHOW ALL ALBUMS FOR AN ARTIST
-     */
 
     @GetMapping("/{id}/albums")
     public String showAllAlbums(
