@@ -266,7 +266,7 @@ public class SpotifyController {
                         .stream()
                         .mapToLong(item ->
                                 item.getTrack()
-                                        .getDuration_ms()
+                                        .getDurationMs()
                         )
                         .sum();
 
@@ -487,16 +487,15 @@ public class SpotifyController {
         /*
          * Only allow Spotify's three
          * supported time ranges.
-         *
-         * This also prevents somebody from
-         * putting an arbitrary value into
-         * the Spotify request.
          */
 
         if (
-                !timeRange.equals("short_term")
-                        && !timeRange.equals("medium_term")
-                        && !timeRange.equals("long_term")
+                timeRange == null
+                        || (
+                        !timeRange.equals("short_term")
+                                && !timeRange.equals("medium_term")
+                                && !timeRange.equals("long_term")
+                )
         ) {
 
             timeRange = "medium_term";

@@ -31,24 +31,58 @@
     </h1>
 
 
-    <section class="album-header">
+    <!-- =====================================================
+         ALBUM INFORMATION
+         ===================================================== -->
 
+    <section class="album-header">
 
         <div class="album-art">
 
+            <!-- =================================================
+                 FIRST: USE STORED ALBUM ARTWORK
+                 ================================================= -->
+
             <img
-                    th:if="${lastFmAlbum != null
+                    th:if="${album.artworkUrl != null
+                    and !album.artworkUrl.isEmpty()}"
+                    th:src="${album.artworkUrl}"
+                    th:alt="${album.title}"
+            >
+
+
+            <!-- =================================================
+                 SECOND: FALL BACK TO LAST.FM ARTWORK
+                 ================================================= -->
+
+            <img
+                    th:if="${(album.artworkUrl == null
+                    or album.artworkUrl.isEmpty())
+                    and lastFmAlbum != null
                     and lastFmAlbum.image != null
-                    and !lastFmAlbum.image.isEmpty()}"
+                    and !lastFmAlbum.image.isEmpty()
+                    and lastFmAlbum.image.get(lastFmAlbum.image.size() - 1) != null
+                    and lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text != null
+                    and !lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text.isEmpty()}"
                     th:src="${lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text}"
                     th:alt="${album.title}"
             >
 
+
+            <!-- =================================================
+                 NO ARTWORK
+                 ================================================= -->
+
             <div
                     class="album-art-placeholder"
-                    th:if="${lastFmAlbum == null
+                    th:if="${(album.artworkUrl == null
+                    or album.artworkUrl.isEmpty())
+                    and (lastFmAlbum == null
                     or lastFmAlbum.image == null
-                    or lastFmAlbum.image.isEmpty()}"
+                    or lastFmAlbum.image.isEmpty()
+                    or lastFmAlbum.image.get(lastFmAlbum.image.size() - 1) == null
+                    or lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text == null
+                    or lastFmAlbum.image.get(lastFmAlbum.image.size() - 1).text.isEmpty())}"
             >
                 No artwork
             </div>
@@ -56,10 +90,15 @@
         </div>
 
 
+        <!-- =====================================================
+             ALBUM DETAILS
+             ===================================================== -->
 
         <div class="album-information">
 
-            <p>ALBUM</p>
+            <p>
+                ALBUM
+            </p>
 
             <h1 th:text="${album.title}">
                 Album Title
@@ -78,7 +117,6 @@
             </p>
 
 
-
             <p
                     th:if="${album.releaseYear != null}"
                     th:text="${album.releaseYear}"
@@ -90,6 +128,10 @@
 
     </section>
 
+
+    <!-- =====================================================
+         REVIEW FORM
+         ===================================================== -->
 
     <form
             class="review-form"

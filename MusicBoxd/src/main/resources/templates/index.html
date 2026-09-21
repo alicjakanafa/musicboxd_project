@@ -28,25 +28,113 @@
 
     <section class="daily-catchup">
 
-        <h2>Hey Y/N, here's your daily catch up</h2>
+        <div class="catchup-heading">
+
+            <h2>
+                Hey
+                <span
+                        th:if="${currentUser != null}"
+                        th:text="${currentUser.username}">
+                User
+            </span>,
+                here's your daily catch up
+            </h2>
+
+            <span
+                    class="notification-count"
+                    th:if="${unreadNotificationCount != null
+                        and unreadNotificationCount > 0}"
+                    th:text="${unreadNotificationCount}">
+            0
+        </span>
+
+        </div>
+
 
         <div class="catchup-list">
 
-            <div class="catchup-item">
-                Someone added an album to a list
+            <!-- NOTIFICATIONS -->
+
+            <div
+                    class="catchup-item"
+                    th:each="notification : ${notifications}"
+            >
+
+                <div class="catchup-icon">
+
+                <span
+                        th:if="${notification.type == 'REVIEW_LIKED'}">
+                    ❤️
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'REVIEW_COMMENTED'}">
+                    💬
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'LIST_LIKED'}">
+                    ❤️
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'LIST_COMMENTED'}">
+                    💬
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'ALBUM_FAVOURITED'}">
+                    ⭐
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'ALBUM_REVIEWED'}">
+                    📝
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'FRIEND_REQUEST'}">
+                    👥
+                </span>
+
+                    <span
+                            th:if="${notification.type == 'FRIEND_ACCEPTED'}">
+                    🤝
+                </span>
+
+                </div>
+
+
+                <div class="catchup-content">
+
+                    <p
+                            th:text="${notification.notificationText}">
+                        Notification
+                    </p>
+
+                    <small
+                            th:if="${notification.createdAt != null}"
+                            th:text="${#temporals.format(
+                                notification.createdAt,
+                                'dd MMM yyyy HH:mm'
+                        )}">
+                        18 Sep 2026 10:30
+                    </small>
+
+                </div>
+
             </div>
 
-            <div class="catchup-item">
-                New release from Phoebe Bridgers
-            </div>
 
-            <div class="catchup-item">
-                Your review received a like
-            </div>
+            <!-- NOTHING TO SHOW -->
 
-            <div class="catchup-item"></div>
-            <div class="catchup-item"></div>
-            <div class="catchup-item"></div>
+            <div
+                    class="catchup-empty"
+                    th:if="${notifications == null
+                        or notifications.isEmpty()}"
+            >
+                You're all caught up! 🎵
+            </div>
 
         </div>
 
@@ -447,58 +535,62 @@
 
     <!-- ALBUM OF THE DAY -->
 
-    <section class="album-of-the-day">
+    <section
+            class="album-of-the-day"
+            th:if="${suggestedAlbum != null}"
+    >
 
         <h2>
             Suggested Album of the Day
         </h2>
 
-
         <a
                 class="suggested-album"
 
-                th:href="@{/album/save(
+                th:href="@{/albums/save(
                 collectionId=${suggestedAlbum.collectionId},
                 artistName=${suggestedAlbum.artistName},
                 albumName=${suggestedAlbum.collectionName},
                 artworkUrl=${suggestedAlbum.highResolutionArtworkUrl},
                 releaseDate=${suggestedAlbum.releaseDate}
-            )}">
-
+            )}"
+        >
 
             <img
-
                     th:if="${suggestedAlbum.highResolutionArtworkUrl != null}"
 
                     th:src="${suggestedAlbum.highResolutionArtworkUrl}"
 
                     th:alt="${suggestedAlbum.collectionName}"
 
-                    class="suggested-album-cover">
-
+                    class="suggested-album-cover"
+            >
 
             <div class="suggested-album-info">
 
                 <h3
-                        th:text="${suggestedAlbum.collectionName}">
+                        th:text="${suggestedAlbum.collectionName}"
+                >
                     Album Name
                 </h3>
 
                 <p
                         class="suggested-album-artist"
-                        th:text="${suggestedAlbum.artistName}">
+                        th:text="${suggestedAlbum.artistName}"
+                >
                     Artist Name
                 </p>
 
                 <p
                         class="suggested-album-genre"
-                        th:text="${suggestedAlbum.primaryGenreName}">
+                        th:text="${suggestedAlbum.primaryGenreName}"
+                >
                     Genre
                 </p>
 
                 <span class="suggested-album-link">
-                    View Album →
-                </span>
+                View Album →
+            </span>
 
             </div>
 
@@ -582,11 +674,168 @@
 
     <aside class="friends">
 
-        <h2>
-            Friends Activity
-        </h2>
+        <div class="friends-header">
 
-        <div class="friends-content"></div>
+            <h2>
+                Friends Activity
+            </h2>
+
+            <span>
+            Recent reviews
+        </span>
+
+        </div>
+
+
+        <!-- NO FRIEND REVIEWS -->
+
+        <div
+                class="friends-empty"
+                th:if="${friendReviews == null
+                    or friendReviews.isEmpty()}"
+        >
+
+            <p>
+                No recent reviews from your friends.
+            </p>
+
+        </div>
+
+
+        <!-- FRIEND REVIEWS -->
+
+        <div
+                class="friends-content"
+                th:unless="${friendReviews == null
+                        or friendReviews.isEmpty()}"
+        >
+
+            <article
+                    class="friend-review"
+                    th:each="review : ${friendReviews}"
+            >
+
+                <!-- ALBUM ART -->
+
+                <a
+                        th:if="${friendReviewAlbums[review.albumId] != null}"
+                        th:href="@{/albums/{id}(id=${review.albumId})}"
+                        class="friend-review-art-link"
+                >
+
+                    <img
+                            th:if="${friendReviewArtwork != null
+                                and friendReviewArtwork[review.albumId] != null}"
+                            th:src="${friendReviewArtwork[review.albumId]}"
+                            th:alt="${friendReviewAlbums[review.albumId].title}"
+                            class="friend-review-art"
+                    >
+
+                    <div
+                            class="friend-review-art-placeholder"
+                            th:unless="${friendReviewArtwork != null
+                                    and friendReviewArtwork[review.albumId] != null}"
+                    >
+                    </div>
+
+                </a>
+
+
+                <!-- REVIEW INFORMATION -->
+
+                <div class="friend-review-content">
+
+                    <!-- REVIEWER -->
+
+                    <div class="friend-review-user">
+
+                        <a
+                                th:if="${friendReviewUsers[review.userId] != null}"
+                                th:href="@{/profile/{id}(id=${review.userId})}"
+                                th:text="${friendReviewUsers[review.userId].username}"
+                        >
+                            Username
+                        </a>
+
+                        <span>
+                        reviewed
+                    </span>
+
+                    </div>
+
+
+                    <!-- ALBUM -->
+
+                    <a
+                            th:if="${friendReviewAlbums[review.albumId] != null}"
+                            th:href="@{/albums/{id}(id=${review.albumId})}"
+                            class="friend-review-album"
+                            th:text="${friendReviewAlbums[review.albumId].title}"
+                    >
+                        Album title
+                    </a>
+
+
+                    <!-- REVIEW HEADER -->
+
+                    <h3
+                            th:if="${review.header != null
+                                and !review.header.isEmpty()}"
+                            th:text="${review.header}"
+                    >
+                        Review title
+                    </h3>
+
+
+                    <!-- REVIEW -->
+
+                    <p
+                            th:if="${review.content != null
+                                and !review.content.isEmpty()}"
+                            th:text="${review.content}"
+                    >
+                        Review content
+                    </p>
+
+
+                    <!-- RATING -->
+
+                    <div class="friend-review-rating">
+
+                    <span>
+                        ★
+                    </span>
+
+                        <strong
+                                th:text="${review.rating}"
+                        >
+                            4.5
+                        </strong>
+
+                        <span>
+                        / 5
+                    </span>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <small
+                            th:if="${review.createdAt != null}"
+                            th:text="${#temporals.format(
+                                    review.createdAt,
+                                    'dd MMM yyyy'
+                                )}"
+                    >
+                        18 Sep 2026
+                    </small>
+
+                </div>
+
+            </article>
+
+        </div>
 
     </aside>
 
