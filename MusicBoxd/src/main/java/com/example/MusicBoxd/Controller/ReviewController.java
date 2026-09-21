@@ -261,10 +261,6 @@ public class ReviewController {
         }
 
 
-        // -----------------------------------------------------
-        // Update review information
-        // -----------------------------------------------------
-
         review.setRating(
                 rating
         );
@@ -274,19 +270,12 @@ public class ReviewController {
         );
 
 
-        // -----------------------------------------------------
-        // Save review
-        // -----------------------------------------------------
 
         Review savedReview =
                 reviewRepository.save(
                         review
                 );
 
-
-        // -----------------------------------------------------
-        // Notify friends only for NEW reviews
-        // -----------------------------------------------------
 
         if (isNewReview) {
 
@@ -341,17 +330,10 @@ public class ReviewController {
         }
 
 
-        // -----------------------------------------------------
-        // Return to profile
-        // -----------------------------------------------------
-
         return "redirect:/profile/" + user.getId();
     }
 
 
-    // =========================================================
-    // DELETE REVIEW
-    // =========================================================
 
     @PostMapping("/reviews/{id}/delete")
     public String deleteReview(
@@ -359,9 +341,6 @@ public class ReviewController {
             Authentication authentication
     ) {
 
-        // -----------------------------------------------------
-        // Get logged-in user
-        // -----------------------------------------------------
 
         OidcUser principal =
                 (OidcUser) authentication.getPrincipal();
@@ -381,9 +360,6 @@ public class ReviewController {
                         );
 
 
-        // -----------------------------------------------------
-        // Find review
-        // -----------------------------------------------------
 
         Review review =
                 reviewRepository
@@ -394,10 +370,6 @@ public class ReviewController {
                                 )
                         );
 
-
-        // -----------------------------------------------------
-        // Make sure the user owns the review
-        // -----------------------------------------------------
 
         if (
                 !user.getId().equals(

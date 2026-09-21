@@ -320,34 +320,60 @@
       </div>
 
 
-      <!-- FOLLOWING -->
-
-      <div class="profile-stat">
-
-        <strong>
-          89
-        </strong>
-
-        <span>
-          Following
-        </span>
-
-      </div>
-
-
       <!-- FOLLOWERS -->
 
       <div class="profile-stat">
 
-        <strong>
-          56
+        <strong
+                th:text="${followerCount != null ? followerCount : 0}"
+        >
+          0
         </strong>
 
         <span>
-          Followers
-        </span>
+        Followers
+    </span>
 
       </div>
+
+
+      <!-- FOLLOWING -->
+
+      <div class="profile-stat">
+
+        <strong
+                th:text="${followingCount != null ? followingCount : 0}"
+        >
+          0
+        </strong>
+
+        <span>
+        Following
+    </span>
+
+      </div>
+
+
+      <!-- FAVOURITE ARTISTS -->
+
+      <a
+              class="profile-stat"
+              th:href="@{/profile/{id}/favourite-artists(id=${user.id})}"
+      >
+
+        <strong
+                th:text="${favouriteArtistCount != null
+                      ? favouriteArtistCount
+                      : 0}"
+        >
+          0
+        </strong>
+
+        <span>
+        Favourite Artists
+    </span>
+
+      </a>
 
     </div>
 
