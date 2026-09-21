@@ -514,25 +514,47 @@
             <!-- LIKE BUTTON -->
 
 
-            <button
-                    type="button"
+              <form
+                      th:action="@{/reviews/{reviewId}/like(reviewId=${review.id})}"
+                      method="post"
+                      class="review-like-form">
 
-                    class="review-like-button"
+                  <button
+                          type="submit"
+                          class="review-like-button"
+                          th:classappend="${reviewLikedByCurrentUser != null
+                and reviewLikedByCurrentUser[review.id]}
+                ? ' liked'
+                : ''"
+                          aria-label="Like review">
 
-                    th:attr="data-review-id=${review.id}"
+        <span class="like-icon">
 
-                    aria-label="Like review"
-            >
+            <span
+                    th:if="${reviewLikedByCurrentUser != null
+                        and reviewLikedByCurrentUser[review.id]}">
+                ♥
+            </span>
 
-                            <span class="like-icon">
-                                ♡
-                            </span>
+            <span
+                    th:unless="${reviewLikedByCurrentUser != null
+                        and reviewLikedByCurrentUser[review.id]}">
+                ♡
+            </span>
 
-              <span class="like-count">
-                                0
-                            </span>
+        </span>
 
-            </button>
+                      <span
+                              class="like-count"
+                              th:text="${reviewLikeCounts[review.id] != null
+                    ? reviewLikeCounts[review.id]
+                    : 0}">
+            0
+        </span>
+
+                  </button>
+
+              </form>
 
           </div>
 
@@ -716,63 +738,7 @@
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 
-<!-- =========================================================
-     TEMPORARY FRONT-END INTERACTIONS
-     ========================================================= -->
-
 <script>
-
-  /*
-   * Temporary review like interaction.
-   *
-   *  */
-
-  document
-          .querySelectorAll(".review-like-button")
-          .forEach(button => {
-
-            button.addEventListener("click", function () {
-
-              const icon =
-                      this.querySelector(".like-icon");
-
-              const count =
-                      this.querySelector(".like-count");
-
-              const currentlyLiked =
-                      this.classList.contains("liked");
-
-              let currentCount =
-                      parseInt(count.textContent) || 0;
-
-              if (currentlyLiked) {
-
-                this.classList.remove("liked");
-
-                icon.textContent = "♡";
-
-                currentCount--;
-
-                if (currentCount < 0) {
-                  currentCount = 0;
-                }
-
-              } else {
-
-                this.classList.add("liked");
-
-                icon.textContent = "♥";
-
-                currentCount++;
-
-              }
-
-              count.textContent =
-                      currentCount;
-
-            });
-
-          });
 
       const addToListButton =
       document.getElementById("addToListButton");
