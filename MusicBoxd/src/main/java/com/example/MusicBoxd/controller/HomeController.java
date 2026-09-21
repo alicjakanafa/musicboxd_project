@@ -1,17 +1,21 @@
 package com.example.MusicBoxd.Controller;
 
+import com.example.MusicBoxd.Model.Notification;
+import com.example.MusicBoxd.Model.User;
+import com.example.MusicBoxd.Repository.NotificationRepository;
+import com.example.MusicBoxd.Repository.UserRepository;
 import com.example.MusicBoxd.api.itunes.ItunesAlbum;
 import com.example.MusicBoxd.api.itunes.ItunesService;
 import com.example.MusicBoxd.api.lastfm.LastFmResponse;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
-import com.example.MusicBoxd.Model.User;
-import com.example.MusicBoxd.Repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -20,29 +24,27 @@ public class HomeController {
     private final SpotifyController spotifyController;
     private final ItunesService itunesService;
     private final UserRepository userRepository;
-
+    private final NotificationRepository notificationRepository;
 
     public HomeController(
             LastFmService lastFmService,
             SpotifyController spotifyController,
             ItunesService itunesService,
-            UserRepository userRepository
+            UserRepository userRepository,
+            NotificationRepository notificationRepository
     ) {
         this.lastFmService = lastFmService;
         this.spotifyController = spotifyController;
         this.itunesService = itunesService;
         this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
     }
-
-
-    // =========================================================
-    // HOME PAGE
-    // =========================================================
 
     @GetMapping("/")
     public String index(
             Model model,
-            HttpSession session
+            HttpSession session,
+            Authentication authentication
     ) {
 
         LastFmResponse response =
@@ -55,21 +57,85 @@ public class HomeController {
                         .subList(0, 10)
         );
 
+        /*
+         * Find the currently logged-in MusicBoxd user.
+         */
+        User currentUser = null;
+
+        if (
+                authentication != null &&
+                        authentication.isAuthenticated()
+        ) {
+
+            OidcUser principal =
+                    (OidcUser) authentication.getPrincipal();
+
+            String oktaUserId =
+                    principal.getSubject();
+
+            currentUser =
+                    userRepository
+                            .findByOktaUserId(oktaUserId)
+                            .orElse(null);
+        }
+
+        /*
+         * Get a daily album based on the user's ID.
+         */
+        Long userId = null;
+
+        if (currentUser != null) {
+            userId = currentUser.getId();
+        }
 
         ItunesAlbum suggestedAlbum =
-                itunesService.getDailyAlbum();
+                itunesService.getDailyAlbum(userId);
 
         model.addAttribute(
                 "suggestedAlbum",
                 suggestedAlbum
         );
 
+        /*
+         * Notifications
+         */
+        if (currentUser != null) {
 
+            List<Notification> notifications =
+                    notificationRepository
+                            .findByUserIdOrderByCreatedAtDesc(
+                                    currentUser.getId()
+                            );
+
+            long unreadNotificationCount =
+                    notificationRepository
+                            .countByUserIdAndReadFalse(
+                                    currentUser.getId()
+                            );
+
+            model.addAttribute(
+                    "notifications",
+                    notifications
+            );
+
+            model.addAttribute(
+                    "unreadNotificationCount",
+                    unreadNotificationCount
+            );
+
+            model.addAttribute(
+                    "currentUser",
+                    currentUser
+            );
+        }
+
+        /*
+         * Spotify
+         */
         String spotifyAccessToken =
                 (String) session.getAttribute(
                         "spotifyAccessToken"
                 );
-
 
         if (spotifyAccessToken != null) {
 
@@ -79,14 +145,8 @@ public class HomeController {
             );
         }
 
-
         return "index";
     }
-
-
-    // =========================================================
-    // CURRENT USER PROFILE
-    // =========================================================
 
     @GetMapping("/profile")
     public String profile(
@@ -96,10 +156,8 @@ public class HomeController {
         OidcUser principal =
                 (OidcUser) authentication.getPrincipal();
 
-
         String oktaUserId =
                 principal.getSubject();
-
 
         User user =
                 userRepository
@@ -110,19 +168,6 @@ public class HomeController {
                                                 + oktaUserId
                                 )
                         );
-
-
-        /*
-         * Redirect to the user's actual profile.
-         *
-         * ProfileController then loads:
-         *
-         * - User information
-         * - Reviews
-         * - Review artwork
-         * - Top 4 albums
-         * - Album artwork
-         */
 
         return "redirect:/profile/" + user.getId();
     }

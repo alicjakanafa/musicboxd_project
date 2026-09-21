@@ -171,6 +171,108 @@ body > main {
     transform: translateY(-2px);
 }
 
+.catchup-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.catchup-heading h2 {
+    margin: 0;
+}
+
+.notification-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 26px;
+    height: 26px;
+
+    padding: 0 8px;
+
+    border-radius: 50px;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.catchup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.catchup-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+
+    transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.catchup-item:hover {
+    background: var(--surface-hover);
+    transform: translateY(-1px);
+}
+
+.catchup-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--surface-light);
+
+    font-size: 1rem;
+}
+
+.catchup-content {
+    min-width: 0;
+}
+
+.catchup-content p {
+    margin: 0 0 4px;
+
+    color: var(--text);
+
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.catchup-content small {
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.catchup-empty {
+    padding: 25px;
+
+    text-align: center;
+
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
 
 /* ====================
    GLOBAL TOP 40

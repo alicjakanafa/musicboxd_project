@@ -8,6 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -148,7 +149,15 @@ public class ItunesService {
         );
     }
 
-    public ItunesAlbum getDailyAlbum() {
+    /*
+     * Returns a daily album based on the current user.
+     *
+     * The same user gets the same album for the same day.
+     * Different users get different random seeds.
+     */
+    public ItunesAlbum getDailyAlbum(
+            Long userId
+    ) {
 
         String[] searchTerms = {
                 "pop",
@@ -162,10 +171,25 @@ public class ItunesService {
                 "r&b"
         };
 
+        long seed;
+
+        if (userId != null) {
+
+            seed =
+                    Objects.hash(
+                            LocalDate.now(),
+                            userId
+                    );
+
+        } else {
+
+            seed =
+                    LocalDate.now()
+                            .toEpochDay();
+        }
+
         Random random =
-                new Random(
-                        LocalDate.now().toEpochDay()
-                );
+                new Random(seed);
 
         int randomIndex =
                 random.nextInt(
