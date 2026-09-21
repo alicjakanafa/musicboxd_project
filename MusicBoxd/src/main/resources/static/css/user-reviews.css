@@ -1,0 +1,208 @@
+/* user reviews page bits */
+
+.user-reviews-page {
+  width: min(1120px, calc(100% - 60px));
+
+  margin: 0 auto;
+
+  padding: 70px 0 90px;
+}
+
+.user-reviews-container > h1 {
+  margin: 0 0 35px;
+
+  font-size: clamp(2rem, 4vw, 3rem);
+
+  font-weight: 800;
+
+  letter-spacing: -1px;
+}
+
+/* user reviews bits ends */
+
+/* user review grid layout */
+
+.user-reviews-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 28px;
+}
+
+/* user review grid layout ends */
+
+/* individual review cards starts */
+
+.user-review-card {
+  min-width: 0;
+  min-height: 530px;
+
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.user-review-card:hover {
+  transform: translateY(-3px);
+
+  border-color: var(--border-light);
+}
+
+/* individual review cards ends */
+
+/* album artwork starts */
+
+.user-review-artwork {
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  display: block;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: var(--surface-light);
+}
+
+.user-review-artwork img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.user-review-artwork-placeholder {
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(145deg, var(--primary), var(--primary-light));
+}
+
+/* album artwork ends */
+
+/* review information/descriptions/ratings etc etc starts */
+
+.user-review-content {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 20px;
+}
+
+.user-review-content h2 {
+  margin: 0;
+
+  font-size: 1.35rem;
+  font-weight: 800;
+
+  line-height: 1.15;
+}
+
+.user-review-rating {
+  margin-top: 6px;
+
+  color: var(--primary-light);
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.user-review-content h3 {
+  margin: 15px 0 5px;
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.user-review-description {
+  margin: 10px 0 20px;
+
+  color: var(--text-muted);
+
+  line-height: 1.5;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+.user-review-date {
+  margin-top: auto;
+
+  align-self: flex-end;
+
+  color: var(--text-muted);
+
+  font-size: 0.9rem;
+}
+
+/* review information ends */
+
+/* empty state starts */
+
+.reviews-empty-state {
+  padding: 80px 30px;
+
+  text-align: center;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+}
+
+.reviews-empty-state h2 {
+  margin-top: 0;
+}
+
+.reviews-empty-state p {
+  color: var(--text-muted);
+}
+
+/* empty state ends */
+
+/* responsive css starts */
+
+@media (max-width: 900px) {
+  .user-reviews-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .user-reviews-page {
+    width: calc(100% - 30px);
+
+    padding-top: 40px;
+  }
+
+  .user-reviews-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* responsive css ends */
+}
