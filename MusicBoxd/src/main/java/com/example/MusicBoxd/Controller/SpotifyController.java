@@ -1,10 +1,11 @@
 package com.example.MusicBoxd.Controller;
 
+import com.example.MusicBoxd.api.spotify.SpotifyArtist;
 import com.example.MusicBoxd.api.spotify.SpotifyCurrentlyPlayingResponse;
 import com.example.MusicBoxd.api.spotify.SpotifyRecentlyPlayedResponse;
 import com.example.MusicBoxd.api.spotify.SpotifyTokenResponse;
 import com.example.MusicBoxd.api.spotify.SpotifyTopArtistsResponse;
-import com.example.MusicBoxd.api.spotify.SpotifyArtist;
+import com.example.MusicBoxd.api.spotify.SpotifyTopTracksResponse;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -39,39 +40,54 @@ public class SpotifyController {
     @Value("${spotify.redirect.uri}")
     private String redirectUri;
 
+
+    /*
+     * =========================
+     * SPOTIFY LOGIN
+     * =========================
+     */
+
     @GetMapping("/spotify/login")
     public String spotifyLogin() {
 
-        String spotifyUrl = UriComponentsBuilder
-                .fromUriString(
-                        "https://accounts.spotify.com/authorize"
-                )
-                .queryParam(
-                        "client_id",
-                        clientId
-                )
-                .queryParam(
-                        "response_type",
-                        "code"
-                )
-                .queryParam(
-                        "redirect_uri",
-                        redirectUri
-                )
-                .queryParam(
-                        "scope",
-                        "user-read-recently-played " +
-                                "user-read-currently-playing " +
-                                "user-read-playback-state " +
-                                "user-modify-playback-state " +
-                                "streaming " +
-                                "user-top-read"
-                )
-                .build()
-                .toUriString();
+        String spotifyUrl =
+                UriComponentsBuilder
+                        .fromUriString(
+                                "https://accounts.spotify.com/authorize"
+                        )
+                        .queryParam(
+                                "client_id",
+                                clientId
+                        )
+                        .queryParam(
+                                "response_type",
+                                "code"
+                        )
+                        .queryParam(
+                                "redirect_uri",
+                                redirectUri
+                        )
+                        .queryParam(
+                                "scope",
+                                "user-read-recently-played " +
+                                        "user-read-currently-playing " +
+                                        "user-read-playback-state " +
+                                        "user-modify-playback-state " +
+                                        "streaming " +
+                                        "user-top-read"
+                        )
+                        .build()
+                        .toUriString();
 
         return "redirect:" + spotifyUrl;
     }
+
+
+    /*
+     * =========================
+     * SPOTIFY CALLBACK
+     * =========================
+     */
 
     @GetMapping("/spotify/callback")
     public String spotifyCallback(
@@ -140,6 +156,7 @@ public class SpotifyController {
                 tokenResponse.getBody();
 
         if (token == null) {
+
             throw new IllegalStateException(
                     "Spotify did not return a token"
             );
@@ -153,26 +170,92 @@ public class SpotifyController {
         return "redirect:/";
     }
 
+
     /*
      * =========================
      * SPOTIFY DATA
      * =========================
+     *
+     * This version is used when
+     * loading Spotify data for
+     * the profile page.
+     *
+     * The timeRange controls both:
+     *
+     * - Top Artists
+     * - Top Tracks
+     *
+     * short_term  = Last 4 weeks
+     * medium_term = Last 6 months
+     * long_term   = Long-term Spotify data
      */
 
     public void getSpotifyData(
             String accessToken,
-            Model model
+            Model model,
+            String timeRange
     ) {
+
+        /*
+         * Make sure the time range
+         * is valid.
+         */
+
+        timeRange =
+                validateTimeRange(
+                        timeRange
+                );
+
+
+        /*
+         * Recently played
+         */
 
         getRecentlyPlayed(
                 accessToken,
                 model
         );
 
+
+        /*
+         * Top tracks
+         */
+
+        SpotifyTopTracksResponse topTracks =
+                getTopTracks(
+                        accessToken,
+                        timeRange
+                );
+
+
+        if (
+                topTracks != null
+                        && topTracks.getItems() != null
+        ) {
+
+            model.addAttribute(
+                    "topTracks",
+                    topTracks.getItems()
+            );
+
+        } else {
+
+            model.addAttribute(
+                    "topTracks",
+                    java.util.List.of()
+            );
+        }
+
+
+        /*
+         * Currently playing
+         */
+
         SpotifyCurrentlyPlayingResponse currentlyPlaying =
                 getCurrentlyPlaying(
                         accessToken
                 );
+
 
         if (
                 currentlyPlaying != null
@@ -183,13 +266,48 @@ public class SpotifyController {
                     "currentlyPlaying",
                     currentlyPlaying
             );
+
+        } else {
+
+            model.addAttribute(
+                    "currentlyPlaying",
+                    null
+            );
         }
     }
+
+
+    /*
+     * =========================
+     * BACKWARDS COMPATIBILITY
+     * =========================
+     *
+     * This keeps the existing
+     * HomeController working.
+     *
+     * It defaults to medium term.
+     */
+
+    public void getSpotifyData(
+            String accessToken,
+            Model model
+    ) {
+
+        getSpotifyData(
+                accessToken,
+                model,
+                "medium_term"
+        );
+    }
+
 
     /*
      * =========================
      * RECENTLY PLAYED
      * =========================
+     *
+     * Spotify returns up to 50
+     * recently played tracks.
      */
 
     private void getRecentlyPlayed(
@@ -223,55 +341,197 @@ public class SpotifyController {
         SpotifyRecentlyPlayedResponse recentlyPlayed =
                 response.getBody();
 
+
+        /*
+         * If Spotify did not return
+         * anything, provide empty
+         * values to Thymeleaf.
+         */
+
         if (
                 recentlyPlayed == null
                         || recentlyPlayed.getItems() == null
         ) {
+
+            model.addAttribute(
+                    "recentTracksCount",
+                    0
+            );
+
+            model.addAttribute(
+                    "uniqueTracksCount",
+                    0
+            );
+
+            model.addAttribute(
+                    "uniqueArtistsCount",
+                    0
+            );
+
+            model.addAttribute(
+                    "uniqueAlbumsCount",
+                    0
+            );
+
+            model.addAttribute(
+                    "listeningMinutes",
+                    0
+            );
+
+            model.addAttribute(
+                    "recentlyPlayed",
+                    java.util.List.of()
+            );
+
+            model.addAttribute(
+                    "recentTrack",
+                    null
+            );
+
             return;
         }
 
+
+        /*
+         * Give Thymeleaf the entire
+         * recently played list.
+         */
+
         model.addAttribute(
-                "recentTrack",
-                recentlyPlayed.getItems().isEmpty()
-                        ? null
-                        : recentlyPlayed.getItems().get(0)
+                "recentlyPlayed",
+                recentlyPlayed.getItems()
         );
 
+
+        /*
+         * Most recent track.
+         */
+
+        model.addAttribute(
+                "recentTrack",
+                recentlyPlayed
+                        .getItems()
+                        .isEmpty()
+                        ? null
+                        : recentlyPlayed
+                        .getItems()
+                        .get(0)
+        );
+
+
+        /*
+         * Number of recent plays.
+         */
+
         int recentTracks =
-                recentlyPlayed.getItems().size();
+                recentlyPlayed
+                        .getItems()
+                        .size();
+
+
+        /*
+         * Number of unique tracks.
+         */
 
         long uniqueTracks =
-                recentlyPlayed.getItems()
+                recentlyPlayed
+                        .getItems()
                         .stream()
+                        .filter(item ->
+                                item.getTrack() != null
+                                        && item.getTrack().getId() != null
+                        )
                         .map(item ->
                                 item.getTrack().getId()
                         )
                         .distinct()
                         .count();
 
+
+        /*
+         * Number of unique artists.
+         */
+
         long uniqueArtists =
-                recentlyPlayed.getItems()
+                recentlyPlayed
+                        .getItems()
                         .stream()
+                        .filter(item ->
+                                item.getTrack() != null
+                                        && item.getTrack().getArtists() != null
+                        )
                         .flatMap(item ->
                                 item.getTrack()
                                         .getArtists()
                                         .stream()
                         )
-                        .map(SpotifyArtist::getName)
+                        .filter(artist ->
+                                artist != null
+                                        && artist.getName() != null
+                        )
+                        .map(
+                                SpotifyArtist::getName
+                        )
                         .distinct()
                         .count();
 
-        long totalDurationMs =
-                recentlyPlayed.getItems()
+
+        /*
+         * Number of unique albums.
+         */
+
+        long uniqueAlbums =
+                recentlyPlayed
+                        .getItems()
                         .stream()
+                        .filter(item ->
+                                item.getTrack() != null
+                                        && item.getTrack().getAlbum() != null
+                                        && item.getTrack().getAlbum().getName() != null
+                        )
+                        .map(item ->
+                                item.getTrack()
+                                        .getAlbum()
+                                        .getName()
+                        )
+                        .distinct()
+                        .count();
+
+
+        /*
+         * Total duration of the
+         * recently played tracks.
+         *
+         * This is an estimate based
+         * on the track durations
+         * returned by Spotify.
+         */
+
+        long totalDurationMs =
+                recentlyPlayed
+                        .getItems()
+                        .stream()
+                        .filter(item ->
+                                item.getTrack() != null
+                                        && item.getTrack().getDurationMs() != null
+                        )
                         .mapToLong(item ->
                                 item.getTrack()
                                         .getDurationMs()
                         )
                         .sum();
 
+
         long totalMinutes =
-                totalDurationMs / 1000 / 60;
+                totalDurationMs
+                        / 1000
+                        / 60;
+
+
+        /*
+         * Send everything to
+         * Thymeleaf.
+         */
 
         model.addAttribute(
                 "recentTracksCount",
@@ -289,10 +549,16 @@ public class SpotifyController {
         );
 
         model.addAttribute(
+                "uniqueAlbumsCount",
+                uniqueAlbums
+        );
+
+        model.addAttribute(
                 "listeningMinutes",
                 totalMinutes
         );
     }
+
 
     /*
      * =========================
@@ -330,6 +596,13 @@ public class SpotifyController {
         return response.getBody();
     }
 
+
+    /*
+     * =========================
+     * CURRENT PLAYER ENDPOINT
+     * =========================
+     */
+
     @GetMapping("/spotify/player/current")
     @ResponseBody
     public ResponseEntity<SpotifyCurrentlyPlayingResponse> current(
@@ -341,6 +614,7 @@ public class SpotifyController {
                         "spotifyAccessToken"
                 );
 
+
         if (accessToken == null) {
 
             return ResponseEntity
@@ -348,10 +622,12 @@ public class SpotifyController {
                     .build();
         }
 
+
         SpotifyCurrentlyPlayingResponse currentlyPlaying =
                 getCurrentlyPlaying(
                         accessToken
                 );
+
 
         if (
                 currentlyPlaying == null
@@ -363,10 +639,12 @@ public class SpotifyController {
                     .build();
         }
 
+
         return ResponseEntity.ok(
                 currentlyPlaying
         );
     }
+
 
     /*
      * =========================
@@ -387,6 +665,7 @@ public class SpotifyController {
         );
     }
 
+
     @PostMapping("/spotify/player/pause")
     @ResponseBody
     public ResponseEntity<Void> pause(
@@ -399,6 +678,7 @@ public class SpotifyController {
                 HttpMethod.PUT
         );
     }
+
 
     @PostMapping("/spotify/player/next")
     @ResponseBody
@@ -413,6 +693,7 @@ public class SpotifyController {
         );
     }
 
+
     @PostMapping("/spotify/player/previous")
     @ResponseBody
     public ResponseEntity<Void> previous(
@@ -426,6 +707,7 @@ public class SpotifyController {
         );
     }
 
+
     private ResponseEntity<Void> sendPlayerCommand(
             HttpSession session,
             String url,
@@ -437,12 +719,14 @@ public class SpotifyController {
                         "spotifyAccessToken"
                 );
 
+
         if (accessToken == null) {
 
             return ResponseEntity
                     .status(401)
                     .build();
         }
+
 
         RestTemplate restTemplate =
                 new RestTemplate();
@@ -459,6 +743,7 @@ public class SpotifyController {
                         headers
                 );
 
+
         return restTemplate.exchange(
                 url,
                 method,
@@ -467,16 +752,20 @@ public class SpotifyController {
         );
     }
 
+
     /*
      * =========================
      * TOP ARTISTS
      * =========================
      *
-     * timeRange can be:
+     * short_term
+     * = Last 4 weeks
      *
-     * short_term  = Last 4 weeks
-     * medium_term = Last 6 months
-     * long_term   = All time
+     * medium_term
+     * = Last 6 months
+     *
+     * long_term
+     * = Long-term Spotify data
      */
 
     public SpotifyTopArtistsResponse getTopArtists(
@@ -484,10 +773,107 @@ public class SpotifyController {
             String timeRange
     ) {
 
-        /*
-         * Only allow Spotify's three
-         * supported time ranges.
-         */
+        timeRange =
+                validateTimeRange(
+                        timeRange
+                );
+
+
+        RestTemplate restTemplate =
+                new RestTemplate();
+
+        HttpHeaders headers =
+                new HttpHeaders();
+
+        headers.setBearerAuth(
+                accessToken
+        );
+
+        HttpEntity<Void> request =
+                new HttpEntity<>(
+                        headers
+                );
+
+
+        String url =
+                "https://api.spotify.com/v1/me/top/artists"
+                        + "?time_range="
+                        + timeRange
+                        + "&limit=6";
+
+
+        ResponseEntity<SpotifyTopArtistsResponse> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        request,
+                        SpotifyTopArtistsResponse.class
+                );
+
+
+        return response.getBody();
+    }
+
+
+    /*
+     * =========================
+     * TOP TRACKS
+     * =========================
+     *
+     * Uses the exact same time
+     * range as Top Artists.
+     */
+
+    public SpotifyTopTracksResponse getTopTracks(
+            String accessToken,
+            String timeRange
+    ) {
+
+        timeRange =
+                validateTimeRange(
+                        timeRange
+                );
+
+
+        RestTemplate restTemplate =
+                new RestTemplate();
+
+        HttpHeaders headers =
+                new HttpHeaders();
+
+        headers.setBearerAuth(
+                accessToken
+        );
+
+        HttpEntity<Void> request =
+                new HttpEntity<>(
+                        headers
+                );
+
+
+        String url =
+                "https://api.spotify.com/v1/me/top/tracks"
+                        + "?time_range="
+                        + timeRange
+                        + "&limit=6";
+
+
+        ResponseEntity<SpotifyTopTracksResponse> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        request,
+                        SpotifyTopTracksResponse.class
+                );
+
+
+        return response.getBody();
+    }
+
+
+    private String validateTimeRange(
+            String timeRange
+    ) {
 
         if (
                 timeRange == null
@@ -498,38 +884,10 @@ public class SpotifyController {
                 )
         ) {
 
-            timeRange = "medium_term";
+            return "medium_term";
         }
 
-        RestTemplate restTemplate =
-                new RestTemplate();
 
-        HttpHeaders headers =
-                new HttpHeaders();
-
-        headers.setBearerAuth(
-                accessToken
-        );
-
-        HttpEntity<Void> request =
-                new HttpEntity<>(
-                        headers
-                );
-
-        String url =
-                "https://api.spotify.com/v1/me/top/artists"
-                        + "?time_range="
-                        + timeRange
-                        + "&limit=6";
-
-        ResponseEntity<SpotifyTopArtistsResponse> response =
-                restTemplate.exchange(
-                        url,
-                        HttpMethod.GET,
-                        request,
-                        SpotifyTopArtistsResponse.class
-                );
-
-        return response.getBody();
+        return timeRange;
     }
 }
