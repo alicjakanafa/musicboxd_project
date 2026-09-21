@@ -51,6 +51,16 @@ public class ReviewController {
             Model model
     ) {
 
+        // i had to add a user repo thing here for it to actually list reviews on a user-by-user basis
+        User user =
+        userRepository
+                .findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found: " + userId
+                        )
+                );
+
         List<Review> reviews =
                 reviewRepository
                         .findByUserIdOrderByCreatedAtDesc(userId);
@@ -81,6 +91,12 @@ public class ReviewController {
             }
         }
 
+        // also had to add a model attribute here for it to find the right user!!!
+        model.addAttribute(
+        "user",
+        user
+);
+
         model.addAttribute(
                 "reviews",
                 reviews
@@ -91,7 +107,8 @@ public class ReviewController {
                 albums
         );
 
-        return "profile-page";
+        // changed profile-page here to the new page i made :)
+        return "user-reviews";
     }
 
 
