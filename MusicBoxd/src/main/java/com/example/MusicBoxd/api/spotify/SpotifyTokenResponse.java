@@ -16,7 +16,6 @@ public class SpotifyTokenResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    @JsonProperty("scope")
     private String scope;
 
     public String getAccessToken() {

@@ -32,4 +32,10 @@ public interface FriendRepository
     List<Friend> findByStatus(
             String status
     );
+    List<Friend> findByRequesterIdAndStatusOrReceiverIdAndStatus(
+            Long requesterId,
+            String requesterStatus,
+            Long receiverId,
+            String receiverStatus
+    );
 }
