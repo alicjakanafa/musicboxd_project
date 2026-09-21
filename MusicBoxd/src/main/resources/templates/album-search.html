@@ -6,24 +6,72 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>MusicBoxd - Search Albums</title>
+    <title>
+        MusicBoxd - Search Albums
+    </title>
 
-    <link rel="stylesheet" th:href="@{/css/search.css}">
-    <link rel="stylesheet" th:href="@{/css/navbar.css}">
-    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
+    <!-- Google Fonts -->
+
+    <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com"
+    >
+
+    <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin
+    >
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    >
+
+
+    <!-- CSS -->
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/search.css}"
+    >
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/navbar.css}"
+    >
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/footer.css}"
+    >
 
 </head>
+
 
 <body>
 
 <div class="page">
 
-    <header th:replace="~{fragments/navbar :: navbar}"></header>
+
+    <!-- NAVBAR -->
+
+    <header
+            th:replace="~{fragments/navbar :: navbar}"
+    >
+    </header>
+
 
     <main class="container">
+
+
+        <!-- HERO -->
 
         <section class="hero">
 
@@ -41,6 +89,8 @@
 
         </section>
 
+
+        <!-- SEARCH FORM -->
 
         <form
                 action="/search"
@@ -63,6 +113,8 @@
         </form>
 
 
+        <!-- RESULTS HEADER -->
+
         <section
                 class="results-header"
                 th:if="${albums != null and !albums.isEmpty()}"
@@ -83,6 +135,8 @@
         </section>
 
 
+        <!-- RESULTS -->
+
         <div
                 class="results"
                 th:if="${albums != null and !albums.isEmpty()}"
@@ -93,24 +147,42 @@
                     th:each="album : ${albums}"
             >
 
-                <!-- Last.fm artwork -->
 
-                <img
-                        th:if="${album.image != null and !album.image.isEmpty()}"
-                        th:src="${album.image.get(album.image.size() - 1).text}"
-                        th:alt="${album.name}"
-                >
+                <!-- ALBUM ART -->
 
+                <div class="album-art">
+
+                    <img
+                            th:if="${album.image != null and !album.image.isEmpty()}"
+                            th:src="${album.image.get(album.image.size() - 1).text}"
+                            th:alt="${album.name}"
+                            onerror="this.onerror=null; this.src='/images/image-unavailable.svg';"
+                    >
+
+                    <img
+                            th:if="${album.image == null or album.image.isEmpty()}"
+                            src="/images/image-unavailable.svg"
+                            th:alt="${album.name}"
+                    >
+
+                </div>
+
+
+                <!-- ALBUM NAME -->
 
                 <h2 th:text="${album.name}">
                     Album Name
                 </h2>
 
 
+                <!-- ARTIST -->
+
                 <p th:text="${album.artist}">
                     Artist Name
                 </p>
 
+
+                <!-- VIEW ALBUM -->
 
                 <a
                         th:href="@{/album/from-artist(
@@ -126,6 +198,8 @@
 
         </div>
 
+
+        <!-- NO RESULTS -->
 
         <div
                 class="empty-state"
@@ -146,13 +220,21 @@
 
         </div>
 
+
     </main>
 
 
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- FOOTER -->
+
+    <footer
+            th:replace="~{fragments/footer :: footer}"
+    >
+    </footer>
+
 
 </div>
 
 </body>
 
 </html>
+
