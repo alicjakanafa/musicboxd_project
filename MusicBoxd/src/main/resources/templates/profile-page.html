@@ -247,9 +247,11 @@
           Recent Reviews
         </h2>
 
-        <a href="#">
+      <a
+          th:href="@{/users/{userId}/reviews(userId=${user.id})}"
+      >
           See all →
-        </a>
+      </a>
 
       </div>
 
