@@ -19,4 +19,6 @@ public interface ReviewRepository
             Long userId,
             Long albumId
     );
+
+    List<Review> findAllByOrderByCreatedAtDesc();
 }

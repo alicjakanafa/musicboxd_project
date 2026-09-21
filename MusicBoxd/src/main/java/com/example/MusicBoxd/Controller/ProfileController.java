@@ -2,19 +2,22 @@ package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Album;
 import com.example.MusicBoxd.Model.Artist;
+import com.example.MusicBoxd.Model.Friend;
 import com.example.MusicBoxd.Model.Review;
 import com.example.MusicBoxd.Model.User;
 import com.example.MusicBoxd.Model.UserFavouriteAlbum;
+
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
+import com.example.MusicBoxd.Repository.FriendRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
 import com.example.MusicBoxd.Repository.UserFavouriteAlbumRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
+
 import com.example.MusicBoxd.api.lastfm.LastFmAlbum;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
 import com.example.MusicBoxd.api.spotify.SpotifyTopArtistsResponse;
-import com.example.MusicBoxd.Model.Friend;
-import com.example.MusicBoxd.Repository.FriendRepository;
+import com.example.MusicBoxd.api.spotify.SpotifyTopTracksResponse;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -63,15 +66,30 @@ public class ProfileController {
             @PathVariable Long id,
             Model model,
             HttpSession session,
+
             @RequestParam(
                     name = "artistRange",
                     defaultValue = "medium_term"
             )
-            String artistRange
+            String artistRange,
+
+            @RequestParam(
+                    name = "topType",
+                    defaultValue = "artists"
+            )
+            String topType
     ) {
 
+        /*
+         * =========================
+         * FIND USER
+         * =========================
+         */
+
         User user =
-                userRepository.findById(id).orElse(null);
+                userRepository
+                        .findById(id)
+                        .orElse(null);
 
         if (user == null) {
 
@@ -91,6 +109,11 @@ public class ProfileController {
         );
 
 
+        /*
+         * =========================
+         * REVIEWS
+         * =========================
+         */
 
         List<Review> reviews =
                 reviewRepository
@@ -111,9 +134,12 @@ public class ProfileController {
         for (Review review : reviews) {
 
             System.out.println(
-                    "REVIEW ID: " + review.getId() +
-                            " USER ID: " + review.getUserId() +
-                            " ALBUM ID: " + review.getAlbumId()
+                    "REVIEW ID: " +
+                            review.getId() +
+                            " USER ID: " +
+                            review.getUserId() +
+                            " ALBUM ID: " +
+                            review.getAlbumId()
             );
 
 
@@ -171,8 +197,6 @@ public class ProfileController {
                 );
             }
         }
-
-
 
         List<UserFavouriteAlbum> favouriteRecords =
                 favouriteAlbumRepository
@@ -244,43 +268,6 @@ public class ProfileController {
         );
 
 
-        String spotifyAccessToken =
-                (String) session.getAttribute(
-                        "spotifyAccessToken"
-                );
-
-
-        model.addAttribute(
-                "spotifyConnected",
-                false
-        );
-
-        model.addAttribute(
-                "recentTracksCount",
-                0
-        );
-
-        model.addAttribute(
-                "uniqueTracksCount",
-                0
-        );
-
-        model.addAttribute(
-                "uniqueArtistsCount",
-                0
-        );
-
-        model.addAttribute(
-                "listeningMinutes",
-                0
-        );
-
-        model.addAttribute(
-                "topArtists",
-                null
-        );
-
-
 
         if (
                 !artistRange.equals("short_term")
@@ -292,11 +279,75 @@ public class ProfileController {
         }
 
 
+        if (
+                !topType.equals("artists")
+                        && !topType.equals("tracks")
+        ) {
+
+            topType = "artists";
+        }
+
+
+
+        String spotifyAccessToken =
+                (String) session.getAttribute(
+                        "spotifyAccessToken"
+                );
+
+
+        model.addAttribute(
+                "spotifyConnected",
+                false
+        );
+
+
+        model.addAttribute(
+                "recentTracksCount",
+                0
+        );
+
+
+        model.addAttribute(
+                "uniqueTracksCount",
+                0
+        );
+
+
+        model.addAttribute(
+                "uniqueArtistsCount",
+                0
+        );
+
+
+        model.addAttribute(
+                "listeningMinutes",
+                0
+        );
+
+
+        model.addAttribute(
+                "topArtists",
+                null
+        );
+
+
+        model.addAttribute(
+                "topTracks",
+                null
+        );
+
+
+
         model.addAttribute(
                 "artistRange",
                 artistRange
         );
 
+
+        model.addAttribute(
+                "topType",
+                topType
+        );
 
 
         if (
@@ -307,39 +358,100 @@ public class ProfileController {
             try {
 
                 System.out.println(
-                        "SPOTIFY CONNECTED - LOADING PROFILE DATA"
+                        "SPOTIFY CONNECTED - " +
+                                "LOADING PROFILE DATA"
                 );
 
 
+                /*
+                 * Load the existing Spotify
+                 * profile information.
+                 */
 
                 spotifyController.getSpotifyData(
                         spotifyAccessToken,
-                        model
+                        model,
+                        artistRange
                 );
 
 
 
-                SpotifyTopArtistsResponse topArtistsResponse =
-                        spotifyController.getTopArtists(
-                                spotifyAccessToken,
-                                artistRange
-                        );
-
-
                 if (
-                        topArtistsResponse != null &&
-                                topArtistsResponse.getItems() != null
+                        topType.equals("artists")
                 ) {
 
-                    model.addAttribute(
-                            "topArtists",
-                            topArtistsResponse.getItems()
+                    System.out.println(
+                            "LOADING TOP ARTISTS - " +
+                                    artistRange
                     );
+
+
+                    SpotifyTopArtistsResponse
+                            topArtistsResponse =
+                            spotifyController
+                                    .getTopArtists(
+                                            spotifyAccessToken,
+                                            artistRange
+                                    );
+
+
+                    if (
+                            topArtistsResponse != null &&
+                                    topArtistsResponse
+                                            .getItems() != null
+                    ) {
+
+                        model.addAttribute(
+                                "topArtists",
+                                topArtistsResponse
+                                        .getItems()
+                        );
+                    }
+
                 }
 
 
                 /*
-                 * Tell Thymeleaf Spotify is connected.
+                 * =========================
+                 * TOP TRACKS
+                 * =========================
+                 */
+
+                else {
+
+                    System.out.println(
+                            "LOADING TOP TRACKS - " +
+                                    artistRange
+                    );
+
+
+                    SpotifyTopTracksResponse
+                            topTracksResponse =
+                            spotifyController
+                                    .getTopTracks(
+                                            spotifyAccessToken,
+                                            artistRange
+                                    );
+
+
+                    if (
+                            topTracksResponse != null &&
+                                    topTracksResponse
+                                            .getItems() != null
+                    ) {
+
+                        model.addAttribute(
+                                "topTracks",
+                                topTracksResponse
+                                        .getItems()
+                        );
+                    }
+
+                }
+
+
+                /*
+                 * Spotify is connected.
                  */
 
                 model.addAttribute(
@@ -352,8 +464,15 @@ public class ProfileController {
                         "SPOTIFY PROFILE DATA LOADED"
                 );
 
+
                 System.out.println(
-                        "TOP ARTIST RANGE: " +
+                        "TOP TYPE: " +
+                                topType
+                );
+
+
+                System.out.println(
+                        "TOP RANGE: " +
                                 artistRange
                 );
 
@@ -382,6 +501,12 @@ public class ProfileController {
         }
 
 
+        /*
+         * =========================
+         * FOLLOWING
+         * =========================
+         */
+
         List<Friend> acceptedFriendships =
                 friendRepository
                         .findByRequesterIdAndStatusOrReceiverIdAndStatus(
@@ -396,30 +521,37 @@ public class ProfileController {
                 new ArrayList<>();
 
 
-        for (Friend friendship : acceptedFriendships) {
+        for (
+                Friend friendship :
+                acceptedFriendships
+        ) {
 
             Long friendId;
 
 
-
             if (
-                    friendship.getRequesterId().equals(id)
+                    friendship
+                            .getRequesterId()
+                            .equals(id)
             ) {
 
                 friendId =
-                        friendship.getReceiverId();
+                        friendship
+                                .getReceiverId();
 
             } else {
 
-
                 friendId =
-                        friendship.getRequesterId();
+                        friendship
+                                .getRequesterId();
             }
 
 
             userRepository
                     .findById(friendId)
-                    .ifPresent(followingUsers::add);
+                    .ifPresent(
+                            followingUsers::add
+                    );
         }
 
 
@@ -435,16 +567,23 @@ public class ProfileController {
         );
 
 
+        /*
+         * =========================
+         * DEBUG INFORMATION
+         * =========================
+         */
 
         System.out.println(
                 "PROFILE REVIEWS SENT TO THYMELEAF: " +
                         reviews.size()
         );
 
+
         System.out.println(
                 "PROFILE ARTWORK FOUND: " +
                         artwork.size()
         );
+
 
         System.out.println(
                 "PROFILE TOP 4: " +
@@ -455,17 +594,34 @@ public class ProfileController {
         return "profile-page";
     }
 
-        @GetMapping("/placeholder-list-form")
-        public String placeholderListForm() {
-            return "placeholder-list-form";
-        }
+
+    /*
+     * =========================
+     * PLACEHOLDER LIST FORM
+     * =========================
+     */
+
+    @GetMapping("/placeholder-list-form")
+    public String placeholderListForm() {
+
+        return "placeholder-list-form";
+    }
 
 
+    /*
+     * =========================
+     * GET ALBUM ARTWORK
+     * =========================
+     */
 
     private String getArtwork(
             Album album
     ) {
 
+        /*
+         * First use artwork already stored
+         * in the database.
+         */
 
         if (
                 album.getArtworkUrl() != null &&
@@ -481,6 +637,11 @@ public class ProfileController {
         }
 
 
+        /*
+         * If there is no artist ID,
+         * we cannot ask Last.fm.
+         */
+
         if (
                 album.getArtistId() == null
         ) {
@@ -494,6 +655,9 @@ public class ProfileController {
         }
 
 
+        /*
+         * Find the artist.
+         */
 
         Artist artist =
                 artistRepository
@@ -514,6 +678,9 @@ public class ProfileController {
         }
 
 
+        /*
+         * Ask Last.fm for artwork.
+         */
 
         try {
 
@@ -598,9 +765,16 @@ public class ProfileController {
                     );
 
 
+                    /*
+                     * Save the artwork to the
+                     * database so we don't need
+                     * to call Last.fm again.
+                     */
+
                     album.setArtworkUrl(
                             imageUrl
                     );
+
 
                     albumRepository.save(
                             album
@@ -624,4 +798,5 @@ public class ProfileController {
 
         return null;
     }
+
 }
