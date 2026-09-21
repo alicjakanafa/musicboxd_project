@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+    <rect width="600" height="600" fill="#101821"></rect>
+
+    <circle cx="300" cy="270" r="105" fill="#192532" stroke="#30475d" stroke-width="4"></circle>
+
+    <text x="300" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="100" fill="#78b7e8">♪</text>
+
+    <text x="300" y="445" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#8b96a3">IMAGE UNAVAILABLE</text>
+</svg>

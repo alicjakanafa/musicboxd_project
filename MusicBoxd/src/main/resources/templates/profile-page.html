@@ -52,11 +52,6 @@
 
 <body>
 
-<a href="/placeholder-list-form">
-  <button>Make a list</button>
-</a>
-
-<h2 th:text="${user.username}">Username</h2>
 
 <!-- =========================
      NAVBAR
@@ -81,14 +76,14 @@
 
       <img
               th:if="${user.profilePictureUrl != null
-                            and !user.profilePictureUrl.isEmpty()}"
+                      and !user.profilePictureUrl.isEmpty()}"
               th:src="${user.profilePictureUrl}"
               alt="Profile picture"
       >
 
       <span
               th:unless="${user.profilePictureUrl != null
-                                and !user.profilePictureUrl.isEmpty()}"
+                          and !user.profilePictureUrl.isEmpty()}"
               class="profile-initial"
               th:text="${user.username != null
                         and !user.username.isEmpty()
@@ -97,13 +92,15 @@
                           )
                         : '?'}"
       >
-                M
-            </span>
+        M
+      </span>
 
     </div>
 
 
-    <!-- USER INFORMATION -->
+    <!-- =========================
+         USER INFORMATION
+         ========================= -->
 
     <div class="profile-info">
 
@@ -122,6 +119,9 @@
         music listener, overthinker, and album collector
       </p>
 
+      <!-- =========================
+      JOINED
+      ========================= -->
 
       <p class="profile-joined">
 
@@ -134,25 +134,154 @@
                             'MMMM yyyy'
                         )}"
         >
-                    March 2025
-                </span>
+          March 2025
+        </span>
 
       </p>
 
     </div>
 
+      <!-- =========================
+           CURRENTLY LISTENING
+           ========================= -->
 
-    <!-- EDIT PROFILE -->
+      <div
+              id="currently-playing"
+              class="currently-playing"
+              th:if="${currentlyPlaying != null
+                      and currentlyPlaying.item != null}"
+      >
 
-    <button
-            type="button"
-            class="edit-profile-button"
-    >
-      Edit Profile
-    </button>
+        <div class="currently-playing-label">
+
+          <span class="spotify-playing-dot"></span>
+
+          Currently listening
+
+        </div>
 
 
-    <!-- PROFILE STATS -->
+        <div class="currently-playing-content">
+
+
+          <!-- ALBUM ART -->
+
+          <img
+                  th:if="${currentlyPlaying.item.album != null
+                          and currentlyPlaying.item.album.images != null
+                          and !currentlyPlaying.item.album.images.isEmpty()}"
+                  th:src="${currentlyPlaying.item.album.images.get(0).url}"
+                  th:alt="${currentlyPlaying.item.album.name}"
+                  class="currently-playing-art"
+          >
+
+
+          <!-- SONG INFORMATION -->
+
+          <div class="currently-playing-info">
+
+            <strong
+                    th:text="${currentlyPlaying.item.name}"
+            >
+              Song title
+            </strong>
+
+
+            <span
+                    th:if="${currentlyPlaying.item.artists != null
+                            and !currentlyPlaying.item.artists.isEmpty()}"
+                    th:text="${currentlyPlaying.item.artists.get(0).name}"
+            >
+              Artist name
+            </span>
+
+
+            <!-- PROGRESS -->
+
+            <div
+                    class="currently-playing-progress"
+                    th:if="${currentlyPlaying.progressMs != null
+                and currentlyPlaying.item.durationMs != null
+                and currentlyPlaying.item.durationMs > 0}"
+            >
+
+              <div
+                      class="currently-playing-progress-bar"
+                      th:style="${'width: ' +
+                       (currentlyPlaying.progressMs * 100.0 /
+                        currentlyPlaying.item.durationMs) +
+                       '%'}"
+              >
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           SPOTIFY CONNECTED
+           BUT NOT PLAYING
+           ========================= -->
+
+      <div
+              id="not-currently-playing"
+              class="currently-playing-not-active"
+              th:if="${currentlyPlaying == null
+                      and spotifyConnected == true}"
+      >
+
+        <span class="spotify-dot"></span>
+
+        Not currently listening
+
+      </div>
+
+
+
+    <!-- PROFILE ACTIONS -->
+
+    <div class="profile-action-buttons">
+
+      <!-- EDIT PROFILE -->
+
+      <a
+              th:href="@{/profile/edit}"
+              class="edit-profile-button"
+      >
+        Edit Profile
+      </a>
+
+
+      <!-- CONNECT SPOTIFY -->
+
+      <a
+              th:if="${spotifyConnected == null or !spotifyConnected}"
+              href="/spotify/login"
+              class="connect-spotify-button"
+      >
+        Connect Spotify
+      </a>
+
+
+      <!-- ALREADY CONNECTED -->
+
+      <a
+              th:if="${spotifyConnected == true}"
+              href="/spotify/login"
+              class="connect-spotify-button spotify-connected-button"
+      >
+        ✓ Spotify Connected
+      </a>
+
+    </div>
+    <!-- =========================
+         PROFILE STATS
+         ========================= -->
 
     <div class="profile-stats">
 
@@ -163,15 +292,15 @@
 
         <strong
                 th:text="${reviews != null
-                            ? reviews.size()
-                            : 0}"
+                          ? reviews.size()
+                          : 0}"
         >
           0
         </strong>
 
         <span>
-                    Reviews
-                </span>
+          Reviews
+        </span>
 
       </div>
 
@@ -185,23 +314,8 @@
         </strong>
 
         <span>
-                    Lists
-                </span>
-
-      </div>
-
-
-      <!-- FOLLOWING -->
-
-      <div class="profile-stat">
-
-        <strong>
-          89
-        </strong>
-
-        <span>
-                    Following
-                </span>
+          Lists
+        </span>
 
       </div>
 
@@ -210,15 +324,56 @@
 
       <div class="profile-stat">
 
-        <strong>
-          56
+        <strong
+                th:text="${followerCount != null ? followerCount : 0}"
+        >
+          0
         </strong>
 
         <span>
-                    Followers
-                </span>
+        Followers
+    </span>
 
       </div>
+
+
+      <!-- FOLLOWING -->
+
+      <div class="profile-stat">
+
+        <strong
+                th:text="${followingCount != null ? followingCount : 0}"
+        >
+          0
+        </strong>
+
+        <span>
+        Following
+    </span>
+
+      </div>
+
+
+      <!-- FAVOURITE ARTISTS -->
+
+      <a
+              class="profile-stat"
+              th:href="@{/profile/{id}/favourite-artists(id=${user.id})}"
+      >
+
+        <strong
+                th:text="${favouriteArtistCount != null
+                      ? favouriteArtistCount
+                      : 0}"
+        >
+          0
+        </strong>
+
+        <span>
+        Favourite Artists
+    </span>
+
+      </a>
 
     </div>
 
@@ -239,17 +394,17 @@
 
     <section class="profile-panel user-reviews">
 
-      <!-- SECTION HEADER -->
-
       <div class="panel-heading">
 
         <h2>
           Recent Reviews
         </h2>
 
-        <a href="#">
+      <a
+          th:href="@{/users/{userId}/reviews(userId=${user.id})}"
+      >
           See all →
-        </a>
+      </a>
 
       </div>
 
@@ -285,23 +440,19 @@
 
             <div class="review-artwork">
 
-              <!-- LAST.FM IMAGE -->
-
               <img
                       th:if="${lastFmArtwork != null
-                                        and lastFmArtwork[review.albumId] != null}"
+                              and lastFmArtwork[review.albumId] != null}"
                       th:src="${lastFmArtwork[review.albumId]}"
                       th:alt="${album != null
-                                        ? album.title
-                                        : 'Album artwork'}"
+                              ? album.title
+                              : 'Album artwork'}"
               >
-
-              <!-- FALLBACK -->
 
               <div
                       class="album-placeholder"
                       th:unless="${lastFmArtwork != null
-                                        and lastFmArtwork[review.albumId] != null}"
+                                  and lastFmArtwork[review.albumId] != null}"
               >
               </div>
 
@@ -312,8 +463,8 @@
 
             <h3
                     th:text="${album != null
-                                    ? album.title
-                                    : 'Album unavailable'}"
+                              ? album.title
+                              : 'Album unavailable'}"
             >
               Album title
             </h3>
@@ -324,7 +475,7 @@
             <p
                     class="review-subtitle"
                     th:if="${review.header != null
-                                    and !review.header.isEmpty()}"
+                            and !review.header.isEmpty()}"
                     th:text="${review.header}"
             >
               Review title
@@ -336,7 +487,7 @@
             <p
                     class="review-text"
                     th:if="${review.content != null
-                                    and !review.content.isEmpty()}"
+                            and !review.content.isEmpty()}"
                     th:text="${review.content}"
             >
               Review content
@@ -352,8 +503,8 @@
               <span
                       th:text="${review.rating}"
               >
-                        4.5
-                    </span>
+                4.5
+              </span>
 
               / 5
 
@@ -365,12 +516,13 @@
             <small
                     th:if="${review.createdAt != null}"
                     th:text="${#temporals.format(
-                                    review.createdAt,
-                                    'dd MMM yyyy'
-                                )}"
+                                review.createdAt,
+                                'dd MMM yyyy'
+                            )}"
             >
               16 Sep 2026
             </small>
+
 
             <!-- REMOVE REVIEW -->
 
@@ -408,66 +560,125 @@
       <div class="panel-heading">
 
         <h2>
-          Top Artists
+          Top Music
         </h2>
 
-        <form
-                method="get"
-                th:action="@{/profile/{id}(id=${user.id})}"
-                class="artist-range-form"
-        >
+        <div class="top-music-controls">
 
-          <select
-                  name="artistRange"
-                  onchange="this.form.submit()"
-                  class="artist-range-select"
+          <!-- ARTISTS / TRACKS -->
+
+          <form
+                  method="get"
+                  th:action="@{/profile/{id}(id=${user.id})}"
+                  class="top-type-form"
           >
 
-            <option
-                    value="short_term"
-                    th:selected="${artistRange == 'short_term'}"
+            <input
+                    type="hidden"
+                    name="artistRange"
+                    th:value="${artistRange}"
             >
-              Last 4 weeks
-            </option>
 
-            <option
-                    value="medium_term"
-                    th:selected="${artistRange == 'medium_term'}"
+            <select
+                    name="topType"
+                    onchange="this.form.submit()"
+                    class="artist-range-select"
             >
-              Last 6 months
-            </option>
 
-            <option
-                    value="long_term"
-                    th:selected="${artistRange == 'long_term'}"
+              <option
+                      value="artists"
+                      th:selected="${topType == 'artists'}"
+              >
+                Top Artists
+              </option>
+
+              <option
+                      value="tracks"
+                      th:selected="${topType == 'tracks'}"
+              >
+                Top Tracks
+              </option>
+
+            </select>
+
+          </form>
+
+
+          <!-- TIME RANGE -->
+
+          <form
+                  method="get"
+                  th:action="@{/profile/{id}(id=${user.id})}"
+                  class="artist-range-form"
+          >
+
+            <input
+                    type="hidden"
+                    name="topType"
+                    th:value="${topType}"
             >
-              The past year
-            </option>
 
-          </select>
+            <select
+                    name="artistRange"
+                    onchange="this.form.submit()"
+                    class="artist-range-select"
+            >
 
-        </form>
+              <option
+                      value="short_term"
+                      th:selected="${artistRange == 'short_term'}"
+              >
+                Last 4 weeks
+              </option>
+
+              <option
+                      value="medium_term"
+                      th:selected="${artistRange == 'medium_term'}"
+              >
+                Last 6 months
+              </option>
+
+              <option
+                      value="long_term"
+                      th:selected="${artistRange == 'long_term'}"
+              >
+                The past year
+              </option>
+
+            </select>
+
+          </form>
+
+        </div>
 
       </div>
 
 
-      <!-- NO SPOTIFY DATA -->
+      <!-- =========================
+           NOT CONNECTED
+           ========================= -->
 
       <div
               class="empty-state"
-              th:if="${topArtists == null or topArtists.isEmpty()}"
+              th:if="${spotifyConnected == null
+                    or !spotifyConnected}"
       >
 
-        Connect Spotify to see your top artists.
+        Connect Spotify to see your top music.
 
       </div>
 
 
-      <!-- ARTISTS -->
+      <!-- =========================
+           TOP ARTISTS
+           ========================= -->
 
       <div
               class="artist-list"
-              th:unless="${topArtists == null or topArtists.isEmpty()}"
+              th:if="${spotifyConnected == true
+                    and topType == 'artists'
+                    and topArtists != null
+                    and !topArtists.isEmpty()}"
       >
 
         <div
@@ -488,7 +699,7 @@
 
           <img
                   th:if="${artist.images != null
-                                      and !artist.images.isEmpty()}"
+                            and !artist.images.isEmpty()}"
                   th:src="${artist.images.get(0).url}"
                   th:alt="${artist.name}"
                   class="artist-image"
@@ -499,7 +710,7 @@
 
           <div
                   th:unless="${artist.images != null
-                                           and !artist.images.isEmpty()}"
+                                and !artist.images.isEmpty()}"
                   class="artist-image-placeholder"
           >
           </div>
@@ -517,13 +728,125 @@
 
       </div>
 
+
+      <!-- =========================
+           TOP TRACKS
+           ========================= -->
+
+      <div
+              class="artist-list top-track-list"
+              th:if="${spotifyConnected == true
+                    and topType == 'tracks'
+                    and topTracks != null
+                    and !topTracks.isEmpty()}"
+      >
+
+        <div
+                class="artist-row top-track-row"
+                th:each="track, stat : ${topTracks}"
+        >
+
+          <!-- RANK -->
+
+          <strong
+                  th:text="${stat.count}"
+          >
+            1
+          </strong>
+
+
+          <!-- TRACK ARTWORK -->
+
+          <img
+                  th:if="${track.album != null
+                            and track.album.images != null
+                            and !track.album.images.isEmpty()}"
+                  th:src="${track.album.images.get(0).url}"
+                  th:alt="${track.album.name}"
+                  class="artist-image"
+          >
+
+
+          <!-- IMAGE FALLBACK -->
+
+          <div
+                  th:unless="${track.album != null
+                                and track.album.images != null
+                                and !track.album.images.isEmpty()}"
+                  class="artist-image-placeholder"
+          >
+          </div>
+
+
+          <!-- TRACK INFORMATION -->
+
+          <div class="top-track-info">
+
+                <span
+                        class="top-track-name"
+                        th:text="${track.name}"
+                >
+                    Track name
+                </span>
+
+
+            <span
+                    class="top-track-artist"
+                    th:if="${track.artists != null
+                                and !track.artists.isEmpty()}"
+                    th:text="${track.artists.get(0).name}"
+            >
+                    Artist name
+                </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           NO ARTIST DATA
+           ========================= -->
+
+      <div
+              class="empty-state"
+              th:if="${spotifyConnected == true
+                    and topType == 'artists'
+                    and (topArtists == null
+                         or topArtists.isEmpty())}"
+      >
+
+        No top artist data available yet.
+
+      </div>
+
+
+      <!-- =========================
+           NO TRACK DATA
+           ========================= -->
+
+      <div
+              class="empty-state"
+              th:if="${spotifyConnected == true
+                    and topType == 'tracks'
+                    and (topTracks == null
+                         or topTracks.isEmpty())}"
+      >
+
+        No top track data available yet.
+
+      </div>
+
     </section>
+
+
     <!-- =========================
          TOP 4
          ========================= -->
 
     <section class="profile-panel favourite-albums">
-
 
       <div class="panel-heading">
 
@@ -539,7 +862,7 @@
       <div
               class="empty-state"
               th:if="${favouriteAlbums == null
-                            or favouriteAlbums.isEmpty()}"
+                      or favouriteAlbums.isEmpty()}"
       >
 
         <p>
@@ -554,15 +877,13 @@
       <div
               class="album-grid"
               th:unless="${favouriteAlbums == null
-                                or favouriteAlbums.isEmpty()}"
+                          or favouriteAlbums.isEmpty()}"
       >
-
 
         <article
                 class="album-card"
                 th:each="album : ${favouriteAlbums}"
         >
-
 
           <!-- ALBUM LINK -->
 
@@ -571,14 +892,11 @@
                   class="album-link"
           >
 
-
-            <!-- =========================
-                 LAST.FM ARTWORK
-                 ========================= -->
+            <!-- LAST.FM ARTWORK -->
 
             <img
                     th:if="${lastFmArtwork != null
-                                        and lastFmArtwork[album.id] != null}"
+                            and lastFmArtwork[album.id] != null}"
                     th:src="${lastFmArtwork[album.id]}"
                     th:alt="${album.title}"
                     class="album-artwork"
@@ -590,7 +908,7 @@
             <div
                     class="album-placeholder"
                     th:unless="${lastFmArtwork != null
-                                             and lastFmArtwork[album.id] != null}"
+                                and lastFmArtwork[album.id] != null}"
             >
             </div>
 
@@ -600,7 +918,6 @@
           <!-- ALBUM INFORMATION -->
 
           <div class="album-card-info">
-
 
             <h3
                     th:text="${album.title}"
@@ -641,7 +958,6 @@
 
     <section class="profile-panel listening-statistics">
 
-
       <div class="panel-heading">
 
         <h2>
@@ -649,8 +965,8 @@
         </h2>
 
         <span>
-                    Spotify
-                </span>
+          Spotify
+        </span>
 
       </div>
 
@@ -660,7 +976,7 @@
       <div
               class="empty-state"
               th:if="${spotifyConnected == null
-                            or !spotifyConnected}"
+                      or !spotifyConnected}"
       >
 
         Connect Spotify to see your listening statistics.
@@ -675,22 +991,21 @@
               th:if="${spotifyConnected == true}"
       >
 
-
         <!-- RECENT TRACKS -->
 
         <div class="listening-stat">
 
           <strong
                   th:text="${recentTracksCount != null
-                                ? recentTracksCount
-                                : 0}"
+                            ? recentTracksCount
+                            : 0}"
           >
             0
           </strong>
 
           <span>
-                        Recent Tracks
-                    </span>
+            Recent Tracks
+          </span>
 
         </div>
 
@@ -701,15 +1016,15 @@
 
           <strong
                   th:text="${uniqueArtistsCount != null
-                                ? uniqueArtistsCount
-                                : 0}"
+                            ? uniqueArtistsCount
+                            : 0}"
           >
             0
           </strong>
 
           <span>
-                        Unique Artists
-                    </span>
+            Unique Artists
+          </span>
 
         </div>
 
@@ -720,15 +1035,15 @@
 
           <strong
                   th:text="${uniqueTracksCount != null
-                                ? uniqueTracksCount
-                                : 0}"
+                            ? uniqueTracksCount
+                            : 0}"
           >
             0
           </strong>
 
           <span>
-                        Unique Tracks
-                    </span>
+            Unique Tracks
+          </span>
 
         </div>
 
@@ -739,15 +1054,15 @@
 
           <strong
                   th:text="${listeningMinutes != null
-                                ? listeningMinutes
-                                : 0}"
+                            ? listeningMinutes
+                            : 0}"
           >
             0
           </strong>
 
           <span>
-                        Minutes Listened
-                    </span>
+            Minutes Listened
+          </span>
 
         </div>
 
@@ -762,7 +1077,6 @@
          ========================= -->
 
     <section class="profile-panel my-lists">
-
 
       <div class="panel-heading">
 
@@ -779,9 +1093,6 @@
 
       <div class="lists-grid">
 
-
-        <!-- CURRENT FAVOURITES -->
-
         <article class="list-card">
 
           <div class="list-placeholder"></div>
@@ -796,8 +1107,6 @@
 
         </article>
 
-
-        <!-- ROAD TRIP -->
 
         <article class="list-card">
 
@@ -814,8 +1123,6 @@
         </article>
 
 
-        <!-- SAD GIRL HOURS -->
-
         <article class="list-card">
 
           <div class="list-placeholder"></div>
@@ -831,8 +1138,6 @@
         </article>
 
 
-        <!-- WORKOUT -->
-
         <article class="list-card">
 
           <div class="list-placeholder"></div>
@@ -847,7 +1152,6 @@
 
         </article>
 
-
       </div>
 
     </section>
@@ -860,114 +1164,129 @@
 
     <section class="profile-panel following">
 
-
       <div class="panel-heading">
 
         <h2>
           Following
         </h2>
 
-        <a href="#">
-          See all →
-        </a>
+        <a th:href="@{/friends}">View All</a>
 
       </div>
 
 
-      <div class="following-list">
+      <!-- =========================
+           NO FOLLOWING
+           ========================= -->
+
+      <div
+              class="empty-state"
+              th:if="${followingUsers == null
+                    or followingUsers.isEmpty()}"
+      >
+
+        <p>
+          You're not following anyone yet.
+        </p>
+
+      </div>
 
 
-        <!-- USER 1 -->
+      <!-- =========================
+           FOLLOWING LIST
+           ========================= -->
 
-        <div class="following-row">
+      <div
+              class="following-list"
+              th:unless="${followingUsers == null
+                        or followingUsers.isEmpty()}"
+      >
 
-          <div class="following-avatar">
-            A
-          </div>
+        <div
+                class="following-row"
+                th:each="followingUser : ${followingUsers}"
+        >
 
+          <!-- PROFILE AVATAR -->
+
+          <a
+                  th:href="@{/profile/{id}(id=${followingUser.id})}"
+                  class="following-avatar-link"
+          >
+
+            <!-- REAL PROFILE IMAGE -->
+
+            <img
+                    th:if="${followingUser.profilePictureUrl != null
+                                and !followingUser.profilePictureUrl.isEmpty()}"
+                    th:src="${followingUser.profilePictureUrl}"
+                    th:alt="${followingUser.username}"
+                    class="following-avatar-image"
+            >
+
+
+            <!-- INITIAL FALLBACK -->
+
+            <div
+                    th:unless="${followingUser.profilePictureUrl != null
+                                    and !followingUser.profilePictureUrl.isEmpty()}"
+                    class="following-avatar"
+                    th:text="${followingUser.username != null
+                                  and !followingUser.username.isEmpty()
+                                  ? #strings.toUpperCase(
+                                      #strings.substring(
+                                          followingUser.username,
+                                          0,
+                                          1
+                                      )
+                                    )
+                                  : '?'}"
+            >
+              A
+            </div>
+
+          </a>
+
+
+          <!-- USER INFORMATION -->
 
           <div class="following-info">
 
-            <strong>
-              albumfiend
-            </strong>
+            <a
+                    th:href="@{/profile/{id}(id=${followingUser.id})}"
+                    class="following-username"
+                    th:text="${followingUser.username}"
+            >
+              username
+            </a>
 
-            <span>
-                            120 reviews
-                        </span>
+
+            <span
+                    th:text="${followingUser.bio != null
+                                  and !followingUser.bio.isEmpty()
+                                  ? followingUser.bio
+                                  : 'MusicBoxd member'}"
+            >
+                    MusicBoxd member
+                </span>
 
           </div>
 
 
-          <button>
-            Follow
-          </button>
+          <!-- PROFILE BUTTON -->
+
+          <a
+                  th:href="@{/profile/{id}(id=${followingUser.id})}"
+                  class="following-profile-button"
+          >
+            View
+          </a>
 
         </div>
-
-
-        <!-- USER 2 -->
-
-        <div class="following-row">
-
-          <div class="following-avatar">
-            I
-          </div>
-
-
-          <div class="following-info">
-
-            <strong>
-              indiehead
-            </strong>
-
-            <span>
-                            music for a better day
-                        </span>
-
-          </div>
-
-
-          <button>
-            Follow
-          </button>
-
-        </div>
-
-
-        <!-- USER 3 -->
-
-        <div class="following-row">
-
-          <div class="following-avatar">
-            P
-          </div>
-
-
-          <div class="following-info">
-
-            <strong>
-              popgirlie
-            </strong>
-
-            <span>
-                            mostly pop, sometimes sad
-                        </span>
-
-          </div>
-
-
-          <button>
-            Follow
-          </button>
-
-        </div>
-
 
       </div>
 
     </section>
-
 
   </div>
 
@@ -980,151 +1299,166 @@
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
+
 <script>
 
-  document.addEventListener(
-          "DOMContentLoaded",
-          function () {
+  function updateCurrentlyPlaying() {
 
-            const scrollContainer =
-                    document.querySelector(
-                            ".review-scroll"
-                    );
+    fetch(
+            "/spotify/player/current"
+    )
 
-            const reviewGrid =
-                    document.querySelector(
-                            ".review-scroll .review-grid"
-                    );
-
-            if (
-                    !scrollContainer ||
-                    !reviewGrid
-            ) {
-              return;
-            }
-
-            const reviews =
-                    Array.from(
-                            reviewGrid.children
-                    );
-
-            if (reviews.length <= 1) {
-              return;
-            }
+            .then(
+                    function (response) {
 
 
+                      if (
+                              response.status === 401
+                      ) {
+                        return null;
+                      }
+
+                      if (
+                              response.status === 204
+                      ) {
+                        return null;
+                      }
 
 
-            reviews.forEach(
-                    function (review) {
-
-                      const clone =
-                              review.cloneNode(true);
-
-                      clone.setAttribute(
-                              "aria-hidden",
-                              "true"
-                      );
-
-                      reviewGrid.appendChild(
-                              clone
-                      );
-                    }
-            );
+                      if (!response.ok) {
+                        return null;
+                      }
 
 
-            let animationFrame;
-
-            let lastTime = performance.now();
-
-            const speed = 60;
-
-
-
-            let originalWidth =
-                    reviewGrid.scrollWidth / 2;
-
-
-            function scrollReviews(
-                    currentTime
-            ) {
-
-              const deltaTime =
-                      currentTime - lastTime;
-
-              lastTime = currentTime;
-
-
-
-
-              scrollContainer.scrollLeft +=
-                      speed * (deltaTime / 1000);
-
-
-
-              if (
-                      scrollContainer.scrollLeft >=
-                      originalWidth
-              ) {
-
-                scrollContainer.scrollLeft -=
-                        originalWidth;
-              }
-
-
-              animationFrame =
-                      requestAnimationFrame(
-                              scrollReviews
-                      );
-            }
-
-
-            animationFrame =
-                    requestAnimationFrame(
-                            scrollReviews
-                    );
-
-
-            window.addEventListener(
-                    "resize",
-                    function () {
-
-                      originalWidth =
-                              reviewGrid.scrollWidth / 2;
+                      return response.json();
 
                     }
-            );
+            )
+
+            .then(
+                    function (data) {
+
+                      if (
+                              !data ||
+                              !data.item
+                      ) {
+                        return;
+                      }
 
 
-            scrollContainer.addEventListener(
-                    "mouseenter",
-                    function () {
 
-                      cancelAnimationFrame(
-                              animationFrame
-                      );
-
-                    }
-            );
-
-
-            scrollContainer.addEventListener(
-                    "mouseleave",
-                    function () {
-
-                      lastTime =
-                              performance.now();
-
-                      animationFrame =
-                              requestAnimationFrame(
-                                      scrollReviews
+                      const container =
+                              document.getElementById(
+                                      "currently-playing"
                               );
 
+
+                      if (!container) {
+                        return;
+                      }
+
+
+                      const title =
+                              container.querySelector(
+                                      ".currently-playing-info strong"
+                              );
+
+
+                      if (title) {
+
+                        title.textContent =
+                                data.item.name;
+
+                      }
+
+
+                      const artist =
+                              container.querySelector(
+                                      ".currently-playing-info span"
+                              );
+
+
+                      if (
+                              artist &&
+                              data.item.artists &&
+                              data.item.artists.length > 0
+                      ) {
+
+                        artist.textContent =
+                                data.item.artists[0].name;
+
+                      }
+
+
+
+                      const artwork =
+                              container.querySelector(
+                                      ".currently-playing-art"
+                              );
+
+
+                      if (
+                              artwork &&
+                              data.item.album &&
+                              data.item.album.images &&
+                              data.item.album.images.length > 0
+                      ) {
+
+                        artwork.src =
+                                data.item.album.images[0].url;
+
+                        artwork.alt =
+                                data.item.album.name;
+
+                      }
+
+
+                      const progressBar =
+                              container.querySelector(
+                                      ".currently-playing-progress-bar"
+                              );
+
+
+                      if (
+                              progressBar &&
+                              data.progress_ms != null &&
+                              data.item.duration_ms != null &&
+                              data.item.duration_ms > 0
+                      ) {
+
+                        const progress =
+                                (
+                                        data.progress_ms * 100
+                                ) /
+                                data.item.duration_ms;
+
+
+                        progressBar.style.width =
+                                progress + "%";
+
+                      }
+
+                    }
+            )
+
+            .catch(
+                    function (error) {
+
+                      console.log(
+                              "Could not update Spotify player:",
+                              error
+                      );
+
                     }
             );
+  }
 
-          }
+
+  setInterval(
+          updateCurrentlyPlaying,
+          10000
   );
+
 
 </script>
 
