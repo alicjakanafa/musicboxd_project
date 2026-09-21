@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <title th:text="${list.title}">List</title>
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
-<body>
 
+<body>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 <main>
-  <h1 th:text="${list.title}">List title</h1>
-  <p th:text="${list.description}">List description</p>
+
+
+  <h1 th:text="${list.title}">
+    List title
+  </h1>
+
+  <p th:text="${list.description}">
+    List description
+  </p>
+
+
 
   <h2>In this list</h2>
 
@@ -17,46 +30,72 @@
   </div>
 
   <ul>
+
     <li th:each="item : ${items}"
         th:if="${item.albumId != null and albums[item.albumId] != null}">
 
-      <h3 th:text="${albums[item.albumId].title}" th:href>
-        Album title
-      </h3>
+      <a th:href="@{/lists/album/{id}(id=${item.albumId})}">
 
-      <img
-              th:if="${albums[item.albumId].artworkUrl != null}"
-              th:src="${albums[item.albumId].artworkUrl}"
-              th:alt="${albums[item.albumId].title}"
-              width="150"
-      >
+        <h3 th:text="${albums[item.albumId].title}">
+          Album title
+        </h3>
 
-      <p th:text="${albums[item.albumId].releaseYear}">
-        Release year
-      </p>
+        <img
+                th:if="${albums[item.albumId].artworkUrl != null}"
+                th:src="${albums[item.albumId].artworkUrl}"
+                th:alt="${albums[item.albumId].title}"
+                width="150"
+        >
 
+        <p th:text="${albums[item.albumId].releaseYear}">
+          Release year
+        </p>
+
+      </a>
 
     </li>
+
   </ul>
+
+
 
   <h3>Add an album</h3>
 
+  <input
+          type="text"
+          id="albumSearch"
+          placeholder="Search for an album..."
+  >
 
-  <input type="text" id="albumSearch" placeholder="Search for an album...">
   <div id="searchResults"></div>
 
+
+
   <p>
-    <a th:href="@{/lists}">Back to lists</a>
+    <a th:href="@{/lists}">
+      Back to lists
+    </a>
   </p>
+
 </main>
 
+
+
 <div th:fragment="searchResults">
+
   <ul>
+
     <li th:each="album : ${results}">
 
-    <span th:text="${album.collectionName + ' — ' + album.artistName}">
-        Album — Artist
-    </span>
+            <span th:text="${album.name}">
+                Album
+            </span>
+
+      <span> — </span>
+
+      <span th:text="${album.artist}">
+                Artist
+            </span>
 
       <form
               th:action="@{/lists/{id}/albums(id=${listId})}"
@@ -66,45 +105,46 @@
 
         <input
                 type="hidden"
-                name="albumId"
-                th:value="${album.collectionId}"
-        >
-
-        <input
-                type="hidden"
                 name="title"
-                th:value="${album.collectionName}"
+                th:value="${album.name}"
         >
 
         <input
                 type="hidden"
-                name="artworkUrl"
-                th:value="${album.highResolutionArtworkUrl}"
+                name="artist"
+                th:value="${album.artist}"
         >
 
-        <input
-                type="hidden"
-                name="releaseDate"
-                th:value="${album.releaseDate}"
-        >
-
-        <button type="submit">Add</button>
+        <button type="submit">
+          Add
+        </button>
 
       </form>
 
     </li>
-    <p th:if="${results == null or results.isEmpty()}">No results.</p>
+
+    <p th:if="${results == null or results.isEmpty()}">
+      No results.
+    </p>
+
   </ul>
+
 </div>
 
+
 <script th:inline="javascript">
+
   const listId = /*[[${list.id}]]*/ 0;
+
   const input = document.getElementById('albumSearch');
   const resultsBox = document.getElementById('searchResults');
+
   let debounceTimer;
 
   input.addEventListener('input', () => {
+
     clearTimeout(debounceTimer);
+
     const term = input.value.trim();
 
     if (term.length < 2) {
@@ -113,12 +153,24 @@
     }
 
     debounceTimer = setTimeout(() => {
-      fetch(`/lists/${listId}/search?q=${encodeURIComponent(term)}`)
+
+      fetch(
+              `/lists/${listId}/search?query=${encodeURIComponent(term)}`
+      )
               .then(res => res.text())
-              .then(html => { resultsBox.innerHTML = html; });
+              .then(html => {
+                resultsBox.innerHTML = html;
+              });
+
     }, 300);
+
   });
+
 </script>
 
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+
 </body>
+
 </html>
