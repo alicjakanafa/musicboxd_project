@@ -1,0 +1,114 @@
+<!doctype html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recent Reviews | MusicBoxd</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Audiowide&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/navbar.css}" />
+    <link rel="stylesheet" th:href="@{/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/css/user-reviews.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
+
+    <!-- A lot of this borrows from the layout for reviews in the profile page HTML -->
+
+    <main class="user-reviews-page">
+      <div class="user-reviews-container">
+        <h1>Recent Reviews</h1>
+
+        <div
+          class="reviews-empty-state"
+          th:if="${reviews == null or reviews.isEmpty()}"
+        >
+          <h2>No reviews yet</h2>
+
+          <p>Albums you review will appear here.</p>
+        </div>
+
+        <div
+          class="user-reviews-grid"
+          th:unless="${reviews == null or reviews.isEmpty()}"
+        >
+          <article
+            class="user-review-card"
+            th:each="review : ${reviews}"
+            th:with="album=${albums.get(review.albumId)}"
+          >
+            <a
+              class="user-review-artwork"
+              th:if="${album != null}"
+              th:href="@{/albums/{id}(id=${album.id})}"
+            >
+              <img
+                th:if="${album.artworkUrl != null
+                            and !album.artworkUrl.isEmpty()}"
+                th:src="${album.artworkUrl}"
+                th:alt="${album.title}"
+              />
+
+              <div
+                class="user-review-artwork-placeholder"
+                th:unless="${album.artworkUrl != null
+                               and !album.artworkUrl.isEmpty()}"
+              ></div>
+            </a>
+
+            <div class="user-review-content">
+              <h2
+                th:text="${album != null
+                        ? album.title
+                        : 'Album unavailable'}"
+              >
+                Album Title
+              </h2>
+
+              <div
+                class="user-review-rating"
+                th:text="|★ ${review.rating} / 5|"
+              >
+                ★ 4.5 / 5
+              </div>
+
+              <h3
+                th:if="${review.header != null
+                           and !review.header.isEmpty()}"
+                th:text="${review.header}"
+              >
+                Review Title
+              </h3>
+
+              <p class="user-review-description" th:text="${review.content}">
+                Review description
+              </p>
+
+              <time
+                class="user-review-date"
+                th:if="${review.createdAt != null}"
+                th:text="${#temporals.format(
+                        review.createdAt,
+                        'dd MMM yyyy'
+                    )}"
+              >
+                18 Sep 2026
+              </time>
+            </div>
+          </article>
+        </div>
+      </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+  </body>
+</html>
