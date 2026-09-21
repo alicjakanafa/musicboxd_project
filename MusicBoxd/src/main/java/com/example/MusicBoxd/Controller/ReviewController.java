@@ -2,13 +2,16 @@ package com.example.MusicBoxd.Controller;
 
 import com.example.MusicBoxd.Model.Album;
 import com.example.MusicBoxd.Model.Artist;
+import com.example.MusicBoxd.Model.Friend;
 import com.example.MusicBoxd.Model.Review;
 import com.example.MusicBoxd.Model.User;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
+import com.example.MusicBoxd.Repository.FriendRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
 import com.example.MusicBoxd.api.lastfm.LastFmService;
+import com.example.MusicBoxd.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -41,8 +44,13 @@ public class ReviewController {
     private UserRepository userRepository;
 
     @Autowired
-    private LastFmService lastFmService;
+    private FriendRepository friendRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private LastFmService lastFmService;
 
 
     @GetMapping("/users/{userId}/reviews")
@@ -51,9 +59,18 @@ public class ReviewController {
             Model model
     ) {
 
+        // i had to add a user repo thing here for it to actually list reviews on a user-by-user basis
+        User user =
+        userRepository
+                .findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found: " + userId
+                        )
+                );
+
         List<Review> reviews =
-                reviewRepository
-                        .findByUserIdOrderByCreatedAtDesc(userId);
+                reviewRepository.findByUserId(userId);
 
         Map<Long, Album> albums =
                 new HashMap<>();
@@ -63,23 +80,28 @@ public class ReviewController {
             Long albumId =
                     review.getAlbumId();
 
-            if (albumId == null) {
-                continue;
-            }
+            if (albumId != null) {
 
-            Album album =
-                    albumRepository
-                            .findById(albumId)
-                            .orElse(null);
+                Album album =
+                        albumRepository
+                                .findById(albumId)
+                                .orElse(null);
 
-            if (album != null) {
+                if (album != null) {
 
-                albums.put(
-                        albumId,
-                        album
-                );
+                    albums.put(
+                            albumId,
+                            album
+                    );
+                }
             }
         }
+
+        // also had to add a model attribute here for it to find the right user!!!
+        model.addAttribute(
+        "user",
+        user
+);
 
         model.addAttribute(
                 "reviews",
@@ -91,13 +113,10 @@ public class ReviewController {
                 albums
         );
 
-        return "profile-page";
+        // changed profile-page here to the new page i made :)
+        return "user-reviews";
     }
 
-
-    // =========================
-    // SHOW REVIEW PAGE
-    // =========================
 
     @GetMapping("/reviews/{id}")
     public String reviewAlbum(
@@ -119,9 +138,6 @@ public class ReviewController {
                 album
         );
 
-
-
-
         Artist artist = null;
 
         if (album.getArtistId() != null) {
@@ -139,39 +155,22 @@ public class ReviewController {
                 artist
         );
 
-
-
         if (artist != null) {
 
             try {
 
-                var lastFmAlbumResponse =
+                var lastFmAlbum =
                         lastFmService.getAlbumInfo(
                                 artist.getName(),
                                 album.getTitle()
                         );
 
-                if (lastFmAlbumResponse != null) {
-
-                    model.addAttribute(
-                            "lastFmAlbum",
-                            lastFmAlbumResponse.getAlbum()
-                    );
-
-                } else {
-
-                    model.addAttribute(
-                            "lastFmAlbum",
-                            null
-                    );
-                }
+                model.addAttribute(
+                        "lastFmAlbum",
+                        lastFmAlbum
+                );
 
             } catch (Exception e) {
-
-                System.out.println(
-                        "LAST.FM REVIEW PAGE ERROR: " +
-                                e.getMessage()
-                );
 
                 model.addAttribute(
                         "lastFmAlbum",
@@ -187,10 +186,8 @@ public class ReviewController {
             );
         }
 
-
         return "reviews";
     }
-
 
 
     @PostMapping("/reviews/{id}")
@@ -198,7 +195,6 @@ public class ReviewController {
             @PathVariable Long id,
             @RequestParam BigDecimal rating,
             @RequestParam String content,
-            @RequestParam(required = false) String header,
             Authentication authentication
     ) {
 
@@ -214,57 +210,60 @@ public class ReviewController {
 
 
 
-
         OidcUser principal =
                 (OidcUser) authentication.getPrincipal();
 
         String oktaUserId =
                 principal.getSubject();
 
-        System.out.println(
-                "AUTHENTICATED OKTA USER ID: " +
-                        oktaUserId
-        );
-
-
-
         User user =
                 userRepository
                         .findByOktaUserId(oktaUserId)
                         .orElseThrow(() ->
                                 new RuntimeException(
-                                        "User not found for Okta ID: " +
-                                                oktaUserId
+                                        "User not found for Okta ID: "
+                                                + oktaUserId
                                 )
                         );
 
 
-        System.out.println(
-                "REVIEW USER ID: " +
-                        user.getId()
-        );
-
-        System.out.println(
-                "REVIEW USERNAME: " +
-                        user.getUsername()
-        );
-
-        System.out.println(
-                "REVIEW ALBUM ID: " +
-                        album.getId()
-        );
-
 
         Review review =
-                new Review();
+                reviewRepository
+                        .findByUserIdAndAlbumId(
+                                user.getId(),
+                                album.getId()
+                        )
+                        .orElse(null);
 
-        review.setUserId(
-                user.getId()
-        );
 
-        review.setAlbumId(
-                album.getId()
-        );
+
+        boolean isNewReview =
+                review == null;
+
+
+        if (isNewReview) {
+
+            review =
+                    new Review();
+
+            review.setUserId(
+                    user.getId()
+            );
+
+            review.setAlbumId(
+                    album.getId()
+            );
+
+            review.setCreatedAt(
+                    LocalDateTime.now()
+            );
+        }
+
+
+        // -----------------------------------------------------
+        // Update review information
+        // -----------------------------------------------------
 
         review.setRating(
                 rating
@@ -274,15 +273,10 @@ public class ReviewController {
                 content
         );
 
-        review.setHeader(
-                header
-        );
 
-        review.setCreatedAt(
-                LocalDateTime.now()
-        );
-
-
+        // -----------------------------------------------------
+        // Save review
+        // -----------------------------------------------------
 
         Review savedReview =
                 reviewRepository.save(
@@ -290,87 +284,145 @@ public class ReviewController {
                 );
 
 
-        System.out.println(
-                "=============================="
-        );
+        // -----------------------------------------------------
+        // Notify friends only for NEW reviews
+        // -----------------------------------------------------
 
-        System.out.println(
-                "REVIEW SAVED SUCCESSFULLY"
-        );
+        if (isNewReview) {
 
-        System.out.println(
-                "Review ID: " +
-                        savedReview.getId()
-        );
+            List<Friend> friendships =
+                    friendRepository
+                            .findByStatus("ACCEPTED");
 
-        System.out.println(
-                "User ID: " +
-                        savedReview.getUserId()
-        );
+            for (
+                    Friend friendship :
+                    friendships
+            ) {
 
-        System.out.println(
-                "Album ID: " +
-                        savedReview.getAlbumId()
-        );
-
-        System.out.println(
-                "Rating: " +
-                        savedReview.getRating()
-        );
-
-        System.out.println(
-                "=============================="
-        );
+                Long friendId = null;
 
 
+                // Current user sent the friend request
+                if (
+                        user.getId().equals(
+                                friendship.getRequesterId()
+                        )
+                ) {
 
-        return "redirect:/albums/" + id;
+                    friendId =
+                            friendship.getReceiverId();
+                }
+
+
+                // Current user received the friend request
+                else if (
+                        user.getId().equals(
+                                friendship.getReceiverId()
+                        )
+                ) {
+
+                    friendId =
+                            friendship.getRequesterId();
+                }
+
+
+                if (friendId == null) {
+                    continue;
+                }
+
+
+                notificationService.notifyFriendReviewed(
+                        friendId,
+                        user.getId(),
+                        savedReview.getId(),
+                        user.getUsername()
+                );
+            }
+        }
+
+
+        // -----------------------------------------------------
+        // Return to profile
+        // -----------------------------------------------------
+
+        return "redirect:/profile/" + user.getId();
     }
+
+
+    // =========================================================
+    // DELETE REVIEW
+    // =========================================================
 
     @PostMapping("/reviews/{id}/delete")
     public String deleteReview(
             @PathVariable Long id,
             Authentication authentication
     ) {
+
+        // -----------------------------------------------------
+        // Get logged-in user
+        // -----------------------------------------------------
+
         OidcUser principal =
                 (OidcUser) authentication.getPrincipal();
 
         String oktaUserId =
                 principal.getSubject();
 
+
         User user =
                 userRepository
                         .findByOktaUserId(oktaUserId)
                         .orElseThrow(() ->
                                 new RuntimeException(
-                                        "User not found for Okta ID: " +
-                                                oktaUserId
+                                        "User not found for Okta ID: "
+                                                + oktaUserId
                                 )
                         );
+
+
+        // -----------------------------------------------------
+        // Find review
+        // -----------------------------------------------------
 
         Review review =
                 reviewRepository
                         .findById(id)
                         .orElseThrow(() ->
                                 new RuntimeException(
-                                        "Review not found: " + id
+                                        "Review not found"
                                 )
                         );
 
-        if (!review.getUserId().equals(user.getId())) {
+
+        // -----------------------------------------------------
+        // Make sure the user owns the review
+        // -----------------------------------------------------
+
+        if (
+                !user.getId().equals(
+                        review.getUserId()
+                )
+        ) {
+
             throw new RuntimeException(
                     "You cannot delete another user's review"
             );
         }
 
-        reviewRepository.delete(review);
 
-        System.out.println("==============================");
-        System.out.println("REVIEW DELETED");
-        System.out.println("Review ID: " + review.getId());
-        System.out.println("User ID: " + review.getUserId());
-        System.out.println("Album ID: " + review.getAlbumId());
-        System.out.println("==============================");
+        // -----------------------------------------------------
+        // Delete review
+        // -----------------------------------------------------
+
+        reviewRepository.delete(
+                review
+        );
+
+
+        // -----------------------------------------------------
+        // Return to profile
+        // -----------------------------------------------------
 
         return "redirect:/profile/" + user.getId();
     }

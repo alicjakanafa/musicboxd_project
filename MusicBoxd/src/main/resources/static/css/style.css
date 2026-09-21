@@ -171,6 +171,232 @@ body > main {
     transform: translateY(-2px);
 }
 
+.catchup-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.catchup-heading h2 {
+    margin: 0;
+}
+
+.notification-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 26px;
+    height: 26px;
+
+    padding: 0 8px;
+
+    border-radius: 50px;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.catchup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.catchup-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+
+    transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.catchup-item:hover {
+    background: var(--surface-hover);
+    transform: translateY(-1px);
+}
+
+.catchup-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--surface-light);
+
+    font-size: 1rem;
+}
+
+.catchup-content {
+    min-width: 0;
+}
+
+.catchup-content p {
+    margin: 0 0 4px;
+
+    color: var(--text);
+
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.catchup-content small {
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.catchup-empty {
+    padding: 25px;
+
+    text-align: center;
+
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.friends {
+    background: #101821;
+    border: 1px solid #1c2936;
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.friends-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.friends-header h2 {
+    margin: 0;
+}
+
+.friends-header span {
+    color: #8b96a3;
+    font-size: 13px;
+}
+
+.friends-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.friend-review {
+    display: flex;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #1c2936;
+}
+
+.friend-review:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.friend-review-art-link {
+    flex-shrink: 0;
+}
+
+.friend-review-art,
+.friend-review-art-placeholder {
+    width: 82px;
+    height: 82px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #151f2a;
+}
+
+.friend-review-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.friend-review-user {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font-size: 13px;
+}
+
+.friend-review-user a {
+    color: #78b7e8;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.friend-review-user span {
+    color: #8b96a3;
+}
+
+.friend-review-album {
+    color: #f5f7fa;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.friend-review-content h3 {
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: #f5f7fa;
+}
+
+.friend-review-content p {
+    margin: 2px 0;
+    color: #8b96a3;
+    font-size: 13px;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.friend-review-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #f5f7fa;
+    font-size: 13px;
+}
+
+.friend-review-rating span:first-child {
+    color: #78b7e8;
+}
+
+.friend-review-content small {
+    color: #697583;
+    font-size: 11px;
+}
+
+.friends-empty {
+    color: #8b96a3;
+    font-size: 14px;
+}
 
 /* ====================
    GLOBAL TOP 40
