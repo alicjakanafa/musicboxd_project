@@ -7,11 +7,13 @@ import com.example.MusicBoxd.Model.Review;
 import com.example.MusicBoxd.Model.User;
 import com.example.MusicBoxd.Model.UserFavouriteAlbum;
 import com.example.MusicBoxd.Model.UserFavouriteArtist;
-import com.example.MusicBoxd.Repository.UserFavouriteArtistRepository;
 
+import com.example.MusicBoxd.Repository.UserFavouriteArtistRepository;
 import com.example.MusicBoxd.Repository.AlbumRepository;
 import com.example.MusicBoxd.Repository.ArtistRepository;
 import com.example.MusicBoxd.Repository.FriendRepository;
+import com.example.MusicBoxd.Repository.ListItemRepository;
+import com.example.MusicBoxd.Repository.ListRepository;
 import com.example.MusicBoxd.Repository.ReviewRepository;
 import com.example.MusicBoxd.Repository.UserFavouriteAlbumRepository;
 import com.example.MusicBoxd.Repository.UserRepository;
@@ -64,6 +66,12 @@ public class ProfileController {
 
     @Autowired
     private UserFavouriteArtistRepository favouriteArtistRepository;
+
+    @Autowired
+    private ListRepository listRepository;
+
+    @Autowired
+    private ListItemRepository listItemRepository;
 
 
     @GetMapping("/profile/{id}")
@@ -243,6 +251,7 @@ public class ProfileController {
         List<Artist> favouriteArtists =
                 new ArrayList<>();
 
+
         for (
                 UserFavouriteArtist favourite :
                 favouriteArtistRecords
@@ -257,10 +266,65 @@ public class ProfileController {
                     );
         }
 
+
         model.addAttribute(
                 "favouriteArtistCount",
                 favouriteArtists.size()
         );
+
+
+        List<com.example.MusicBoxd.Model.List> profileLists =
+                listRepository
+                        .findByUserIdOrderByCreatedAtDesc(id);
+
+
+        Map<Long, Integer> profileListItemCounts =
+                new HashMap<>();
+
+
+        for (
+                com.example.MusicBoxd.Model.List list :
+                profileLists
+        ) {
+
+            int itemCount =
+                    listItemRepository
+                            .findByListIdOrderByPositionAsc(
+                                    list.getId()
+                            )
+                            .size();
+
+
+            profileListItemCounts.put(
+                    list.getId(),
+                    itemCount
+            );
+        }
+
+
+        model.addAttribute(
+                "profileLists",
+                profileLists
+        );
+
+
+        model.addAttribute(
+                "profileListCount",
+                profileLists.size()
+        );
+
+
+        model.addAttribute(
+                "profileListItemCounts",
+                profileListItemCounts
+        );
+
+
+        System.out.println(
+                "PROFILE LISTS FOUND: " +
+                        profileLists.size()
+        );
+
 
 
         long followingCount =
@@ -269,6 +333,7 @@ public class ProfileController {
                                 id,
                                 "ACCEPTED"
                         );
+
 
         long followerCount =
                 friendRepository
@@ -282,6 +347,7 @@ public class ProfileController {
                 "followingCount",
                 followingCount
         );
+
 
         model.addAttribute(
                 "followerCount",
@@ -338,6 +404,7 @@ public class ProfileController {
                 (String) session.getAttribute(
                         "spotifyAccessToken"
                 );
+
 
 
         model.addAttribute(
@@ -446,7 +513,10 @@ public class ProfileController {
                         );
                     }
 
-                } else {
+                }
+
+
+                else {
 
                     System.out.println(
                             "LOADING TOP TRACKS - " +
@@ -501,12 +571,14 @@ public class ProfileController {
                                 artistRange
                 );
 
+
             } catch (Exception e) {
 
                 System.out.println(
                         "SPOTIFY PROFILE ERROR: " +
                                 e.getMessage()
                 );
+
 
                 e.printStackTrace();
 
@@ -518,12 +590,16 @@ public class ProfileController {
 
             }
 
-        } else {
+        }
+
+
+        else {
 
             System.out.println(
                     "SPOTIFY NOT CONNECTED"
             );
         }
+
 
 
         List<Friend> acceptedFriendships =
@@ -558,7 +634,9 @@ public class ProfileController {
                         friendship
                                 .getReceiverId();
 
-            } else {
+            }
+
+            else {
 
                 friendId =
                         friendship
@@ -580,10 +658,12 @@ public class ProfileController {
         );
 
 
+
         System.out.println(
                 "FOLLOWING COUNT: " +
                         followingCount
         );
+
 
         System.out.println(
                 "FOLLOWER COUNT: " +
@@ -609,8 +689,15 @@ public class ProfileController {
         );
 
 
+        System.out.println(
+                "PROFILE LIST COUNT: " +
+                        profileLists.size()
+        );
+
+
         return "profile-page";
     }
+
 
 
     @GetMapping("/placeholder-list-form")
@@ -634,6 +721,7 @@ public class ProfileController {
                             album.getTitle()
             );
 
+
             return album.getArtworkUrl();
         }
 
@@ -647,9 +735,9 @@ public class ProfileController {
                             album.getTitle()
             );
 
+
             return null;
         }
-
 
         Artist artist =
                 artistRepository
@@ -665,6 +753,7 @@ public class ProfileController {
                     "ARTIST NOT FOUND FOR: " +
                             album.getTitle()
             );
+
 
             return null;
         }
@@ -697,6 +786,7 @@ public class ProfileController {
                                 album.getTitle()
                 );
 
+
                 return null;
             }
 
@@ -714,6 +804,7 @@ public class ProfileController {
                         "LAST.FM RETURNED NO IMAGES FOR: " +
                                 album.getTitle()
                 );
+
 
                 return null;
             }
@@ -762,7 +853,9 @@ public class ProfileController {
                 }
             }
 
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
 
             System.out.println(
                     "LAST.FM ARTWORK ERROR FOR " +
@@ -788,7 +881,9 @@ public class ProfileController {
                         .findById(id)
                         .orElse(null);
 
+
         if (user == null) {
+
             return "redirect:/";
         }
 
@@ -837,4 +932,5 @@ public class ProfileController {
 
         return "favourite-artists";
     }
+
 }

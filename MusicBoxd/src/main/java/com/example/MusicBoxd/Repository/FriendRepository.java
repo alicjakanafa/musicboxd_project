@@ -2,7 +2,9 @@ package com.example.MusicBoxd.Repository;
 
 import com.example.MusicBoxd.Model.Friend;
 import com.example.MusicBoxd.Model.User;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,18 +36,35 @@ public interface FriendRepository
             String status
     );
 
-    boolean existsByReceiverAndRequesterAndStatus(
-            User receiver,
-            User requester,
-            Friend.Status status
+
+    @Query("""
+            SELECT COUNT(f) > 0
+            FROM Friend f
+            WHERE f.requesterId = :#{#requester.id}
+            AND f.receiverId = :#{#receiver.id}
+            AND f.status = :status
+            """)
+    boolean existsByRequesterAndReceiverAndStatus(
+            @Param("requester") User requester,
+            @Param("receiver") User receiver,
+            @Param("status") Friend.Status status
     );
 
-    boolean existsByRequesterAndReceiverAndStatus(
-            User requester,
-            User receiver,
-            Friend.Status status
+
+    @Query("""
+            SELECT COUNT(f) > 0
+            FROM Friend f
+            WHERE f.receiverId = :#{#receiver.id}
+            AND f.requesterId = :#{#requester.id}
+            AND f.status = :status
+            """)
+    boolean existsByReceiverAndRequesterAndStatus(
+            @Param("receiver") User receiver,
+            @Param("requester") User requester,
+            @Param("status") Friend.Status status
     );
-}
+
+
     List<Friend> findByRequesterIdAndStatusOrReceiverIdAndStatus(
             Long requesterId,
             String requesterStatus,
