@@ -30,6 +30,12 @@ public class Friend {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public enum Status {
+        PENDING,
+        ACCEPTED,
+        REJECTED
+    }
+
     public Friend(
             Long requesterId,
             Long receiverId,
