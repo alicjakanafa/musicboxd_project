@@ -411,19 +411,82 @@ public class ReviewController {
         }
 
 
-        // -----------------------------------------------------
-        // Delete review
-        // -----------------------------------------------------
-
         reviewRepository.delete(
                 review
         );
 
 
-        // -----------------------------------------------------
-        // Return to profile
-        // -----------------------------------------------------
-
         return "redirect:/profile/" + user.getId();
     }
+
+    @GetMapping("/reviews")
+    public String getAllReviews(Model model) {
+
+        List<Review> reviews =
+                reviewRepository.findAllByOrderByCreatedAtDesc();
+
+        Map<Long, Album> albums =
+                new HashMap<>();
+
+        Map<Long, User> users =
+                new HashMap<>();
+
+        for (Review review : reviews) {
+
+            Long albumId =
+                    review.getAlbumId();
+
+            if (albumId != null) {
+
+                Album album =
+                        albumRepository
+                                .findById(albumId)
+                                .orElse(null);
+
+                if (album != null) {
+                    albums.put(
+                            albumId,
+                            album
+                    );
+                }
+            }
+
+
+            Long userId =
+                    review.getUserId();
+
+            if (userId != null) {
+
+                User user =
+                        userRepository
+                                .findById(userId)
+                                .orElse(null);
+
+                if (user != null) {
+                    users.put(
+                            userId,
+                            user
+                    );
+                }
+            }
+        }
+
+        model.addAttribute(
+                "reviews",
+                reviews
+        );
+
+        model.addAttribute(
+                "albums",
+                albums
+        );
+
+        model.addAttribute(
+                "users",
+                users
+        );
+
+        return "all-reviews";
+    }
 }
+

@@ -249,12 +249,12 @@
 
       <!-- EDIT PROFILE -->
 
-      <button
-              type="button"
+      <a
+              th:href="@{/profile/edit}"
               class="edit-profile-button"
       >
         Edit Profile
-      </button>
+      </a>
 
 
       <!-- CONNECT SPOTIFY -->
@@ -534,66 +534,125 @@
       <div class="panel-heading">
 
         <h2>
-          Top Artists
+          Top Music
         </h2>
 
-        <form
-                method="get"
-                th:action="@{/profile/{id}(id=${user.id})}"
-                class="artist-range-form"
-        >
+        <div class="top-music-controls">
 
-          <select
-                  name="artistRange"
-                  onchange="this.form.submit()"
-                  class="artist-range-select"
+          <!-- ARTISTS / TRACKS -->
+
+          <form
+                  method="get"
+                  th:action="@{/profile/{id}(id=${user.id})}"
+                  class="top-type-form"
           >
 
-            <option
-                    value="short_term"
-                    th:selected="${artistRange == 'short_term'}"
+            <input
+                    type="hidden"
+                    name="artistRange"
+                    th:value="${artistRange}"
             >
-              Last 4 weeks
-            </option>
 
-            <option
-                    value="medium_term"
-                    th:selected="${artistRange == 'medium_term'}"
+            <select
+                    name="topType"
+                    onchange="this.form.submit()"
+                    class="artist-range-select"
             >
-              Last 6 months
-            </option>
 
-            <option
-                    value="long_term"
-                    th:selected="${artistRange == 'long_term'}"
+              <option
+                      value="artists"
+                      th:selected="${topType == 'artists'}"
+              >
+                Top Artists
+              </option>
+
+              <option
+                      value="tracks"
+                      th:selected="${topType == 'tracks'}"
+              >
+                Top Tracks
+              </option>
+
+            </select>
+
+          </form>
+
+
+          <!-- TIME RANGE -->
+
+          <form
+                  method="get"
+                  th:action="@{/profile/{id}(id=${user.id})}"
+                  class="artist-range-form"
+          >
+
+            <input
+                    type="hidden"
+                    name="topType"
+                    th:value="${topType}"
             >
-              The past year
-            </option>
 
-          </select>
+            <select
+                    name="artistRange"
+                    onchange="this.form.submit()"
+                    class="artist-range-select"
+            >
 
-        </form>
+              <option
+                      value="short_term"
+                      th:selected="${artistRange == 'short_term'}"
+              >
+                Last 4 weeks
+              </option>
+
+              <option
+                      value="medium_term"
+                      th:selected="${artistRange == 'medium_term'}"
+              >
+                Last 6 months
+              </option>
+
+              <option
+                      value="long_term"
+                      th:selected="${artistRange == 'long_term'}"
+              >
+                The past year
+              </option>
+
+            </select>
+
+          </form>
+
+        </div>
 
       </div>
 
 
-      <!-- NO SPOTIFY DATA -->
+      <!-- =========================
+           NOT CONNECTED
+           ========================= -->
 
       <div
               class="empty-state"
-              th:if="${topArtists == null or topArtists.isEmpty()}"
+              th:if="${spotifyConnected == null
+                    or !spotifyConnected}"
       >
 
-        Connect Spotify to see your top artists.
+        Connect Spotify to see your top music.
 
       </div>
 
 
-      <!-- ARTISTS -->
+      <!-- =========================
+           TOP ARTISTS
+           ========================= -->
 
       <div
               class="artist-list"
-              th:unless="${topArtists == null or topArtists.isEmpty()}"
+              th:if="${spotifyConnected == true
+                    and topType == 'artists'
+                    and topArtists != null
+                    and !topArtists.isEmpty()}"
       >
 
         <div
@@ -614,7 +673,7 @@
 
           <img
                   th:if="${artist.images != null
-                          and !artist.images.isEmpty()}"
+                            and !artist.images.isEmpty()}"
                   th:src="${artist.images.get(0).url}"
                   th:alt="${artist.name}"
                   class="artist-image"
@@ -625,7 +684,7 @@
 
           <div
                   th:unless="${artist.images != null
-                              and !artist.images.isEmpty()}"
+                                and !artist.images.isEmpty()}"
                   class="artist-image-placeholder"
           >
           </div>
@@ -636,15 +695,125 @@
           <span
                   th:text="${artist.name}"
           >
-            Artist name
-          </span>
+                Artist name
+            </span>
 
         </div>
 
       </div>
 
-    </section>
 
+      <!-- =========================
+           TOP TRACKS
+           ========================= -->
+
+      <div
+              class="artist-list top-track-list"
+              th:if="${spotifyConnected == true
+                    and topType == 'tracks'
+                    and topTracks != null
+                    and !topTracks.isEmpty()}"
+      >
+
+        <div
+                class="artist-row top-track-row"
+                th:each="track, stat : ${topTracks}"
+        >
+
+          <!-- RANK -->
+
+          <strong
+                  th:text="${stat.count}"
+          >
+            1
+          </strong>
+
+
+          <!-- TRACK ARTWORK -->
+
+          <img
+                  th:if="${track.album != null
+                            and track.album.images != null
+                            and !track.album.images.isEmpty()}"
+                  th:src="${track.album.images.get(0).url}"
+                  th:alt="${track.album.name}"
+                  class="artist-image"
+          >
+
+
+          <!-- IMAGE FALLBACK -->
+
+          <div
+                  th:unless="${track.album != null
+                                and track.album.images != null
+                                and !track.album.images.isEmpty()}"
+                  class="artist-image-placeholder"
+          >
+          </div>
+
+
+          <!-- TRACK INFORMATION -->
+
+          <div class="top-track-info">
+
+                <span
+                        class="top-track-name"
+                        th:text="${track.name}"
+                >
+                    Track name
+                </span>
+
+
+            <span
+                    class="top-track-artist"
+                    th:if="${track.artists != null
+                                and !track.artists.isEmpty()}"
+                    th:text="${track.artists.get(0).name}"
+            >
+                    Artist name
+                </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           NO ARTIST DATA
+           ========================= -->
+
+      <div
+              class="empty-state"
+              th:if="${spotifyConnected == true
+                    and topType == 'artists'
+                    and (topArtists == null
+                         or topArtists.isEmpty())}"
+      >
+
+        No top artist data available yet.
+
+      </div>
+
+
+      <!-- =========================
+           NO TRACK DATA
+           ========================= -->
+
+      <div
+              class="empty-state"
+              th:if="${spotifyConnected == true
+                    and topType == 'tracks'
+                    and (topTracks == null
+                         or topTracks.isEmpty())}"
+      >
+
+        No top track data available yet.
+
+      </div>
+
+    </section>
 
 
     <!-- =========================
@@ -975,9 +1144,7 @@
           Following
         </h2>
 
-        <a href="#">
-          See all →
-        </a>
+        <a th:href="@{/friends}">View All</a>
 
       </div>
 
