@@ -12,27 +12,33 @@
 <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <main>
-  <h1>My Lists</h1>
+  <div class="list-header">
+    <div>
+      <h1>My Lists</h1>
+    </div>
 
-  <p>
-    <a th:href="@{/lists/placeholder-list-form}">Create a new list</a>
-  </p>
+    <a th:href="@{/lists/placeholder-list-form}" class="create-list-button">
+      Create a new list
+    </a>
+  </div>
 
   <div th:if="${lists == null or lists.isEmpty()}">
     <p>You haven't created any lists yet.</p>
   </div>
 
-  <div th:each="list : ${lists}">
-    <h2>
-      <a th:href="@{/lists/{id}(id=${list.id})}"
-         th:text="${list.title}">
-        List title
-      </a>
-    </h2>
+  <div th:each="list : ${lists}" class="list-container">
+    <a th:href="@{/lists/{id}(id=${list.id})}" class="list-link">
 
-    <p th:text="${list.description}">List description</p>
+      <img src="https://dev.afrocharts.com/images/song_cover.png"
+           alt="music-png"
+           class="list-image">
 
-    <hr>
+      <div class="list-info">
+        <h2 th:text="${list.title}">List title</h2>
+        <p th:text="${list.description}">List description</p>
+      </div>
+
+    </a>
   </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>

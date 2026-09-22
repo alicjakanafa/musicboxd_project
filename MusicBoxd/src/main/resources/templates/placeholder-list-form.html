@@ -5,15 +5,16 @@
     <title>Create List</title>
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/lists.css}">
 </head>
 <body>
 
 <header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <main>
-    <h1>Create a list</h1>
+    <h1 class="form-header">Create a list</h1>
 
-    <form th:action="@{/lists}" method="post">
+    <form th:action="@{/lists}" method="post" class="list-form">
         <p>
             <label for="title">Title</label><br>
             <input id="title" name="title" type="text" maxlength="50" required>
@@ -24,11 +25,11 @@
             <textarea id="description" name="description"></textarea>
         </p>
 
-        <button type="submit">Create list</button>
+        <button type="submit" class="create-list-button">Create list</button>
     </form>
 
     <p>
-        <a th:href="@{/lists}">Back to lists</a>
+        <a th:href="@{/lists}" class="back-list-button">Back to lists</a>
     </p>
 </main>
 

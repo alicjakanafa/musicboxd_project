@@ -6,56 +6,61 @@
   <title th:text="${list.title}">List</title>
   <link rel="stylesheet" th:href="@{/css/navbar.css}">
   <link rel="stylesheet" th:href="@{/css/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/lists.css}">
 </head>
 
 <body>
 <header th:replace="~{fragments/navbar :: navbar}"></header>
 <main>
 
+  <div class="list-info">
+    <h1 th:text="${list.title}">
+      List title
+    </h1>
 
-  <h1 th:text="${list.title}">
-    List title
-  </h1>
-
-  <p th:text="${list.description}">
-    List description
-  </p>
-
-
-
-  <h2>In this list</h2>
-
-  <div th:if="${items == null or items.isEmpty()}">
-    <p>Nothing added yet.</p>
+    <p th:text="${list.description}">
+      List description
+    </p>
   </div>
 
-  <ul>
 
-    <li th:each="item : ${items}"
-        th:if="${item.albumId != null and albums[item.albumId] != null}">
 
-      <a th:href="@{/lists/album/{id}(id=${item.albumId})}">
+  <section class="list-albums">
+    <h2>In this list</h2>
 
-        <h3 th:text="${albums[item.albumId].title}">
-          Album title
-        </h3>
+    <div th:if="${items == null or items.isEmpty()}" class="empty-list">
+      <p>Nothing added yet.</p>
+    </div>
 
-        <img
-                th:if="${albums[item.albumId].artworkUrl != null}"
-                th:src="${albums[item.albumId].artworkUrl}"
-                th:alt="${albums[item.albumId].title}"
-                width="150"
-        >
+    <div class="album-grid">
+      <div th:each="item : ${items}"
+           th:if="${item.albumId != null and albums[item.albumId] != null}"
+           class="album-newcard">
 
-        <p th:text="${albums[item.albumId].releaseYear}">
-          Release year
-        </p>
+        <a th:href="@{/lists/album/{id}(id=${item.albumId})}"
+           class="album-link">
 
-      </a>
+          <img
+                  th:if="${albums[item.albumId].artworkUrl != null}"
+                  th:src="${albums[item.albumId].artworkUrl}"
+                  th:alt="${albums[item.albumId].title}"
+                  class="album-image"
+          >
 
-    </li>
+          <div class="album-info">
+            <h3 th:text="${albums[item.albumId].title}">
+              Album title
+            </h3>
 
-  </ul>
+            <p th:text="${albums[item.albumId].releaseYear}">
+              Release year
+            </p>
+          </div>
+
+        </a>
+      </div>
+    </div>
+  </section>
 
 
 
@@ -65,6 +70,7 @@
           type="text"
           id="albumSearch"
           placeholder="Search for an album..."
+          class="search-input"
   >
 
   <div id="searchResults"></div>
@@ -72,7 +78,7 @@
 
 
   <p>
-    <a th:href="@{/lists}">
+    <a th:href="@{/lists}" class="back-list-button">
       Back to lists
     </a>
   </p>
@@ -85,13 +91,17 @@
 
   <ul>
 
-    <li th:each="album : ${results}">
+    <li th:each="album : ${results}" class="album-search-result">
+
+
 
             <span th:text="${album.name}">
                 Album
             </span>
 
-      <span> — </span>
+
+
+      <span>    by    </span>
 
       <span th:text="${album.artist}">
                 Artist
@@ -115,7 +125,7 @@
                 th:value="${album.artist}"
         >
 
-        <button type="submit">
+        <button type="submit" class="add-tolist">
           Add
         </button>
 
