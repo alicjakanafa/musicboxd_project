@@ -25,6 +25,7 @@ import com.example.MusicBoxd.Repository.ArtistRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/lists")
@@ -266,25 +267,30 @@ public class ListController {
 
 
     @GetMapping("/album/{id}")
-    public String getAlbum(@PathVariable Long id, Model model) {
+    public String getAlbum(Authentication authentication, @PathVariable Long id, Model model) {
         Album album = albumRepository.findById(id).orElse(null);
+        //if album donesnt exists just return lists
         if (album == null) {
             return "redirect:/lists";
         }
         model.addAttribute("album", album);
+        // Check if album is already in Want to Listen
+        boolean alreadyInWantToListen = false;
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = getCurrentUser(authentication);
+            Optional<com.example.MusicBoxd.Model.List> wantToListen =
+                    listRepository.findByUserIdAndListType(user.getId(), ListType.WANT_TO_LISTEN);
+            if (wantToListen.isPresent()) {
+                alreadyInWantToListen = listItemRepository.existsByListIdAndAlbumId(wantToListen.get().getId(), album.getId());
+            }
+        }
+        model.addAttribute("alreadyInWantToListen", alreadyInWantToListen);
         LastFmAlbum lastFmAlbum = null;
         if (album.getArtistId() != null) {
-            Artist artist =
-                    artistRepository
-                            .findById(album.getArtistId())
-                            .orElse(null);
+            Artist artist = artistRepository.findById(album.getArtistId()).orElse(null);
             if (artist != null) {
                 model.addAttribute("artist", artist);
-                LastFmAlbumResponse response =
-                        lastFmService.getAlbumInfo(
-                                artist.getName(),
-                                album.getTitle()
-                        );
+                LastFmAlbumResponse response = lastFmService.getAlbumInfo(artist.getName(), album.getTitle());
                 if (response != null) {
                     lastFmAlbum = response.getAlbum();
                 }

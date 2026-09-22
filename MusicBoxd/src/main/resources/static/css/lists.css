@@ -1,29 +1,22 @@
 :root {
     --background: #080d14;
     --background-soft: #0b121b;
-
     --primary: #4d9bd6;
     --primary-light: #78b7e8;
     --primary-dark: #2f6f9f;
-
     --surface: #101821;
     --surface-light: #151f2a;
     --surface-hover: #192532;
-
     --border: #1c2936;
     --border-light: #30475d;
-
     --text: #f5f7fa;
     --text-muted: #8b96a3;
     --text-subtle: #697583;
-
     --black: #05080c;
 }
 
 body {
     margin: 0;
-    min-height: 100vh;
-
     background:
             radial-gradient(
                     circle at 50% -10%,
@@ -31,19 +24,372 @@ body {
                     transparent 38%
             ),
             var(--background);
-
     color: var(--text);
-
     font-family:
             "DM Sans",
             Arial,
             Helvetica,
             sans-serif;
-
     display: flex;
     flex-direction: column;
 }
 
 body > main {
     flex: 1;
+}
+
+main {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 55px 0 80px;
+}
+
+.list-container{
+    grid-area: album;
+    width: 100%;
+    padding: 25px;
+    margin-bottom: 20px;
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #151f2a,
+                    #101821
+            );
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.list-container:hover {
+    transform: translateY(-2px);
+}
+
+.list-container h2 {
+    margin: 0 0 18px;
+    color: var(--primary-light);
+    font-size: 21px;
+    letter-spacing: -0.3px;
+}
+
+.list-link {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    color: inherit;
+    text-decoration: none;
+}
+
+.list-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 14px;
+    flex-shrink: 0;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.list-header h1 {
+    margin: 0;
+}
+
+.list-header p {
+    margin: 5px 0 0;
+}
+
+.create-list-button {
+    padding: 12px 20px;
+    background: #1e88e5;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.create-list-button:hover {
+    background: #1565c0;
+}
+
+/* ALL this stuff below this line until the next comment is for placeholder-lists-form */
+
+.form-header {
+    width: 550px;
+    max-width: 100%;
+    margin: 25px auto 15px;
+}
+
+.list-form {
+    width: 550px;
+    max-width: 100%;
+    margin: 0 auto 50px;
+    padding: 25px 30px;
+
+    background: #080d14;
+    border: 1px solid #303030;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.list-info p {
+    margin: 0 0 20px;
+    font-size: 20px;
+    color: #ffffff;
+    padding-bottom: 20px;
+
+}
+
+.list-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 150px;
+    padding: 12px;
+    background: #242424;
+    color: #ffffff;
+    border: 1px solid #383838;
+    border-radius: 4px;
+}
+
+.list-form textarea::placeholder {
+    color: #777777;
+}
+
+.list-form textarea:focus {
+    outline: none;
+    border-color: #4d9bd6;
+    box-shadow: 0 0 0 1px #4d9bd6;
+}
+
+.list-form input[type="text"] {
+    width: 300px;
+    padding: 12px 14px;
+    background: #242424;
+    color: #ffffff;
+    border: 1px solid #383838;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.list-form input[type="text"]:focus {
+    outline: none;
+    border-color: #4d9bd6;
+}
+
+.create-list-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 22px;
+    background: #4d9bd6;
+    color: #101010;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border: 1px solid #4d9bd6;
+    transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+}
+
+.create-list-button:hover{
+    background: #4d9bd6;
+    border-color: #4d9bd6;
+    transform: translateY(-2px);
+}
+
+.back-list-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 22px;
+    background: #4d9bd6;
+    color: #101010;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border: 1px solid #4d9bd6;
+    border-radius: 8px;
+    transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+}
+
+/* ALL this stuff below this line is for placeholder-lists-items */
+
+.list-albums h2 {
+    margin: 0 0 20px;
+}
+
+.list-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.album-newcard {
+    background: linear-gradient(
+            145deg,
+            var(--surface-light),
+            var(--surface)
+    );
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            background 0.2s ease;
+}
+
+.album-newcard:hover {
+    transform: translateY(-4px);
+    background: var(--surface-hover);
+    border-color: var(--border-light);
+}
+
+.album-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.album-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+}
+
+.album-info {
+    padding: 15px;
+}
+
+.album-info h3 {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.album-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.album-search-result {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+
+    background: linear-gradient(
+            145deg,
+            #151f2a,
+            #101821
+    );
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition:
+            transform 0.2s ease,
+            background 0.2s ease;
+}
+
+.album-search-result span {
+    margin: 0;
+    color: var(--primary-light);
+    font-size: 15px;
+}
+
+.add-tolist{
+    margin-left: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 22px;
+    background: #4d9bd6;
+    border-radius: 8px;
+    color: #101010;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border: 1px solid #4d9bd6;
+    transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+}
+
+.add-tolist:hover{
+    background: #4d9bd6;
+    border-color: #4d9bd6;
+    transform: translateY(-2px);
+}
+
+/* Search bar */
+.search-input {
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+
+    padding: 14px 18px;
+    margin: 10px 0 20px;
+
+    font-size: 16px;
+    font-family: inherit;
+
+    color: #222;
+    background-color: #fff;
+
+    border: 1px solid #d6d6d6;
+    border-radius: 12px;
+
+    outline: none;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+    transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-input:hover {
+    border-color: #aaa;
+}
+
+.search-input:focus {
+    border-color: #6c63ff;
+
+    box-shadow:
+            0 0 0 3px rgba(108, 99, 255, 0.15),
+            0 4px 10px rgba(0, 0, 0, 0.08);
+
+    transform: translateY(-1px);
 }
