@@ -28,6 +28,11 @@ body {
     padding: 65px 0 80px;
 }
 
+
+/* =========================
+   HERO
+   ========================= */
+
 .hero {
     margin-bottom: 45px;
 }
@@ -66,6 +71,11 @@ body {
     font-size: 17px;
     line-height: 1.6;
 }
+
+
+/* =========================
+   SEARCH
+   ========================= */
 
 .search-form {
     display: flex;
@@ -139,6 +149,11 @@ body {
     transform: translateY(-1px);
 }
 
+
+/* =========================
+   RESULTS HEADER
+   ========================= */
+
 .results-header {
     display: flex;
 
@@ -167,6 +182,10 @@ body {
 }
 
 
+/* =========================
+   RESULTS GRID
+   ========================= */
+
 .results {
     display: grid;
 
@@ -176,7 +195,11 @@ body {
     gap: 18px;
 }
 
-.album-card,
+
+/* =========================
+   TRACK CARD
+   ========================= */
+
 .track-card {
     background: #101821;
 
@@ -195,7 +218,6 @@ body {
             box-shadow 0.2s ease;
 }
 
-.album-card:hover,
 .track-card:hover {
     transform: translateY(-5px);
 
@@ -207,68 +229,36 @@ body {
             0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.album-art {
-    width: 100%;
 
-    aspect-ratio: 1 / 1;
-
-    margin-bottom: 15px;
-
-    overflow: hidden;
-
-    background:
-            radial-gradient(
-                    circle at 50% 35%,
-                    #30475d 0%,
-                    #192532 45%,
-                    #101821 100%
-            );
-
-    border-radius: 9px;
-
-    border: 1px solid #1c2936;
-}
-
-.album-art img {
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-
-    margin: 0;
-
-    border-radius: 8px;
-
-    background: #101821;
-
-    transition:
-            transform 0.3s ease,
-            opacity 0.3s ease;
-}
-
-.album-card:hover .album-art img {
-    transform: scale(1.03);
-}
+/* =========================
+   TRACK ARTWORK
+   ========================= */
 
 .track-card img {
     width: 100%;
 
-    aspect-ratio: 1;
+    aspect-ratio: 1 / 1;
+
+    height: auto;
 
     object-fit: cover;
 
+    object-position: center;
+
     display: block;
 
-    border-radius: 7px;
+    border-radius: 8px;
 
     background: #18232e;
 
-    margin-bottom: 15px;
+    margin: 0 0 15px;
 }
 
-.album-card h2,
+
+/* =========================
+   TRACK INFORMATION
+   ========================= */
+
 .track-card h2 {
     margin: 0 0 7px;
 
@@ -279,7 +269,6 @@ body {
     line-height: 1.3;
 }
 
-.album-card p,
 .track-card p {
     margin: 5px 0;
 
@@ -290,61 +279,36 @@ body {
     line-height: 1.4;
 }
 
+
+/* Artist name */
+
 .track-card p:nth-of-type(1) {
     color: #78b7e8;
 
     font-weight: 600;
 }
 
-.album-card a {
-    display: inline-flex;
 
-    align-items: center;
+/* =========================
+   AUDIO PREVIEW
+   ========================= */
 
-    gap: 7px;
-
-    margin-top: 13px;
-
-    padding: 9px 13px;
-
-    background: transparent;
-
-    color: #4d9bd6;
-
-    border: 1px solid #30475d;
-
-    border-radius: 6px;
-
-    text-decoration: none;
-
-    font-size: 12px;
-    font-weight: 700;
-
-    transition:
-            background 0.2s ease,
-            color 0.2s ease,
-            border-color 0.2s ease;
+.song-preview {
+    margin-top: 15px;
 }
-
-.album-card a:hover {
-    background: #4d9bd6;
-
-    color: #080d14;
-
-    border-color: #4d9bd6;
-}
-
 
 audio {
     width: 100%;
 
     height: 38px;
 
-    margin-top: 15px;
-
     border-radius: 5px;
 }
 
+
+/* =========================
+   NO PREVIEW
+   ========================= */
 
 .no-preview {
     margin-top: 15px !important;
@@ -363,6 +327,11 @@ audio {
 
     text-align: center;
 }
+
+
+/* =========================
+   EMPTY STATE
+   ========================= */
 
 .empty-state {
     text-align: center;
@@ -390,6 +359,11 @@ audio {
     margin: 0;
 }
 
+
+/* =========================
+   FOOTER
+   ========================= */
+
 footer {
     padding: 30px 5%;
 
@@ -402,6 +376,11 @@ footer {
     font-size: 12px;
 }
 
+
+/* =========================
+   TABLET
+   ========================= */
+
 @media (max-width: 900px) {
 
     .results {
@@ -412,6 +391,11 @@ footer {
     }
 
 }
+
+
+/* =========================
+   MOBILE
+   ========================= */
 
 @media (max-width: 700px) {
 
@@ -446,29 +430,24 @@ footer {
         gap: 12px;
     }
 
-    .album-card,
     .track-card {
         padding: 10px;
     }
 
-    .album-card h2,
     .track-card h2 {
         font-size: 14px;
     }
 
-    .album-card p,
     .track-card p {
         font-size: 11px;
     }
 
-    .album-card a {
-        width: 100%;
-
-        justify-content: center;
-    }
-
 }
 
+
+/* =========================
+   SMALL MOBILE
+   ========================= */
 
 @media (max-width: 420px) {
 
@@ -481,4 +460,3 @@ footer {
     }
 
 }
-
