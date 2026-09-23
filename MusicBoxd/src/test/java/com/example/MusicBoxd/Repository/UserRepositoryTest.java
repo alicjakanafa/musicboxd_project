@@ -85,4 +85,62 @@ class UserRepositoryTest {
 
         assertThat(userRepository.findById(persisted.getId())).isEmpty();
     }
+
+    @Test
+    void findByOktaUserIdReturnsMatchingUser() {
+        entityManager.persistAndFlush(new User("okta-abc", "okta-user", "okta@example.com", null, null));
+
+        Optional<User> found = userRepository.findByOktaUserId("okta-abc");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getUsername()).isEqualTo("okta-user");
+    }
+
+    @Test
+    void findByOktaUserIdReturnsEmptyWhenNoUserMatches() {
+        Optional<User> found = userRepository.findByOktaUserId("does-not-exist");
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    void findByUsernameContainingIgnoreCaseReturnsPartialCaseInsensitiveMatches() {
+        entityManager.persistAndFlush(new User("g4", "MusicLover99", "musiclover@example.com", null, null));
+        entityManager.persistAndFlush(new User("g5", "jazzfan", "jazzfan@example.com", null, null));
+
+        List<User> found = userRepository.findByUsernameContainingIgnoreCase("music");
+
+        assertThat(found).hasSize(1)
+                .extracting(User::getUsername)
+                .containsExactly("MusicLover99");
+    }
+
+    @Test
+    void findByUsernameContainingIgnoreCaseReturnsEmptyListWhenNoUsernameMatches() {
+        entityManager.persistAndFlush(new User("g6", "jazzfan", "jazzfan@example.com", null, null));
+
+        List<User> found = userRepository.findByUsernameContainingIgnoreCase("rock");
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    void findByIdInReturnsOnlyRequestedUsers() {
+        User userOne = entityManager.persistFlushFind(new User("g7", "user-a", "a@example.com", null, null));
+        User userTwo = entityManager.persistFlushFind(new User("g8", "user-b", "b@example.com", null, null));
+        entityManager.persistFlushFind(new User("g9", "user-c", "c@example.com", null, null));
+
+        List<User> found = userRepository.findByIdIn(java.util.List.of(userOne.getId(), userTwo.getId()));
+
+        assertThat(found).hasSize(2)
+                .extracting(User::getUsername)
+                .containsExactlyInAnyOrder("user-a", "user-b");
+    }
+
+    @Test
+    void findByIdInReturnsEmptyListWhenNoIdsMatch() {
+        List<User> found = userRepository.findByIdIn(java.util.List.of(9998L, 9999L));
+
+        assertThat(found).isEmpty();
+    }
 }

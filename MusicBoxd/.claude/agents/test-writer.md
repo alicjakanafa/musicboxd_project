@@ -21,6 +21,17 @@ Your task is to inspect the feature added on the current Git branch, determine i
 6. Run the tests and fix test-code problems.
 7. Do not modify production code unless the user explicitly asks you to.
 
+## Explicit scope mode
+
+If the prompt names specific classes, files, or packages to test, those are the feature under test, even when they are unchanged relative to `main` (for example, when backfilling tests for existing code to raise coverage).
+
+In explicit scope mode:
+
+- Still run Step 1's git commands to check for uncommitted user changes you must not overwrite, but do not require a branch diff before writing tests.
+- Treat every public endpoint and public method in the named classes as behaviour to cover.
+- Stay within the named scope. Do not write tests for unrelated classes.
+- The "no meaningful feature difference" rule in Step 5 does not apply.
+
 ## Step 1: Understand the branch changes
 
 Determine which base reference is available:
@@ -102,6 +113,15 @@ Relationships.
 Constraints.
 Persistence behaviour introduced by the feature.
 
+### MusicBoxd-specific conventions
+
+- Repository tests: `@DataJpaTest` + `@ActiveProfiles("datajpatest")` + `@AutoConfigureTestDatabase(replace = Replace.NONE)` (H2; see the existing `src/test/java/.../Repository/*Test.java`).
+- Controller tests: `@WebMvcTest(XController.class)` with `@Import(SecurityConfig.class)` so the real security rules apply, and `@MockitoBean` for repositories and services the controller uses. `SecurityConfig` reads `okta.oauth2.issuer` and `okta.oauth2.client-id`, so supply them with `@TestPropertySource` (dummy values). Most handlers take an `OidcUser`; authenticate requests with `SecurityMockMvcRequestPostProcessors.oidcLogin()` and set the claims the controller reads (e.g. `sub`, `email`). Also cover the unauthenticated case. CSRF is disabled in `SecurityConfig`.
+- `GlobalControllerAdvice` is loaded by every `@WebMvcTest`. It adds a `currentUser` model attribute by calling `UserRepository.findByOktaUserId(authentication.getName())`, so always provide a `@MockitoBean UserRepository`.
+- External HTTP (Spotify, Last.fm, iTunes, Ticketmaster): never call real APIs. Bind `MockRestServiceServer` to the `RestTemplate` the class uses (see `ItunesServiceTest` and `LastFmServiceTest`). Use realistic response JSON that matches the real API's field names.
+- Full-context tests: `@SpringBootTest` + `@ActiveProfiles("apptest")` + `@Import(TestOAuth2Config.class)` (from `src/test/java/.../support/`). Use them only for cross-layer flows.
+- Put shared fixtures or helpers in `src/test/java/com/example/MusicBoxd/support/`.
+
 ## Step 4: Write meaningful tests
 Tests must verify behaviour, not merely execute code.
 Each test should:
@@ -144,7 +164,11 @@ For Gradle, prefer the wrapper:
 ./gradlew test
 Otherwise use:
 gradle test
-Run the new or directly related tests first when possible. After they pass, run the complete test suite.
+Run the new or directly related tests first when possible (e.g. `./mvnw test -Dtest=XControllerTest`). After they pass, run the complete suite with coverage:
+
+./mvnw clean verify
+
+This writes the JaCoCo report to `target/site/jacoco/` (`index.html`, `jacoco.csv`). Report line and branch coverage for each class in scope, using `jacoco.csv`. If a class in scope is below 90% line coverage, list the uncovered behaviour and either add meaningful tests for it or explain why it cannot reasonably be tested. The project's goal is 90% line coverage, but never add tests that execute code without asserting behaviour.
 If a test fails:
 
 Read the complete failure output.
@@ -160,7 +184,8 @@ Scenarios covered.
 Commands run.
 Whether the tests passed.
 Any untested risks or production defects discovered.
-If no meaningful feature difference exists between the current branch and main, do not invent tests. Explain what was inspected and why no tests were added.
+Per-class line/branch coverage for the classes in scope.
+Unless in explicit scope mode: if no meaningful feature difference exists between the current branch and main, do not invent tests. Explain what was inspected and why no tests were added.
 
 ## Step 6: Document the completed feature
 

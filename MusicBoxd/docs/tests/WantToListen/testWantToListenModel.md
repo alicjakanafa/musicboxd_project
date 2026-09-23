@@ -51,6 +51,20 @@ compile. Instead, every lookup in this test converts the id with `.longValue()`,
   persisted with `songId` set and `albumId = null` (saving a song rather than an
   album); both fields round-trip correctly, confirming `songId`/`albumId` are
   independently nullable at the JPA level as documented.
+- **`findAllByUserIdOrderByCreatedAtDescReturnsTheSingleEntryForThatUser`** — when a
+  user has exactly one entry, `findAllByUserIdOrderByCreatedAtDesc` returns it (and
+  ignores other users' entries).
+- **`findAllByUserIdOrderByCreatedAtDescReturnsEmptyWhenUserHasNoEntries`** — a user
+  with no entries gets back `Optional.empty()`.
+- **`findAllByUserIdOrderByCreatedAtDescThrowsWhenUserHasMoreThanOneEntry`** —
+  documents a **suspected production defect**: because the method returns a single
+  `Optional<WantToListen>` with no `LIMIT`/`Top` applied, a user with two or more
+  entries causes it to throw
+  `org.springframework.dao.IncorrectResultSizeDataAccessException` instead of
+  returning anything useful (see the ["Known issue" in the repository
+  docs](../../features/WantToListen/wantToListenRepositoryDocumentation.md) for
+  details). This method is not called from any production code today, so this is a
+  latent defect rather than an active one.
 
 ### Known limitation
 

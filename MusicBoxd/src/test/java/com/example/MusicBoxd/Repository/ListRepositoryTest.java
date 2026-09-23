@@ -79,4 +79,46 @@ class ListRepositoryTest {
         assertThat(saved.getDescription()).isNull();
         assertThat(saved.getTitle()).isEqualTo("No Description");
     }
+
+    @Test
+    void findByUserIdOrderByCreatedAtDescReturnsOnlyThatUsersListsNewestFirst() throws InterruptedException {
+        com.example.MusicBoxd.Model.List older = entityManager.persistFlushFind(
+                new com.example.MusicBoxd.Model.List(5L, "Older List", null, ListType.CUSTOM));
+        Thread.sleep(5);
+        com.example.MusicBoxd.Model.List newer = entityManager.persistFlushFind(
+                new com.example.MusicBoxd.Model.List(5L, "Newer List", null, ListType.CUSTOM));
+        entityManager.persistAndFlush(new com.example.MusicBoxd.Model.List(6L, "Other User List", null, ListType.CUSTOM));
+
+        java.util.List<com.example.MusicBoxd.Model.List> lists = listRepository.findByUserIdOrderByCreatedAtDesc(5L);
+
+        assertThat(lists).extracting(com.example.MusicBoxd.Model.List::getId)
+                .containsExactly(newer.getId(), older.getId());
+    }
+
+    @Test
+    void findByUserIdOrderByCreatedAtDescReturnsEmptyListWhenUserHasNoLists() {
+        java.util.List<com.example.MusicBoxd.Model.List> lists = listRepository.findByUserIdOrderByCreatedAtDesc(999L);
+
+        assertThat(lists).isEmpty();
+    }
+
+    @Test
+    void findByUserIdAndListTypeReturnsMatchingList() {
+        entityManager.persistAndFlush(new com.example.MusicBoxd.Model.List(7L, "Favourites", null, ListType.FAVOURITES));
+        entityManager.persistAndFlush(new com.example.MusicBoxd.Model.List(7L, "Custom List", null, ListType.CUSTOM));
+
+        Optional<com.example.MusicBoxd.Model.List> found = listRepository.findByUserIdAndListType(7L, ListType.FAVOURITES);
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("Favourites");
+    }
+
+    @Test
+    void findByUserIdAndListTypeReturnsEmptyWhenNoMatchingListType() {
+        entityManager.persistAndFlush(new com.example.MusicBoxd.Model.List(8L, "Custom List", null, ListType.CUSTOM));
+
+        Optional<com.example.MusicBoxd.Model.List> found = listRepository.findByUserIdAndListType(8L, ListType.WANT_TO_LISTEN);
+
+        assertThat(found).isEmpty();
+    }
 }

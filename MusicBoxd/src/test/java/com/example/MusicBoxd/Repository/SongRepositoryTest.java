@@ -78,4 +78,44 @@ class SongRepositoryTest {
 
         assertThat(songRepository.findById(persisted.getId())).isEmpty();
     }
+
+    @Test
+    void findByAlbumIdReturnsOnlyThatAlbumsSongs() {
+        Album albumOne = entityManager.persistFlushFind(new Album());
+        Album albumTwo = entityManager.persistFlushFind(new Album());
+        entityManager.persistAndFlush(new Song("ext-6", albumOne.getId(), "Song A", 1, null, null));
+        entityManager.persistAndFlush(new Song("ext-7", albumOne.getId(), "Song B", 2, null, null));
+        entityManager.persistAndFlush(new Song("ext-8", albumTwo.getId(), "Other Album Song", 1, null, null));
+
+        List<Song> songs = songRepository.findByAlbumId(albumOne.getId());
+
+        assertThat(songs).hasSize(2)
+                .extracting(Song::getTitle)
+                .containsExactlyInAnyOrder("Song A", "Song B");
+    }
+
+    @Test
+    void findByAlbumIdReturnsEmptyListWhenAlbumHasNoSongs() {
+        List<Song> songs = songRepository.findByAlbumId(999L);
+
+        assertThat(songs).isEmpty();
+    }
+
+    @Test
+    void findByExternalIdReturnsMatchingSong() {
+        Album album = entityManager.persistFlushFind(new Album());
+        entityManager.persistAndFlush(new Song("unique-song-ext-id", album.getId(), "Findable Song", 1, null, null));
+
+        Optional<Song> found = songRepository.findByExternalId("unique-song-ext-id");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("Findable Song");
+    }
+
+    @Test
+    void findByExternalIdReturnsEmptyWhenNoSongMatches() {
+        Optional<Song> found = songRepository.findByExternalId("does-not-exist");
+
+        assertThat(found).isEmpty();
+    }
 }

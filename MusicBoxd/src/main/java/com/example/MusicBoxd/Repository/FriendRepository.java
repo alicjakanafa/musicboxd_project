@@ -42,7 +42,7 @@ public interface FriendRepository
             FROM Friend f
             WHERE f.requesterId = :#{#requester.id}
             AND f.receiverId = :#{#receiver.id}
-            AND f.status = :status
+            AND f.status = :#{#status.name()}
             """)
     boolean existsByRequesterAndReceiverAndStatus(
             @Param("requester") User requester,
@@ -56,7 +56,7 @@ public interface FriendRepository
             FROM Friend f
             WHERE f.receiverId = :#{#receiver.id}
             AND f.requesterId = :#{#requester.id}
-            AND f.status = :status
+            AND f.status = :#{#status.name()}
             """)
     boolean existsByReceiverAndRequesterAndStatus(
             @Param("receiver") User receiver,

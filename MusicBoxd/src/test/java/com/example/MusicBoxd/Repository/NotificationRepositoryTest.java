@@ -81,4 +81,61 @@ class NotificationRepositoryTest {
 
         assertThat(saved.isRead()).isFalse();
     }
+
+    @Test
+    void findByUserIdOrderByCreatedAtDescReturnsOnlyThatUsersNotificationsNewestFirst() throws InterruptedException {
+        entityManager.persistFlushFind(new Notification(10L, 2L, 3L, "LIKE", "older"));
+        Thread.sleep(5);
+        entityManager.persistFlushFind(new Notification(10L, 2L, 3L, "LIKE", "newer"));
+        entityManager.persistAndFlush(new Notification(11L, 2L, 3L, "LIKE", "other user"));
+
+        List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(10L);
+
+        assertThat(notifications).extracting(Notification::getNotificationText)
+                .containsExactly("newer", "older");
+    }
+
+    @Test
+    void findByUserIdOrderByCreatedAtDescReturnsEmptyListWhenUserHasNoNotifications() {
+        List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(999L);
+
+        assertThat(notifications).isEmpty();
+    }
+
+    @Test
+    void findTop6ByUserIdOrderByCreatedAtDescLimitsResultsToSix() {
+        for (int i = 0; i < 8; i++) {
+            entityManager.persistAndFlush(new Notification(20L, 2L, 3L, "LIKE", "notification " + i));
+        }
+
+        List<Notification> notifications = notificationRepository.findTop6ByUserIdOrderByCreatedAtDesc(20L);
+
+        assertThat(notifications).hasSize(6);
+    }
+
+    @Test
+    void findByUserIdAndReadFalseOrderByCreatedAtDescReturnsOnlyUnreadNotifications() {
+        Notification unread = entityManager.persistFlushFind(new Notification(30L, 2L, 3L, "LIKE", "unread"));
+        Notification read = entityManager.persistFlushFind(new Notification(30L, 2L, 3L, "LIKE", "read"));
+        read.setRead(true);
+        entityManager.persistFlushFind(read);
+
+        List<Notification> notifications = notificationRepository.findByUserIdAndReadFalseOrderByCreatedAtDesc(30L);
+
+        assertThat(notifications).extracting(Notification::getId)
+                .containsExactly(unread.getId());
+    }
+
+    @Test
+    void countByUserIdAndReadFalseCountsOnlyUnreadNotificationsForThatUser() {
+        entityManager.persistAndFlush(new Notification(40L, 2L, 3L, "LIKE", "unread 1"));
+        entityManager.persistAndFlush(new Notification(40L, 2L, 3L, "LIKE", "unread 2"));
+        Notification read = entityManager.persistFlushFind(new Notification(40L, 2L, 3L, "LIKE", "read"));
+        read.setRead(true);
+        entityManager.persistFlushFind(read);
+
+        long count = notificationRepository.countByUserIdAndReadFalse(40L);
+
+        assertThat(count).isEqualTo(2);
+    }
 }

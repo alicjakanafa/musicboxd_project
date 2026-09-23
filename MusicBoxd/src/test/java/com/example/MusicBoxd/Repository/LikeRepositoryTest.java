@@ -77,4 +77,42 @@ class LikeRepositoryTest {
         assertThat(saved.getReviewId()).isNull();
         assertThat(saved.getCommentId()).isEqualTo(8L);
     }
+
+    @Test
+    void findByUserIdAndReviewIdReturnsMatchingLike() {
+        entityManager.persistAndFlush(new Like(10L, 20L, null));
+
+        Optional<Like> found = likeRepository.findByUserIdAndReviewId(10L, 20L);
+
+        assertThat(found).isPresent();
+    }
+
+    @Test
+    void findByUserIdAndReviewIdReturnsEmptyWhenNoMatch() {
+        Optional<Like> found = likeRepository.findByUserIdAndReviewId(10L, 999L);
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    void countByReviewIdCountsLikesForThatReviewOnly() {
+        entityManager.persistAndFlush(new Like(1L, 30L, null));
+        entityManager.persistAndFlush(new Like(2L, 30L, null));
+        entityManager.persistAndFlush(new Like(3L, 31L, null));
+
+        long count = likeRepository.countByReviewId(30L);
+
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    void deleteByUserIdAndReviewIdRemovesOnlyMatchingLike() {
+        entityManager.persistAndFlush(new Like(40L, 50L, null));
+        entityManager.persistAndFlush(new Like(41L, 50L, null));
+
+        likeRepository.deleteByUserIdAndReviewId(40L, 50L);
+
+        assertThat(likeRepository.findByUserIdAndReviewId(40L, 50L)).isEmpty();
+        assertThat(likeRepository.findByUserIdAndReviewId(41L, 50L)).isPresent();
+    }
 }
