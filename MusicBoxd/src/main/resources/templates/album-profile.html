@@ -248,43 +248,35 @@
 
             <form
                     th:action="@{/lists/want-to-listen/{albumId}(
-                albumId=${album.id}
-            )}"
+            albumId=${album.id}
+        )}"
                     method="post"
             >
-
                 <button
                         type="submit"
                         class="album-action-button secondary"
-                        th:classappend="${alreadyInWantToListen}
-                    ? ' active'
-                    : ''"
+                        th:classappend="${alreadyInWantToListen} ? ' active' : ''"
                 >
 
-            <span class="action-icon">
-                <span
-                        th:if="${alreadyInWantToListen}"
-                >
-                    ✓
-                </span>
-
-                <span
-                        th:unless="${alreadyInWantToListen}"
-                >
-                    ♡
-                </span>
+        <span class="action-icon">
+            <span th:if="${alreadyInWantToListen}">
+                ✓
             </span>
+
+            <span th:unless="${alreadyInWantToListen}">
+                ♡
+            </span>
+        </span>
 
                     <span
                             th:text="${alreadyInWantToListen
-                        ? 'In Want to Listen'
-                        : 'Want to Listen'}"
+                    ? 'In Want to Listen'
+                    : 'Want to Listen'}"
                     >
-                Want to Listen
-            </span>
+            Want to Listen
+        </span>
 
                 </button>
-
             </form>
 
         </div>

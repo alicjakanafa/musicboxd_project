@@ -25,4 +25,6 @@ public interface ListItemRepository extends CrudRepository<ListItem, Long> {
     long countByListId(Long listId);
 
     void deleteByListId(Long listId);
+
+    void deleteByListIdAndAlbumId(Long listId, Long albumId);
 }

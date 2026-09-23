@@ -2,12 +2,14 @@
     box-sizing: border-box;
 }
 
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     background: #080d14;
     color: #ffffff;
 }
+
 
 .page {
     min-height: 100vh;
@@ -20,6 +22,7 @@ body {
             ),
             #080d14;
 }
+
 
 .container {
     width: 90%;
@@ -37,6 +40,7 @@ body {
     margin-bottom: 45px;
 }
 
+
 .hero-label {
     color: #4d9bd6;
 
@@ -47,6 +51,7 @@ body {
 
     margin-bottom: 15px;
 }
+
 
 .hero h1 {
     margin: 0;
@@ -59,9 +64,11 @@ body {
     font-weight: 900;
 }
 
+
 .hero h1 span {
     color: #4d9bd6;
 }
+
 
 .hero p {
     margin: 20px 0 0;
@@ -87,6 +94,7 @@ body {
     margin-bottom: 45px;
 }
 
+
 .search-form input {
     flex: 1;
 
@@ -111,9 +119,11 @@ body {
             box-shadow 0.2s ease;
 }
 
+
 .search-form input::placeholder {
     color: #697583;
 }
+
 
 .search-form input:focus {
     border-color: #4d9bd6;
@@ -121,6 +131,7 @@ body {
     box-shadow:
             0 0 0 3px rgba(77, 155, 214, 0.1);
 }
+
 
 .search-form button {
     padding: 14px 24px;
@@ -142,6 +153,7 @@ body {
             background 0.2s ease,
             transform 0.2s ease;
 }
+
 
 .search-form button:hover {
     background: #78b7e8;
@@ -167,11 +179,13 @@ body {
     border-bottom: 1px solid #1c2936;
 }
 
+
 .results-header h2 {
     margin: 0 0 5px;
 
     font-size: 22px;
 }
+
 
 .results-header p {
     margin: 0;
@@ -197,9 +211,10 @@ body {
 
 
 /* =========================
-   TRACK CARD
+   ALBUM + TRACK CARDS
    ========================= */
 
+.album-card,
 .track-card {
     background: #101821;
 
@@ -218,6 +233,8 @@ body {
             box-shadow 0.2s ease;
 }
 
+
+.album-card:hover,
 .track-card:hover {
     transform: translateY(-5px);
 
@@ -231,10 +248,11 @@ body {
 
 
 /* =========================
-   TRACK ARTWORK
+   ALBUM + TRACK ARTWORK
    ========================= */
 
-.track-card img {
+.album-card > img,
+.track-card > img {
     width: 100%;
 
     aspect-ratio: 1 / 1;
@@ -256,9 +274,10 @@ body {
 
 
 /* =========================
-   TRACK INFORMATION
+   CARD INFORMATION
    ========================= */
 
+.album-card h2,
 .track-card h2 {
     margin: 0 0 7px;
 
@@ -269,6 +288,8 @@ body {
     line-height: 1.3;
 }
 
+
+.album-card p,
 .track-card p {
     margin: 5px 0;
 
@@ -282,10 +303,70 @@ body {
 
 /* Artist name */
 
-.track-card p:nth-of-type(1) {
+.album-card p:first-of-type,
+.track-card p:first-of-type {
     color: #78b7e8;
 
     font-weight: 600;
+}
+
+
+/* =========================
+   VIEW ALBUM BUTTON
+   ========================= */
+
+.view-album-button {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+
+    margin-top: 16px;
+
+    padding: 10px 12px;
+
+    background: #18232e;
+
+    border: 1px solid #263646;
+
+    border-radius: 7px;
+
+    color: #78b7e8;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease;
+}
+
+
+.view-album-button span {
+    font-size: 16px;
+
+    transition:
+            transform 0.2s ease;
+}
+
+
+.view-album-button:hover {
+    background: #1c2c3b;
+
+    border-color: #4d9bd6;
+
+    color: #ffffff;
+}
+
+
+.view-album-button:hover span {
+    transform: translateX(3px);
 }
 
 
@@ -296,6 +377,7 @@ body {
 .song-preview {
     margin-top: 15px;
 }
+
 
 audio {
     width: 100%;
@@ -341,6 +423,7 @@ audio {
     color: #697583;
 }
 
+
 .empty-icon {
     margin-bottom: 15px;
 
@@ -349,11 +432,13 @@ audio {
     font-size: 45px;
 }
 
+
 .empty-state h2 {
     margin: 0 0 10px;
 
     color: #ffffff;
 }
+
 
 .empty-state p {
     margin: 0;
@@ -405,9 +490,11 @@ footer {
         padding-top: 45px;
     }
 
+
     .hero {
         margin-bottom: 35px;
     }
+
 
     .hero h1 {
         font-size: 55px;
@@ -415,13 +502,16 @@ footer {
         letter-spacing: -3px;
     }
 
+
     .search-form {
         flex-direction: column;
     }
 
+
     .search-form button {
         width: 100%;
     }
+
 
     .results {
         grid-template-columns:
@@ -430,15 +520,28 @@ footer {
         gap: 12px;
     }
 
+
+    .album-card,
     .track-card {
         padding: 10px;
     }
 
+
+    .album-card h2,
     .track-card h2 {
         font-size: 14px;
     }
 
+
+    .album-card p,
     .track-card p {
+        font-size: 11px;
+    }
+
+
+    .view-album-button {
+        padding: 9px 10px;
+
         font-size: 11px;
     }
 
@@ -454,6 +557,7 @@ footer {
     .results {
         grid-template-columns: 1fr;
     }
+
 
     .hero h1 {
         font-size: 48px;

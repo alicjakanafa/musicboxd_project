@@ -10,12 +10,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDateTime;
 
 @RestController
 public class UserController {
-
     @Autowired
     UserRepository userRepository;
 
@@ -23,30 +23,47 @@ public class UserController {
     ListRepository listRepository;
 
     @GetMapping("/users/after-login")
-    public RedirectView afterLogin() {
-        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+    public RedirectView afterLogin(HttpSession session) {
+
+        DefaultOidcUser principal =
+                (DefaultOidcUser) SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal();
 
         String oktaUserId = principal.getSubject();
         String username = principal.getEmail();
 
-        userRepository
-                .findByOktaUserId(oktaUserId)
-                .orElseGet(() -> {
-                    User user = new User(
-                            oktaUserId,
-                            username,
-                            principal.getEmail(),
-                            "",
-                            principal.getPicture()
-                    );
-                    user.setCreatedAt(LocalDateTime.now());
-                    User savedUser = userRepository.save(user);
-                    createDefaultLists(savedUser);
-                    return savedUser;
-                });
+        User user =
+                userRepository
+                        .findByOktaUserId(oktaUserId)
+                        .orElseGet(() -> {
+
+                            User newUser = new User(
+                                    oktaUserId,
+                                    username,
+                                    principal.getEmail(),
+                                    "",
+                                    principal.getPicture()
+                            );
+
+                            newUser.setCreatedAt(
+                                    LocalDateTime.now()
+                            );
+
+                            User savedUser =
+                                    userRepository.save(newUser);
+
+                            createDefaultLists(savedUser);
+
+                            return savedUser;
+                        });
+
+        session.setAttribute(
+                "userId",
+                user.getId()
+        );
+
 
         return new RedirectView("/");
     }

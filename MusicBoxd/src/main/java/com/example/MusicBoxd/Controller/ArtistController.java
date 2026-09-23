@@ -272,31 +272,25 @@ public class ArtistController {
     }
 
     @PostMapping("/{id}/favourite")
-    public String favouriteArtist(
+    public String toggleFavouriteArtist(
             @PathVariable Long id,
             Authentication authentication
     ) {
 
         OidcUser principal =
-                (OidcUser)
-                        authentication.getPrincipal();
-
+                (OidcUser) authentication.getPrincipal();
 
         String oktaUserId =
                 principal.getSubject();
 
-
         User user =
                 userRepository
-                        .findByOktaUserId(
-                                oktaUserId
-                        )
+                        .findByOktaUserId(oktaUserId)
                         .orElseThrow(() ->
                                 new RuntimeException(
                                         "User not found"
                                 )
                         );
-
 
         Artist artist =
                 artistRepository
@@ -307,7 +301,6 @@ public class ArtistController {
                                 )
                         );
 
-
         boolean alreadyFavourite =
                 favouriteArtistRepository
                         .existsByUserIdAndArtistId(
@@ -315,8 +308,17 @@ public class ArtistController {
                                 artist.getId()
                         );
 
+        if (alreadyFavourite) {
 
-        if (!alreadyFavourite) {
+            // Remove from favourites
+            favouriteArtistRepository
+                    .deleteByUserIdAndArtistId(
+                            user.getId(),
+                            artist.getId()
+                    );
+
+        } else {
+
 
             UserFavouriteArtist favourite =
                     new UserFavouriteArtist(
@@ -324,50 +326,8 @@ public class ArtistController {
                             artist.getId()
                     );
 
-
-            favouriteArtistRepository.save(
-                    favourite
-            );
+            favouriteArtistRepository.save(favourite);
         }
-
-
-        return "redirect:/artists/" + id;
-    }
-
-
-    @PostMapping("/{id}/unfavourite")
-    public String unfavouriteArtist(
-            @PathVariable Long id,
-            Authentication authentication
-    ) {
-
-        OidcUser principal =
-                (OidcUser)
-                        authentication.getPrincipal();
-
-
-        String oktaUserId =
-                principal.getSubject();
-
-
-        User user =
-                userRepository
-                        .findByOktaUserId(
-                                oktaUserId
-                        )
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "User not found"
-                                )
-                        );
-
-
-        favouriteArtistRepository
-                .deleteByUserIdAndArtistId(
-                        user.getId(),
-                        id
-                );
-
 
         return "redirect:/artists/" + id;
     }

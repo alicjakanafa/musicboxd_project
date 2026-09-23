@@ -364,14 +364,16 @@ public class ListController {
     }
 
     @PostMapping("/want-to-listen/{albumId}")
-    public String addToWantToListen(
+    public String toggleWantToListen(
             Authentication authentication,
             @PathVariable Long albumId
     ) {
+
         User user = getCurrentUser(authentication);
 
         Album album =
-                albumRepository.findById(albumId).orElseThrow();
+                albumRepository.findById(albumId)
+                        .orElseThrow();
 
         com.example.MusicBoxd.Model.List wantToListen =
                 listRepository
@@ -380,6 +382,7 @@ public class ListController {
                                 ListType.WANT_TO_LISTEN
                         )
                         .orElseGet(() -> {
+
                             com.example.MusicBoxd.Model.List newList =
                                     new com.example.MusicBoxd.Model.List(
                                             user.getId(),
@@ -391,13 +394,20 @@ public class ListController {
                             return listRepository.save(newList);
                         });
 
-        boolean alreadyExists =
-                listItemRepository.existsByListIdAndAlbumId(
+        Optional<ListItem> existingItem =
+                listItemRepository.findByListIdAndAlbumId(
                         wantToListen.getId(),
                         albumId
                 );
 
-        if (!alreadyExists) {
+        if (existingItem.isPresent()) {
+
+            // Remove from Want to Listen
+            listItemRepository.delete(existingItem.get());
+
+        } else {
+
+            // Add to Want to Listen
             int nextPosition =
                     listItemRepository.findMaxPosition(
                             wantToListen.getId()
