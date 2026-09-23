@@ -11,9 +11,7 @@
             content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        MusicBoxd - Search Albums
-    </title>
+    <title>MusicBoxd - Search Albums</title>
 
 
     <!-- Google Fonts -->
@@ -67,6 +65,8 @@
     >
     </header>
 
+
+    <!-- MAIN CONTENT -->
 
     <main class="container">
 
@@ -142,42 +142,45 @@
                 th:if="${albums != null and !albums.isEmpty()}"
         >
 
+
+            <!-- ALBUM CARD -->
+
             <div
                     class="album-card"
                     th:each="album : ${albums}"
             >
 
 
-                <!-- ALBUM ART -->
+                <!-- ALBUM ARTWORK -->
 
-                <div class="album-art">
+                <img
+                        th:if="${album.image != null and !album.image.isEmpty()}"
+                        th:src="${album.image.get(album.image.size() - 1).text}"
+                        th:alt="${album.name}"
+                        onerror="this.onerror=null; this.src='/images/image-unavailable.svg';"
+                >
 
-                    <img
-                            th:if="${album.image != null and !album.image.isEmpty()}"
-                            th:src="${album.image.get(album.image.size() - 1).text}"
-                            th:alt="${album.name}"
-                            onerror="this.onerror=null; this.src='/images/image-unavailable.svg';"
-                    >
-
-                    <img
-                            th:if="${album.image == null or album.image.isEmpty()}"
-                            src="/images/image-unavailable.svg"
-                            th:alt="${album.name}"
-                    >
-
-                </div>
+                <img
+                        th:if="${album.image == null or album.image.isEmpty()}"
+                        src="/images/image-unavailable.svg"
+                        th:alt="${album.name}"
+                >
 
 
                 <!-- ALBUM NAME -->
 
-                <h2 th:text="${album.name}">
+                <h2
+                        th:text="${album.name}"
+                >
                     Album Name
                 </h2>
 
 
                 <!-- ARTIST -->
 
-                <p th:text="${album.artist}">
+                <p
+                        th:text="${album.artist}"
+                >
                     Artist Name
                 </p>
 
@@ -189,6 +192,7 @@
                             artistName=${album.artist},
                             albumName=${album.name}
                         )}"
+                        class="view-album-button"
                 >
                     View Album
                     <span>→</span>
@@ -237,4 +241,3 @@
 </body>
 
 </html>
-

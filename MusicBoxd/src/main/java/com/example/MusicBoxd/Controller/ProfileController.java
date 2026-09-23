@@ -108,11 +108,31 @@ public class ProfileController {
         }
 
 
+        Object loggedInUserId =
+                session.getAttribute("userId");
+
+        boolean isOwnProfile =
+                loggedInUserId != null &&
+                        Long.valueOf(
+                                loggedInUserId.toString()
+                        ).equals(id);
+
+        model.addAttribute(
+                "isOwnProfile",
+                isOwnProfile
+        );
+
+
         System.out.println(
                 "LOADING PROFILE FOR USER: " +
                         user.getUsername() +
                         " ID: " +
                         user.getId()
+        );
+
+        System.out.println(
+                "IS OWN PROFILE: " +
+                        isOwnProfile
         );
 
 
@@ -200,6 +220,7 @@ public class ProfileController {
         }
 
 
+
         List<UserFavouriteAlbum> favouriteRecords =
                 favouriteAlbumRepository
                         .findByUserIdOrderByPositionAsc(id);
@@ -273,6 +294,7 @@ public class ProfileController {
         );
 
 
+
         List<com.example.MusicBoxd.Model.List> profileLists =
                 listRepository
                         .findByUserIdOrderByCreatedAtDesc(id);
@@ -333,27 +355,50 @@ public class ProfileController {
         Iterable<Friend> allFriendships =
                 friendRepository.findAll();
 
+
         for (Friend friendship : allFriendships) {
 
             if (friendship.getStatus() == null) {
                 continue;
             }
 
-            if (friendship.getStatus().equals("REJECTED")) {
+
+            if (
+                    friendship
+                            .getStatus()
+                            .equals("REJECTED")
+            ) {
+
                 continue;
             }
 
-            Long requesterId = friendship.getRequesterId();
-            Long receiverId = friendship.getReceiverId();
 
-            if (requesterId == null || receiverId == null) {
+            Long requesterId =
+                    friendship.getRequesterId();
+
+            Long receiverId =
+                    friendship.getReceiverId();
+
+
+            if (
+                    requesterId == null ||
+                            receiverId == null
+            ) {
+
                 continue;
             }
 
 
-            if (friendship.getStatus().equals("ACCEPTED")) {
+            if (
+                    friendship
+                            .getStatus()
+                            .equals("ACCEPTED")
+            ) {
 
-                if (requesterId.equals(id) || receiverId.equals(id)) {
+                if (
+                        requesterId.equals(id) ||
+                                receiverId.equals(id)
+                ) {
 
                     followerCount++;
                     followingCount++;
@@ -362,17 +407,30 @@ public class ProfileController {
                 continue;
             }
 
-            if (friendship.getStatus().equals("PENDING")) {
+            if (
+                    friendship
+                            .getStatus()
+                            .equals("PENDING")
+            ) {
 
-                if (receiverId.equals(id)) {
+
+                if (
+                        receiverId.equals(id)
+                ) {
+
                     followerCount++;
                 }
 
-                if (requesterId.equals(id)) {
+
+                if (
+                        requesterId.equals(id)
+                ) {
+
                     followingCount++;
                 }
             }
         }
+
 
         model.addAttribute(
                 "followingCount",
@@ -383,6 +441,7 @@ public class ProfileController {
                 "followerCount",
                 followerCount
         );
+
 
 
         model.addAttribute(
@@ -434,7 +493,6 @@ public class ProfileController {
                 (String) session.getAttribute(
                         "spotifyAccessToken"
                 );
-
 
 
         model.addAttribute(
@@ -631,54 +689,119 @@ public class ProfileController {
         }
 
 
-
-        List<Friend> acceptedFriendships =
-                friendRepository
-                        .findByRequesterIdAndStatusOrReceiverIdAndStatus(
-                                id,
-                                "ACCEPTED",
-                                id,
-                                "ACCEPTED"
-                        );
-
-
         List<User> followingUsers =
                 new ArrayList<>();
 
 
+        Iterable<Friend> allFriendshipsForUsers =
+                friendRepository.findAll();
+
+
         for (
                 Friend friendship :
-                acceptedFriendships
+                allFriendshipsForUsers
         ) {
 
-            Long friendId;
+            if (
+                    friendship.getStatus() == null
+            ) {
+
+                continue;
+            }
 
 
             if (
                     friendship
-                            .getRequesterId()
-                            .equals(id)
+                            .getStatus()
+                            .equals("REJECTED")
             ) {
 
-                friendId =
-                        friendship
-                                .getReceiverId();
-
-            }
-
-            else {
-
-                friendId =
-                        friendship
-                                .getRequesterId();
+                continue;
             }
 
 
-            userRepository
-                    .findById(friendId)
-                    .ifPresent(
-                            followingUsers::add
-                    );
+            Long requesterId =
+                    friendship.getRequesterId();
+
+            Long receiverId =
+                    friendship.getReceiverId();
+
+
+            if (
+                    requesterId == null ||
+                            receiverId == null
+            ) {
+
+                continue;
+            }
+
+
+            /*
+             * PENDING:
+             *
+             * The profile user sent the request,
+             * so they are following the receiver.
+             */
+
+            if (
+                    friendship
+                            .getStatus()
+                            .equals("PENDING")
+                            &&
+                            requesterId.equals(id)
+            ) {
+
+                userRepository
+                        .findById(receiverId)
+                        .ifPresent(
+                                followingUsers::add
+                        );
+
+                continue;
+            }
+
+
+            /*
+             * ACCEPTED:
+             *
+             * Either direction means they are
+             * mutually following each other.
+             */
+
+            if (
+                    friendship
+                            .getStatus()
+                            .equals("ACCEPTED")
+            ) {
+
+                Long friendId = null;
+
+
+                if (
+                        requesterId.equals(id)
+                ) {
+
+                    friendId = receiverId;
+
+                }
+
+                else if (
+                        receiverId.equals(id)
+                ) {
+
+                    friendId = requesterId;
+                }
+
+
+                if (friendId != null) {
+
+                    userRepository
+                            .findById(friendId)
+                            .ifPresent(
+                                    followingUsers::add
+                            );
+                }
+            }
         }
 
 
@@ -686,8 +809,6 @@ public class ProfileController {
                 "followingUsers",
                 followingUsers
         );
-
-
 
         System.out.println(
                 "FOLLOWING COUNT: " +
@@ -729,7 +850,6 @@ public class ProfileController {
     }
 
 
-
     @GetMapping("/placeholder-list-form")
     public String placeholderListForm() {
 
@@ -768,6 +888,7 @@ public class ProfileController {
 
             return null;
         }
+
 
         Artist artist =
                 artistRepository

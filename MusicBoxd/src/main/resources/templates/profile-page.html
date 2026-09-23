@@ -244,6 +244,7 @@
       <!-- EDIT PROFILE -->
 
       <a
+              th:if="${isOwnProfile}"
               th:href="@{/profile/edit}"
               class="edit-profile-button"
       >
@@ -254,7 +255,7 @@
       <!-- CONNECT SPOTIFY -->
 
       <a
-              th:if="${spotifyConnected == null or !spotifyConnected}"
+              th:if="${isOwnProfile and (spotifyConnected == null or !spotifyConnected)}"
               href="/spotify/login"
               class="connect-spotify-button"
       >
@@ -265,7 +266,7 @@
       <!-- ALREADY CONNECTED -->
 
       <a
-              th:if="${spotifyConnected == true}"
+              th:if="${isOwnProfile and spotifyConnected == true}"
               href="/spotify/login"
               class="connect-spotify-button spotify-connected-button"
       >
