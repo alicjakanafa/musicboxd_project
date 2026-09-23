@@ -5,7 +5,7 @@
 .site-header {
     min-height: 78px;
 
-    padding: 0 5%;
+    padding: 0 clamp(18px, 5vw, 60px);
 
     background:
             linear-gradient(
@@ -22,11 +22,13 @@
     display: grid;
 
     grid-template-columns:
-        1fr
-        auto
-        1fr;
+            minmax(0, 1fr)
+            auto
+            minmax(0, 1fr);
 
     align-items: center;
+
+    column-gap: clamp(12px, 2vw, 35px);
 
     position: sticky;
 
@@ -37,6 +39,11 @@
     box-shadow:
             0 4px 20px rgba(0, 0, 0, 0.35);
 }
+
+
+/* =========================
+   NAVBAR BOTTOM LINE
+   ========================= */
 
 .site-header::after {
     content: "";
@@ -62,18 +69,29 @@
             );
 }
 
+
+/* =========================
+   BRAND
+   ========================= */
+
 .brand {
-    align-self: center;
+    min-width: 0;
+
+    justify-self: center;
 
     display: flex;
 
     flex-direction: column;
+
+    align-items: center;
 
     text-align: center;
 
     color: #ffffff;
 
     text-decoration: none;
+
+    white-space: nowrap;
 
     transition:
             opacity 0.2s ease;
@@ -88,7 +106,7 @@
             "Audiowide",
             sans-serif;
 
-    font-size: 26px;
+    font-size: clamp(20px, 2vw, 26px);
 
     font-weight: 400;
 
@@ -115,13 +133,20 @@
     letter-spacing: 0.3px;
 }
 
+
+/* =========================
+   NAVIGATION
+   ========================= */
+
 .nav-left,
 .nav-right {
+    min-width: 0;
+
     display: flex;
 
     align-items: center;
 
-    gap: 6px;
+    gap: clamp(2px, 0.5vw, 6px);
 }
 
 .nav-left {
@@ -130,12 +155,19 @@
 
 .nav-right {
     justify-self: end;
+
+    max-width: 100%;
 }
+
+
+/* =========================
+   NAV LINKS
+   ========================= */
 
 .site-header nav a {
     position: relative;
 
-    padding: 9px 12px;
+    padding: 9px clamp(7px, 0.8vw, 12px);
 
     color: rgba(255, 255, 255, 0.72);
 
@@ -146,11 +178,13 @@
             Arial,
             sans-serif;
 
-    font-size: 13px;
+    font-size: clamp(11px, 1vw, 13px);
 
     font-weight: 600;
 
     border-radius: 8px;
+
+    white-space: nowrap;
 
     transition:
             color 0.2s ease,
@@ -166,7 +200,6 @@
 
     transform: translateY(-1px);
 }
-
 
 .site-header nav a::after {
     content: "";
@@ -198,11 +231,19 @@
 }
 
 
+/* =========================
+   LOGIN / LOGOUT
+   ========================= */
+
 .logged-in,
 .logged-out {
     display: flex;
+
     align-items: center;
-    gap: 8px;
+
+    gap: 4px;
+
+    min-width: 0;
 }
 
 .welcome-message {
@@ -213,17 +254,23 @@
             Arial,
             sans-serif;
 
-    font-size: 13px;
+    font-size: clamp(11px, 1vw, 13px);
 
     font-weight: 600;
 
     white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    max-width: clamp(80px, 10vw, 160px);
 }
 
 .logout-button {
     position: relative;
 
-    padding: 9px 12px;
+    padding: 9px clamp(7px, 0.8vw, 12px);
 
     color: rgba(255, 255, 255, 0.72);
 
@@ -236,13 +283,15 @@
             Arial,
             sans-serif;
 
-    font-size: 13px;
+    font-size: clamp(11px, 1vw, 13px);
 
     font-weight: 600;
 
     border-radius: 8px;
 
     cursor: pointer;
+
+    white-space: nowrap;
 
     transition:
             color 0.2s ease,
@@ -265,6 +314,7 @@
     position: absolute;
 
     left: 12px;
+
     right: 12px;
 
     bottom: 4px;
@@ -286,29 +336,54 @@
 .logout-button:hover::after {
     transform: scaleX(1);
 }
+
+
+/* =========================
+   SEARCH
+   ========================= */
+
 .album-search {
     display: flex;
+
     align-items: center;
-    margin-left: 8px;
+
+    flex-shrink: 1;
+
+    min-width: 0;
+
+    margin-left: clamp(3px, 0.5vw, 8px);
+
     height: 34px;
 }
 
 .album-search input {
-    width: 150px;
+    width: clamp(90px, 10vw, 150px);
+
+    min-width: 60px;
+
     height: 34px;
-    padding: 0 12px;
+
+    padding: 0 10px;
 
     background: #101821;
+
     border: 1px solid #30475d;
+
     border-right: none;
+
     border-radius: 8px 0 0 8px;
 
     color: #f5f7fa;
+
     font-family: inherit;
+
     font-size: 13px;
 
     outline: none;
-    transition: width 0.2s ease, border-color 0.2s ease;
+
+    transition:
+            width 0.2s ease,
+            border-color 0.2s ease;
 }
 
 .album-search input::placeholder {
@@ -316,52 +391,49 @@
 }
 
 .album-search input:focus {
-    width: 190px;
+    width: clamp(120px, 13vw, 190px);
+
     border-color: #4d9bd6;
 }
 
 .album-search button {
     width: 38px;
+
+    min-width: 38px;
+
     height: 34px;
 
     padding: 0;
 
     background: #2f6f9f;
+
     border: 1px solid #4d9bd6;
+
     border-radius: 0 8px 8px 0;
 
     color: #ffffff;
+
     cursor: pointer;
 
-    transition: background 0.2s ease;
+    transition:
+            background 0.2s ease;
 }
 
 .album-search button:hover {
     background: #4d9bd6;
 }
 
-@media (max-width: 700px) {
+
+/* =========================
+   MEDIUM SCREENS
+   ========================= */
+
+@media (max-width: 1050px) {
 
     .site-header {
-        min-height: 70px;
+        padding: 0 20px;
 
-        padding: 0 18px;
-
-        grid-template-columns:
-            1fr
-            auto;
-    }
-
-    .brand {
-        grid-column: 1 / -1;
-
-        grid-row: 1;
-
-        position: absolute;
-
-        left: 50%;
-
-        transform: translateX(-50%);
+        column-gap: 12px;
     }
 
     .brand-name {
@@ -372,10 +444,143 @@
         display: none;
     }
 
+    .site-header nav a {
+        padding: 8px 7px;
+
+        font-size: 11px;
+    }
+
+    .album-search input {
+        width: 110px;
+    }
+
+    .album-search input:focus {
+        width: 140px;
+    }
+
+    .welcome-message {
+        max-width: 90px;
+    }
+}
+
+
+/* =========================
+   TABLET / SMALL LAPTOP
+   ========================= */
+
+@media (max-width: 800px) {
+
+    .site-header {
+        min-height: 68px;
+
+        padding: 8px 16px;
+
+        grid-template-columns:
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr);
+
+        column-gap: 8px;
+    }
+
+    .brand-name {
+        font-size: 19px;
+    }
+
+    .nav-left,
+    .nav-right {
+        gap: 1px;
+    }
+
+    .site-header nav a {
+        padding: 7px 5px;
+
+        font-size: 10px;
+    }
+
+    .logout-button {
+        padding: 7px 5px;
+
+        font-size: 10px;
+    }
+
+    .welcome-message {
+        display: none;
+    }
+
+    .album-search {
+        margin-left: 3px;
+    }
+
+    .album-search input {
+        width: 90px;
+
+        font-size: 12px;
+    }
+
+    .album-search input:focus {
+        width: 120px;
+    }
+
+    .album-search button {
+        width: 34px;
+
+        min-width: 34px;
+    }
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 650px) {
+
+    .site-header {
+        min-height: auto;
+
+        padding: 10px 14px;
+
+        display: grid;
+
+        grid-template-columns: 1fr auto;
+
+        grid-template-rows: auto auto;
+
+        row-gap: 7px;
+
+        column-gap: 8px;
+    }
+
+    /* Logo gets its own row */
+
+    .brand {
+        grid-column: 1 / -1;
+
+        grid-row: 1;
+
+        justify-self: center;
+
+        position: static;
+
+        transform: none;
+    }
+
+    .brand-name {
+        font-size: 21px;
+    }
+
+    .brand-tagline {
+        display: none;
+    }
+
+
+    /* Navigation row */
+
     .nav-left {
         grid-column: 1;
 
-        grid-row: 1;
+        grid-row: 2;
 
         justify-self: start;
     }
@@ -383,40 +588,131 @@
     .nav-right {
         grid-column: 2;
 
-        grid-row: 1;
+        grid-row: 2;
 
         justify-self: end;
-    }
-
-    .nav-left,
-    .nav-right {
-        gap: 2px;
-    }
-
-    .site-header nav a {
-        padding: 8px;
-
-        font-size: 12px;
-    }
-
-    .site-header nav a::after {
-        display: none;
-    }
-}
-
-@media (max-width: 480px) {
-
-    .site-header {
-        padding: 0 12px;
-    }
-
-    .brand-name {
-        font-size: 18px;
     }
 
     .site-header nav a {
         padding: 7px 6px;
 
         font-size: 11px;
+    }
+
+    .logout-button {
+        padding: 7px 6px;
+
+        font-size: 11px;
+    }
+
+    .album-search input {
+        width: 100px;
+    }
+
+    .album-search input:focus {
+        width: 130px;
+    }
+}
+
+
+/* =========================
+   VERY SMALL PHONES
+   ========================= */
+
+@media (max-width: 480px) {
+
+    .site-header {
+        padding: 9px 10px;
+    }
+
+    .brand-name {
+        font-size: 18px;
+    }
+
+    .nav-left,
+    .nav-right {
+        gap: 0;
+    }
+
+    .site-header nav a {
+        padding: 6px 4px;
+
+        font-size: 10px;
+    }
+
+    .logout-button {
+        padding: 6px 4px;
+
+        font-size: 10px;
+    }
+
+    .album-search {
+        margin-left: 2px;
+    }
+
+    .album-search input {
+        width: 75px;
+
+        height: 32px;
+
+        padding: 0 7px;
+
+        font-size: 11px;
+    }
+
+    .album-search input:focus {
+        width: 100px;
+    }
+
+    .album-search button {
+        width: 32px;
+
+        min-width: 32px;
+
+        height: 32px;
+    }
+}
+
+
+/* =========================
+   EXTREMELY SMALL PHONES
+   ========================= */
+
+@media (max-width: 380px) {
+
+    .site-header {
+        padding: 8px;
+    }
+
+    .brand-name {
+        font-size: 17px;
+    }
+
+    .site-header nav a {
+        padding: 6px 3px;
+
+        font-size: 9px;
+    }
+
+    .logout-button {
+        padding: 6px 3px;
+
+        font-size: 9px;
+    }
+
+    .album-search input {
+        width: 65px;
+
+        font-size: 10px;
+    }
+
+    .album-search input:focus {
+        width: 85px;
+    }
+
+    .album-search button {
+        width: 30px;
+
+        min-width: 30px;
     }
 }
