@@ -83,21 +83,13 @@
     opacity: 0.9;
 }
 
-.brand-name {
-    font-family:
-            "Audiowide",
-            sans-serif;
+.brand-logo {
+    display: block;
 
-    font-size: 26px;
+    width: 185px;
+    height: auto;
 
-    font-weight: 400;
-
-    letter-spacing: 0.5px;
-
-    color: #ffffff;
-
-    text-shadow:
-            0 2px 12px rgba(0, 0, 0, 0.3);
+    object-fit: contain;
 }
 
 .brand-tagline {
@@ -108,7 +100,7 @@
             Arial,
             sans-serif;
 
-    font-size: 10px;
+    font-size: 12px;
 
     color: rgba(255, 255, 255, 0.65);
 

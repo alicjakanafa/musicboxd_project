@@ -2,8 +2,22 @@
 
 <footer class="site-footer" th:fragment="footer">
     <div class="footer-brand">
-        <span class="footer-logo">MUSICBOXD</span>
-        <span class="footer-tagline">it’s letterboxd, but music</span>
+    <a
+            class="footer-logo-link"
+            th:href="@{/}"
+            aria-label="MusicBoxd home"
+    >
+        <img
+                class="footer-logo-image"
+                th:src="@{/images/musicboxd-logo-blue.svg}"
+                alt=""
+                aria-hidden="true"
+        >
+    </a>
+
+    <span class="footer-tagline">
+        it’s letterboxd, but music
+    </span>
     </div>
 
     <nav class="footer-links">

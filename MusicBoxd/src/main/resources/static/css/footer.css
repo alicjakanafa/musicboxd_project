@@ -21,9 +21,17 @@
     text-align: left;
 }
 
-.footer-logo {
-    font-family: "Audiowide", sans-serif;
-    font-size: 1.2rem;
+.footer-logo-link {
+    display: block;
+    text-decoration: none;
+}
+
+.footer-logo-image {
+    display: block;
+    width: 182px;
+    height: auto;
+
+    margin-left: -4px;
 }
 
 .footer-tagline {
