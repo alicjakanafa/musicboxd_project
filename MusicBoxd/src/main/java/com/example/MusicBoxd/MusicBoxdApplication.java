@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MusicBoxdApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MusicBoxdApplication.class, args);
+        SpringApplication.run(MusicBoxdApplication.class, args
+        );
     }
 
 }

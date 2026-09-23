@@ -2,10 +2,11 @@
 
 `ItunesServiceTest`
 (`src/test/java/com/example/MusicBoxd/api/itunes/ItunesServiceTest.java`) is a plain
-JUnit unit test (no Spring context) that verifies the
+JUnit unit test (no Spring context) that verifies every public method of
 [`ItunesService`](../../features/ExternalMusicApis/itunesServiceDocumentation.md)
-builds the correct outgoing request and parses realistic iTunes Search API responses
-correctly.
+(`searchAlbums`, `searchAlbumsByArtist`, `searchTracks`, `getDailyAlbum`, and
+`getAlbumTracks`) builds the correct outgoing request and parses realistic iTunes
+Search/Lookup API responses correctly.
 
 ### Test setup
 
@@ -42,6 +43,31 @@ No real network call to `itunes.apple.com` is ever made.
 - **`searchAlbumsReturnsEmptyResultsWhenNoMatchesFound`** — a response with
   `resultCount: 0` and an empty `results` array is passed straight through as an empty
   list, without the service throwing or substituting a default value.
+- **`searchAlbumsByArtistBuildsExpectedRequestWithHighResultLimit`** —
+  `searchAlbumsByArtist("Radiohead")` issues a GET with `entity=album` and `limit=200`
+  (instead of the `20` used by `searchAlbums`), and deserializes the response the same
+  way `searchAlbums` does.
+- **`getAlbumTracksBuildsLookupRequestWithCollectionIdAndSongEntity`** —
+  `getAlbumTracks(111L)` issues a GET to `https://itunes.apple.com/lookup` with
+  `id=111` and `entity=song`, and deserializes the response into an
+  `ItunesTrackResponse`.
+- **`getDailyAlbumReturnsNullWhenSearchResultsAreEmpty`** — when the genre search
+  returns `resultCount: 0` with an empty `results` array, `getDailyAlbum` returns `null`.
+- **`getDailyAlbumReturnsNullWhenResultsFieldIsExplicitlyNull`** — the same null result
+  when the `results` field is present but explicitly `null` rather than an empty array.
+- **`getDailyAlbumReturnsNullWhenRemoteResponseBodyIsEmpty`** — an empty HTTP response
+  body (no JSON at all) also results in `getDailyAlbum` returning `null`, rather than
+  throwing.
+- **`getDailyAlbumReturnsAnAlbumFromTheSearchResultsForAGivenUser`** — given a
+  three-album search response, `getDailyAlbum(userId)` returns one of the three albums
+  (not `null`, and not a fabricated value).
+- **`getDailyAlbumReturnsSameAlbumForSameUserOnSameDay`** — calling `getDailyAlbum` twice
+  in a row with the same `userId` (and therefore the same day) returns the exact same
+  album both times, confirming the per-day/per-user seeded `Random` is deterministic
+  rather than picking a fresh random album on every call.
+- **`getDailyAlbumWorksWithoutAUserIdUsingEpochDaySeed`** — passing `null` for `userId`
+  still returns a valid album, exercising the fallback seed based on
+  `LocalDate.now().toEpochDay()`.
 
 ### Running the tests
 

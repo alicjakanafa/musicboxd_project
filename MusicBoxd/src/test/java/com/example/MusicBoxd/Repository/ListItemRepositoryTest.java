@@ -80,4 +80,93 @@ class ListItemRepositoryTest {
         assertThat(second.getPosition()).isEqualTo(1);
         assertThat(first.getListId()).isEqualTo(second.getListId());
     }
+
+    @Test
+    void findByListIdOrderByPositionAscReturnsOnlyThatListsItemsInOrder() {
+        entityManager.persistAndFlush(new ListItem(100L, 1L, null, 2));
+        entityManager.persistAndFlush(new ListItem(100L, 2L, null, 0));
+        entityManager.persistAndFlush(new ListItem(100L, 3L, null, 1));
+        entityManager.persistAndFlush(new ListItem(200L, 4L, null, 0));
+
+        List<ListItem> items = listItemRepository.findByListIdOrderByPositionAsc(100L);
+
+        assertThat(items).extracting(ListItem::getAlbumId)
+                .containsExactly(2L, 3L, 1L);
+    }
+
+    @Test
+    void findByListIdOrderByPositionAscReturnsEmptyListWhenListHasNoItems() {
+        List<ListItem> items = listItemRepository.findByListIdOrderByPositionAsc(999L);
+
+        assertThat(items).isEmpty();
+    }
+
+    @Test
+    void findByListIdAndAlbumIdReturnsMatchingItem() {
+        entityManager.persistAndFlush(new ListItem(300L, 40L, null, 0));
+
+        Optional<ListItem> found = listItemRepository.findByListIdAndAlbumId(300L, 40L);
+
+        assertThat(found).isPresent();
+    }
+
+    @Test
+    void findByListIdAndAlbumIdReturnsEmptyWhenNoMatch() {
+        Optional<ListItem> found = listItemRepository.findByListIdAndAlbumId(300L, 999L);
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    void existsByListIdAndAlbumIdReturnsTrueWhenItemExists() {
+        entityManager.persistAndFlush(new ListItem(400L, 50L, null, 0));
+
+        assertThat(listItemRepository.existsByListIdAndAlbumId(400L, 50L)).isTrue();
+    }
+
+    @Test
+    void existsByListIdAndAlbumIdReturnsFalseWhenItemDoesNotExist() {
+        assertThat(listItemRepository.existsByListIdAndAlbumId(400L, 999L)).isFalse();
+    }
+
+    @Test
+    void findMaxPositionReturnsHighestPositionForList() {
+        entityManager.persistAndFlush(new ListItem(500L, 60L, null, 0));
+        entityManager.persistAndFlush(new ListItem(500L, 61L, null, 3));
+        entityManager.persistAndFlush(new ListItem(500L, 62L, null, 1));
+
+        Integer maxPosition = listItemRepository.findMaxPosition(500L);
+
+        assertThat(maxPosition).isEqualTo(3);
+    }
+
+    @Test
+    void findMaxPositionReturnsZeroWhenListHasNoItems() {
+        Integer maxPosition = listItemRepository.findMaxPosition(999L);
+
+        assertThat(maxPosition).isEqualTo(0);
+    }
+
+    @Test
+    void countByListIdCountsOnlyItemsInThatList() {
+        entityManager.persistAndFlush(new ListItem(600L, 70L, null, 0));
+        entityManager.persistAndFlush(new ListItem(600L, 71L, null, 1));
+        entityManager.persistAndFlush(new ListItem(601L, 72L, null, 0));
+
+        long count = listItemRepository.countByListId(600L);
+
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    void deleteByListIdRemovesAllItemsInThatListOnly() {
+        entityManager.persistAndFlush(new ListItem(700L, 80L, null, 0));
+        entityManager.persistAndFlush(new ListItem(700L, 81L, null, 1));
+        entityManager.persistAndFlush(new ListItem(701L, 82L, null, 0));
+
+        listItemRepository.deleteByListId(700L);
+
+        assertThat(listItemRepository.findByListIdOrderByPositionAsc(700L)).isEmpty();
+        assertThat(listItemRepository.findByListIdOrderByPositionAsc(701L)).hasSize(1);
+    }
 }

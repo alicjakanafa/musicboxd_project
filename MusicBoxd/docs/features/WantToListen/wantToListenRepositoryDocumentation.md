@@ -2,9 +2,31 @@
 
 `WantToListenRepository` (`com.example.MusicBoxd.Repository.WantToListenRepository`) is
 the data-access interface for the
-[`WantToListen` model](./wantToListenModelDocumentation.md). It declares no additional
-query methods of its own — every operation it exposes is the standard `CrudRepository`
-contract.
+[`WantToListen` model](./wantToListenModelDocumentation.md). Besides the standard
+`CrudRepository` contract, it declares one derived query method,
+`findAllByUserIdOrderByCreatedAtDesc(Long id)` — see the known issue below, though,
+before relying on it.
+
+> **Note:** the `WANT_TO_LISTEN` table backing this entity was dropped in
+> `src/main/resources/db/migration/V23__delete_want_to_listen_table.sql`, and this
+> repository/entity are not referenced anywhere in `src/main/java` outside of tests.
+> This appears to be a leftover, superseded feature (see the
+> [`Favourites` feature](../Favourites/userFavouriteAlbumModelDocumentation.md) for
+> similar-in-spirit functionality that is actively used).
+
+> **Known issue:** `findAllByUserIdOrderByCreatedAtDesc` is declared to return a
+> single `Optional<WantToListen>`, even though its name ("findAllBy...") and
+> `OrderByCreatedAtDesc` clause both imply it should return every want-to-listen entry
+> for a user, most recent first. Because the return type is a single `Optional` and
+> there's no `Top`/`First`/`Pageable` limiting the query, Spring Data executes it as a
+> single-result query with no `LIMIT`. As soon as a user has more than one
+> want-to-listen entry, this throws
+> `org.springframework.dao.IncorrectResultSizeDataAccessException` ("Query did not
+> return a unique result: 2 results were returned") instead of returning anything. See
+> `findAllByUserIdOrderByCreatedAtDescThrowsWhenUserHasMoreThanOneEntry` in
+> [the repository tests](../../tests/WantToListen/testWantToListenModel.md) for a
+> reproduction. Since the method isn't called from any production code path today,
+> this is a latent rather than an active defect.
 
 > **Known issue:** `WantToListenRepository` is currently declared as
 > `CrudRepository<WantToListen, Long>` in source, even though `WantToListen.id` is an
@@ -27,10 +49,6 @@ the box:
 - `existsById(Long id)`
 - `deleteById(Long id)` / `delete(WantToListen entry)`
 - `count()`
-
-There are currently no custom finder methods (e.g. no `findByUserId`) — any lookup
-beyond "by id" or "all" is not yet supported by this repository and would need to be
-added as a derived query method or `@Query` if needed.
 
 ### Usage example
 

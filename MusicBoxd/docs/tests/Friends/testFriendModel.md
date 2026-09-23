@@ -38,6 +38,34 @@ directly instead of persisting real `User` rows first.
 - **`persistsFriendStatusTransitionToAccepted`** — `status` is a plain, mutable
   `String` column, so a `Friend` initially persisted with `status = "PENDING"` can have
   its status updated (e.g. to `"ACCEPTED"`) and that change is correctly persisted.
+- **`findByRequesterIdAndReceiverIdReturnsMatchingFriendRequest`** /
+  **`findByRequesterIdAndReceiverIdReturnsEmptyWhenNoMatch`** — looks up a friend link
+  in the requester → receiver direction, and returns `Optional.empty()` when there is
+  none.
+- **`findByReceiverIdAndRequesterIdReturnsMatchingFriendRequest`** — the mirrored
+  lookup, in the receiver → requester direction.
+- **`findByReceiverIdAndStatusReturnsOnlyMatchingFriendships`** /
+  **`findByRequesterIdAndStatusReturnsOnlyMatchingFriendships`** — each method returns
+  only the friend links for the given receiver/requester that also match the given
+  status, excluding links with a different status or for a different user.
+- **`findByStatusReturnsAllFriendshipsWithThatStatus`** /
+  **`findByStatusReturnsEmptyListWhenNoneMatch`** — `findByStatus` returns every friend
+  link with a given status regardless of requester/receiver, and an empty list when
+  none match.
+- **`findByRequesterIdAndStatusOrReceiverIdAndStatusReturnsFriendshipsOnEitherSide`** —
+  called with the same user id/status on both sides, this returns friend links where
+  that user is either the requester or the receiver with that status, letting callers
+  find "my accepted friends" regardless of who sent the original request.
+- **`countByReceiverIdAndStatusCountsOnlyMatchingFriendships`** /
+  **`countByRequesterIdAndStatusCountsOnlyMatchingFriendships`** — each count only
+  includes friend links for the given user/status combination.
+- **`existsByRequesterAndReceiverAndStatusMatchesOnlyTheGivenDirectionAndStatus`** /
+  **`existsByReceiverAndRequesterAndStatusMatchesOnlyTheGivenDirectionAndStatus`** —
+  each `existsBy...AndStatus` query returns `true` only for a friend link with the given
+  direction and `Friend.Status`, and `false` for a different status or the reverse
+  direction. (These methods previously threw `InvalidDataAccessApiUsageException`
+  because the enum was bound against the `String` column. The queries now compare
+  against the enum's name.)
 
 ### Known limitation
 

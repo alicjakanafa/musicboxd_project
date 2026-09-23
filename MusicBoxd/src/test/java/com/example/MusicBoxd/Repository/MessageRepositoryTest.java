@@ -84,4 +84,74 @@ class MessageRepositoryTest {
 
         assertThat(saved.isRead()).isFalse();
     }
+
+    @Test
+    void findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtAscReturnsConversationInBothDirections() throws InterruptedException {
+        entityManager.persistFlushFind(new Message(10L, 20L, "First", null, null, null, null));
+        Thread.sleep(5);
+        entityManager.persistFlushFind(new Message(20L, 10L, "Second", null, null, null, null));
+        entityManager.persistAndFlush(new Message(10L, 30L, "Unrelated conversation", null, null, null, null));
+
+        List<Message> conversation = messageRepository
+                .findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtAsc(10L, 20L, 20L, 10L);
+
+        assertThat(conversation).extracting(Message::getContent)
+                .containsExactly("First", "Second");
+    }
+
+    @Test
+    void findTopBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtDescReturnsMostRecentMessage() throws InterruptedException {
+        entityManager.persistFlushFind(new Message(11L, 21L, "Older", null, null, null, null));
+        Thread.sleep(5);
+        entityManager.persistFlushFind(new Message(21L, 11L, "Newest", null, null, null, null));
+
+        Optional<Message> latest = messageRepository
+                .findTopBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtDesc(11L, 21L, 21L, 11L);
+
+        assertThat(latest).isPresent();
+        assertThat(latest.get().getContent()).isEqualTo("Newest");
+    }
+
+    @Test
+    void findTopBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtDescReturnsEmptyWhenNoConversationExists() {
+        Optional<Message> latest = messageRepository
+                .findTopBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtDesc(999L, 998L, 998L, 999L);
+
+        assertThat(latest).isEmpty();
+    }
+
+    @Test
+    void findBySenderIdOrReceiverIdOrderByCreatedAtDescReturnsAllMessagesInvolvingUserNewestFirst() throws InterruptedException {
+        entityManager.persistFlushFind(new Message(12L, 22L, "Sent by 12", null, null, null, null));
+        Thread.sleep(5);
+        entityManager.persistFlushFind(new Message(22L, 12L, "Received by 12", null, null, null, null));
+        entityManager.persistAndFlush(new Message(30L, 31L, "Unrelated", null, null, null, null));
+
+        List<Message> messages = messageRepository.findBySenderIdOrReceiverIdOrderByCreatedAtDesc(12L, 12L);
+
+        assertThat(messages).extracting(Message::getContent)
+                .containsExactly("Received by 12", "Sent by 12");
+    }
+
+    @Test
+    void deleteBySenderIdRemovesOnlyMessagesSentByThatUser() {
+        entityManager.persistAndFlush(new Message(13L, 23L, "From 13", null, null, null, null));
+        entityManager.persistAndFlush(new Message(23L, 13L, "To 13", null, null, null, null));
+
+        messageRepository.deleteBySenderId(13L);
+
+        List<Message> remaining = (List<Message>) messageRepository.findAll();
+        assertThat(remaining).extracting(Message::getContent).containsExactly("To 13");
+    }
+
+    @Test
+    void deleteByReceiverIdRemovesOnlyMessagesReceivedByThatUser() {
+        entityManager.persistAndFlush(new Message(14L, 24L, "From 14", null, null, null, null));
+        entityManager.persistAndFlush(new Message(24L, 14L, "To 14", null, null, null, null));
+
+        messageRepository.deleteByReceiverId(24L);
+
+        List<Message> remaining = (List<Message>) messageRepository.findAll();
+        assertThat(remaining).extracting(Message::getContent).containsExactly("To 14");
+    }
 }

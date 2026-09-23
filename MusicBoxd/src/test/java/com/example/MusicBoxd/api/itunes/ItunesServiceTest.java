@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.startsWith;
@@ -167,5 +170,179 @@ class ItunesServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getResultCount()).isEqualTo(0);
         assertThat(response.getResults()).isEmpty();
+    }
+
+    @Test
+    void searchAlbumsByArtistBuildsExpectedRequestWithHighResultLimit() {
+        String responseBody = """
+                {
+                  "resultCount": 1,
+                  "results": [
+                    {
+                      "collectionId": 111,
+                      "collectionName": "In Rainbows",
+                      "artistName": "Radiohead"
+                    }
+                  ]
+                }
+                """;
+
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("term", "Radiohead"))
+                .andExpect(queryParam("media", "music"))
+                .andExpect(queryParam("entity", "album"))
+                .andExpect(queryParam("limit", "200"))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        ItunesAlbumResponse response = itunesService.searchAlbumsByArtist("Radiohead");
+
+        assertThat(response).isNotNull();
+        assertThat(response.getResults()).hasSize(1);
+        assertThat(response.getResults().get(0).getCollectionName()).isEqualTo("In Rainbows");
+    }
+
+    @Test
+    void getAlbumTracksBuildsLookupRequestWithCollectionIdAndSongEntity() {
+        String responseBody = """
+                {
+                  "resultCount": 1,
+                  "results": [
+                    {
+                      "trackId": 55,
+                      "trackName": "15 Step",
+                      "artistName": "Radiohead",
+                      "collectionName": "In Rainbows"
+                    }
+                  ]
+                }
+                """;
+
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/lookup")))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("id", "111"))
+                .andExpect(queryParam("entity", "song"))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        ItunesTrackResponse response = itunesService.getAlbumTracks(111L);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getResults()).hasSize(1);
+        assertThat(response.getResults().get(0).getTrackName()).isEqualTo("15 Step");
+    }
+
+    @Test
+    void getDailyAlbumReturnsNullWhenSearchResultsAreEmpty() {
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("entity", "album"))
+                .andExpect(queryParam("limit", "50"))
+                .andRespond(withSuccess(
+                        "{ \"resultCount\": 0, \"results\": [] }",
+                        MediaType.APPLICATION_JSON));
+
+        ItunesAlbum album = itunesService.getDailyAlbum(42L);
+
+        assertThat(album).isNull();
+    }
+
+    @Test
+    void getDailyAlbumReturnsNullWhenResultsFieldIsExplicitlyNull() {
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(
+                        "{ \"resultCount\": 0, \"results\": null }",
+                        MediaType.APPLICATION_JSON));
+
+        ItunesAlbum album = itunesService.getDailyAlbum(42L);
+
+        assertThat(album).isNull();
+    }
+
+    @Test
+    void getDailyAlbumReturnsNullWhenRemoteResponseBodyIsEmpty() {
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+
+        ItunesAlbum album = itunesService.getDailyAlbum(42L);
+
+        assertThat(album).isNull();
+    }
+
+    @Test
+    void getDailyAlbumReturnsAnAlbumFromTheSearchResultsForAGivenUser() {
+        String responseBody = """
+                {
+                  "resultCount": 3,
+                  "results": [
+                    { "collectionId": 1, "collectionName": "Album One", "artistName": "Artist One" },
+                    { "collectionId": 2, "collectionName": "Album Two", "artistName": "Artist Two" },
+                    { "collectionId": 3, "collectionName": "Album Three", "artistName": "Artist Three" }
+                  ]
+                }
+                """;
+
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("media", "music"))
+                .andExpect(queryParam("entity", "album"))
+                .andExpect(queryParam("limit", "50"))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        ItunesAlbum album = itunesService.getDailyAlbum(7L);
+
+        assertThat(album).isNotNull();
+        assertThat(album.getCollectionId()).isIn(1L, 2L, 3L);
+        assertThat(List.of("Album One", "Album Two", "Album Three"))
+                .contains(album.getCollectionName());
+    }
+
+    @Test
+    void getDailyAlbumReturnsSameAlbumForSameUserOnSameDay() {
+        String responseBody = """
+                {
+                  "resultCount": 3,
+                  "results": [
+                    { "collectionId": 1, "collectionName": "Album One", "artistName": "Artist One" },
+                    { "collectionId": 2, "collectionName": "Album Two", "artistName": "Artist Two" },
+                    { "collectionId": 3, "collectionName": "Album Three", "artistName": "Artist Three" }
+                  ]
+                }
+                """;
+
+        mockServer.expect(ExpectedCount.times(2), requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        ItunesAlbum firstCall = itunesService.getDailyAlbum(99L);
+        ItunesAlbum secondCall = itunesService.getDailyAlbum(99L);
+
+        assertThat(firstCall).isNotNull();
+        assertThat(secondCall).isNotNull();
+        assertThat(secondCall.getCollectionId()).isEqualTo(firstCall.getCollectionId());
+        assertThat(secondCall.getCollectionName()).isEqualTo(firstCall.getCollectionName());
+    }
+
+    @Test
+    void getDailyAlbumWorksWithoutAUserIdUsingEpochDaySeed() {
+        String responseBody = """
+                {
+                  "resultCount": 2,
+                  "results": [
+                    { "collectionId": 10, "collectionName": "Fallback Album One", "artistName": "Artist One" },
+                    { "collectionId": 20, "collectionName": "Fallback Album Two", "artistName": "Artist Two" }
+                  ]
+                }
+                """;
+
+        mockServer.expect(requestTo(startsWith("https://itunes.apple.com/search")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        ItunesAlbum album = itunesService.getDailyAlbum(null);
+
+        assertThat(album).isNotNull();
+        assertThat(album.getCollectionId()).isIn(10L, 20L);
     }
 }

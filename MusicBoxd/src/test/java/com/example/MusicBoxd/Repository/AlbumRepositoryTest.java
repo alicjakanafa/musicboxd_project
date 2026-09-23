@@ -77,4 +77,44 @@ class AlbumRepositoryTest {
 
         assertThat(albumRepository.findById(persisted.getId())).isEmpty();
     }
+
+    @Test
+    void findByArtistIdReturnsOnlyAlbumsForThatArtist() {
+        Artist artistOne = entityManager.persistFlushFind(new Artist("Artist One"));
+        Artist artistTwo = entityManager.persistFlushFind(new Artist("Artist Two"));
+        entityManager.persistAndFlush(new Album("ext-6", artistOne.getId(), "Album One", (short) 2015, null));
+        entityManager.persistAndFlush(new Album("ext-7", artistOne.getId(), "Album Two", (short) 2016, null));
+        entityManager.persistAndFlush(new Album("ext-8", artistTwo.getId(), "Other Artist Album", (short) 2017, null));
+
+        List<Album> albums = albumRepository.findByArtistId(artistOne.getId());
+
+        assertThat(albums).hasSize(2)
+                .extracting(Album::getTitle)
+                .containsExactlyInAnyOrder("Album One", "Album Two");
+    }
+
+    @Test
+    void findByArtistIdReturnsEmptyListWhenArtistHasNoAlbums() {
+        List<Album> albums = albumRepository.findByArtistId(999L);
+
+        assertThat(albums).isEmpty();
+    }
+
+    @Test
+    void findByExternalIdReturnsMatchingAlbum() {
+        Artist artist = entityManager.persistFlushFind(new Artist());
+        entityManager.persistAndFlush(new Album("unique-ext-id", artist.getId(), "Findable Album", (short) 2018, null));
+
+        Optional<Album> found = albumRepository.findByExternalId("unique-ext-id");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("Findable Album");
+    }
+
+    @Test
+    void findByExternalIdReturnsEmptyWhenNoAlbumMatches() {
+        Optional<Album> found = albumRepository.findByExternalId("does-not-exist");
+
+        assertThat(found).isEmpty();
+    }
 }

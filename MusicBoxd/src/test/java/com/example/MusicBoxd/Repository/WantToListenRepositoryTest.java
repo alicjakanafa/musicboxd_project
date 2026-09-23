@@ -77,4 +77,41 @@ class WantToListenRepositoryTest {
         assertThat(saved.getSongId()).isEqualTo(7L);
         assertThat(saved.getAlbumId()).isNull();
     }
+
+    @Test
+    void findAllByUserIdOrderByCreatedAtDescReturnsTheSingleEntryForThatUser() {
+        WantToListen persisted = entityManager.persistFlushFind(new WantToListen(8L, 9L, null));
+        entityManager.persistAndFlush(new WantToListen(99L, 11L, null));
+
+        Optional<WantToListen> found = wantToListenRepository.findAllByUserIdOrderByCreatedAtDesc(8L);
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getId()).isEqualTo(persisted.getId());
+    }
+
+    @Test
+    void findAllByUserIdOrderByCreatedAtDescReturnsEmptyWhenUserHasNoEntries() {
+        Optional<WantToListen> found = wantToListenRepository.findAllByUserIdOrderByCreatedAtDesc(999L);
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    void findAllByUserIdOrderByCreatedAtDescThrowsWhenUserHasMoreThanOneEntry() {
+        // NOTE: despite its "findAllBy" name and "OrderByCreatedAtDesc" clause (which
+        // suggest it should return every want-to-listen entry for a user, most recent
+        // first), this method is declared to return a single Optional<WantToListen>
+        // with no LIMIT applied. Spring Data therefore executes it as a single-result
+        // query, which blows up with NonUniqueResultException as soon as a user has
+        // more than one entry. This method is not currently called from production
+        // code (the WANT_TO_LISTEN table itself was dropped in
+        // V23__delete_want_to_listen_table.sql), so this test documents the latent
+        // defect rather than exercising a real code path.
+        entityManager.persistFlushFind(new WantToListen(8L, 9L, null));
+        entityManager.persistFlushFind(new WantToListen(8L, 10L, null));
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(
+                        () -> wantToListenRepository.findAllByUserIdOrderByCreatedAtDesc(8L))
+                .isInstanceOf(org.springframework.dao.IncorrectResultSizeDataAccessException.class);
+    }
 }

@@ -64,4 +64,21 @@ class ArtistRepositoryTest {
 
         assertThat(artistRepository.findById(persisted.getId())).isEmpty();
     }
+
+    @Test
+    void findByNameIgnoreCaseMatchesRegardlessOfCase() {
+        entityManager.persistAndFlush(new Artist("Radiohead"));
+
+        Optional<Artist> found = artistRepository.findByNameIgnoreCase("radiohead");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getName()).isEqualTo("Radiohead");
+    }
+
+    @Test
+    void findByNameIgnoreCaseReturnsEmptyWhenNoArtistMatches() {
+        Optional<Artist> found = artistRepository.findByNameIgnoreCase("Unknown Artist");
+
+        assertThat(found).isEmpty();
+    }
 }

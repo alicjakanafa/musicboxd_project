@@ -2,10 +2,11 @@
 
 `LastFmServiceTest`
 (`src/test/java/com/example/MusicBoxd/api/lastfm/LastFmServiceTest.java`) is a plain
-JUnit unit test (no Spring context) that verifies the
+JUnit unit test (no Spring context) that verifies every public method of
 [`LastFmService`](../../features/ExternalMusicApis/lastFmServiceDocumentation.md)
-builds the correct outgoing request and parses a realistic Last.fm `chart.gettopartists`
-response correctly.
+(`getTopArtists`, `getArtistInfo`, `getArtistAlbums`, `searchAlbums`, `getAlbumInfo`)
+builds the correct outgoing request and parses realistic Last.fm API responses
+correctly, including the error-handling paths of `searchAlbums` and `getAlbumInfo`.
 
 ### Test setup
 
@@ -35,17 +36,29 @@ No real network call to `ws.audioscrobbler.com` is ever made.
 - **`getTopArtistsUsesInjectedApiKeyInRequest`** — a second `LastFmService` instance
   constructed with a different API key sends that key as the `api_key` query parameter,
   confirming the constructor-injected key (not a hardcoded value) drives the request.
-
-### Known limitation covered by this test, not by production behavior
-
-The sample response bodies used in these tests use the JSON key `text` for each image's
-URL, to match the `LastFmImage.text` field exactly. The real Last.fm API actually
-returns `#text` for that key. See the "Known limitation" section in the
-[`LastFmService` documentation](../../features/ExternalMusicApis/lastFmServiceDocumentation.md#known-limitation)
-— these tests intentionally use the field name Java expects so they exercise
-deserialization correctly, but that means they do not reproduce the real API's `#text`
-key mismatch. That mismatch was left as-is because fixing it is a production code
-change outside the scope of this test suite.
+- **`getArtistInfoBuildsExpectedRequestAndParsesResponse`** — `getArtistInfo("Radiohead")`
+  issues GETs with `method=artist.getinfo`, `artist=Radiohead`, `autocorrect=1`, and
+  correctly deserializes `name`, `listeners`, `playcount`, and the nested `bio`
+  (`summary`/`content`). The mock server is set up with `ExpectedCount.times(2)` because
+  `getArtistInfo` fetches the same URL twice (see the service documentation).
+- **`getArtistAlbumsBuildsExpectedRequestAndParsesResponse`** —
+  `getArtistAlbums("Radiohead")` issues a GET with `method=artist.gettopalbums`,
+  `limit=50`, `autocorrect=1`, and correctly deserializes the nested `topalbums.album`
+  list, including each album's `image` list.
+- **`searchAlbumsBuildsExpectedRequestAndParsesResponse`** — `searchAlbums("OK Computer")`
+  issues a GET with `method=album.search`, `album=OK+Computer`, `limit=20`, and
+  correctly deserializes the nested `results.albummatches.album` list.
+- **`searchAlbumsReturnsNullWhenRemoteServiceReturnsServerError`** — when the mock server
+  responds with an HTTP 500, `searchAlbums` catches the resulting exception and returns
+  `null` instead of propagating it.
+- **`getAlbumInfoBuildsExpectedRequestAndParsesResponse`** —
+  `getAlbumInfo("Radiohead", "OK Computer")` issues a GET with `method=album.getinfo`,
+  `artist=Radiohead`, `album=OK+Computer`, `autocorrect=1`, and correctly deserializes
+  the album's `name`, `artist`, `releasedate`, and its `tracks.track` list (including
+  `LastFmTrack.getFormattedDuration()` converting a `284`-second duration to `4:44`).
+- **`getAlbumInfoReturnsNullWhenRemoteServiceReturnsNotFound`** — when the mock server
+  responds with an HTTP 404 (an unknown artist/album pair), `getAlbumInfo` catches the
+  exception and returns `null` instead of propagating it.
 
 ### Running the tests
 
