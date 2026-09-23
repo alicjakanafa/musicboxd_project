@@ -55,8 +55,8 @@ attempt OIDC discovery against Auth0 at startup.
 ### Known failing test at baseline
 
 `LastFmServiceTest.getTopArtistsBuildsExpectedRequestAndParsesResponse`
-fails because `LastFmImage.getText()` returns `null`: the `#text` JSON field
-is not being deserialized. This failure was already present before coverage
-tooling was added and points to a defect in production code, not in the test.
-The baseline numbers above were generated with
-`-Dmaven.test.failure.ignore=true`.
+was failing before coverage tooling was added, so the baseline numbers above
+were generated with `-Dmaven.test.failure.ignore=true`. The test's mock
+response used an image key of `"text"`, while the real Last.fm API (and
+`LastFmImage`, via `@JsonProperty("#text")`) uses `"#text"`. The fixture has
+since been corrected and the test passes.

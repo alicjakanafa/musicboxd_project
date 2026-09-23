@@ -40,6 +40,15 @@ public class SpotifyController {
     @Value("${spotify.redirect.uri}")
     private String redirectUri;
 
+    private final RestTemplate restTemplate;
+
+    public SpotifyController(
+            RestTemplate restTemplate
+    ) {
+
+        this.restTemplate = restTemplate;
+    }
+
     @GetMapping("/spotify/login")
     public String spotifyLogin() {
 
@@ -80,9 +89,6 @@ public class SpotifyController {
             String code,
             HttpSession session
     ) {
-
-        RestTemplate restTemplate =
-                new RestTemplate();
 
         MultiValueMap<String, String> body =
                 new LinkedMultiValueMap<>();
@@ -243,9 +249,6 @@ public class SpotifyController {
             String accessToken,
             Model model
     ) {
-
-        RestTemplate restTemplate =
-                new RestTemplate();
 
         HttpHeaders headers =
                 new HttpHeaders();
@@ -444,9 +447,6 @@ public class SpotifyController {
             String accessToken
     ) {
 
-        RestTemplate restTemplate =
-                new RestTemplate();
-
         HttpHeaders headers =
                 new HttpHeaders();
 
@@ -590,9 +590,6 @@ public class SpotifyController {
         }
 
 
-        RestTemplate restTemplate =
-                new RestTemplate();
-
         HttpHeaders headers =
                 new HttpHeaders();
 
@@ -624,9 +621,6 @@ public class SpotifyController {
                         timeRange
                 );
 
-
-        RestTemplate restTemplate =
-                new RestTemplate();
 
         HttpHeaders headers =
                 new HttpHeaders();
@@ -670,9 +664,6 @@ public class SpotifyController {
                         timeRange
                 );
 
-
-        RestTemplate restTemplate =
-                new RestTemplate();
 
         HttpHeaders headers =
                 new HttpHeaders();

@@ -73,11 +73,11 @@ class LastFmServiceTest {
                     "url": "https://www.last.fm/music/Radiohead",
                     "image": [
                       {
-                        "text": "https://example.com/small.jpg",
+                        "#text": "https://example.com/small.jpg",
                         "size": "small"
                       },
                       {
-                        "text": "https://example.com/large.jpg",
+                        "#text": "https://example.com/large.jpg",
                         "size": "large"
                       }
                     ]
